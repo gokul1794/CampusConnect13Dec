@@ -62,7 +62,6 @@ public class SelectCollegeActivity extends AppCompatActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         college_list.setLayoutManager(llm);
         college_list.setItemAnimator(new DefaultItemAnimator());
-        college_list.addItemDecoration(new DividerItemDecoration_college_list(this, LinearLayoutManager.HORIZONTAL));
         SharedPreferences sharedpreferences = getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
         mEmailAccount = sharedpreferences.getString(AppConstants.EMAIL_KEY, null);
 
@@ -200,6 +199,9 @@ public class SelectCollegeActivity extends AppCompatActivity {
                                 JSONObject collegeObj = new JSONObject(strResponse);
                                 if (collegeObj.has("collegeList")) {
                                     JSONArray collegeArr = collegeObj.getJSONArray("collegeList");
+                                    CollegeListInfoBean bean = new CollegeListInfoBean();
+                                    bean.setName("Select your campus");
+                                    list.add(0,bean);
                                     for (int i = 0; i < collegeArr.length(); i++) {
                                         JSONObject obj = collegeArr.getJSONObject(i);
                                         String abbreviation = obj.optString("abbreviation");
@@ -208,11 +210,11 @@ public class SelectCollegeActivity extends AppCompatActivity {
                                         String collegeid = obj.optString("collegeId");
 
 
-                                        CollegeListInfoBean bean = new CollegeListInfoBean();
+                                        bean = new CollegeListInfoBean();
                                         bean.setCollegeId(collegeid);
                                         bean.setLocation(location);
                                         bean.setName(name);
-                                        list.add(bean);
+                                        list.add(i+1,bean);
                                     }
                                     CollegeListAdapterActivity cl = new CollegeListAdapterActivity(list);
                                     college_list.setAdapter(cl);

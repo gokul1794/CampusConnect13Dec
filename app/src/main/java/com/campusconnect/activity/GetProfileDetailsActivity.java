@@ -41,8 +41,7 @@ import java.util.List;
 public class GetProfileDetailsActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button cont;
-    TextView skip;
-    EditText batch, branch, phone;
+    EditText batch, branch;
 
     static ModelsProfileMiniForm pmf;
     private static final String LOG_TAG = "GetProfileDetails";
@@ -56,13 +55,10 @@ public class GetProfileDetailsActivity extends AppCompatActivity implements View
 
         batch = (EditText) findViewById(R.id.et_batch);
         branch = (EditText) findViewById(R.id.et_branch);
-        skip = (TextView) findViewById(R.id.tv_skip);
         cont = (Button) findViewById(R.id.b_continue);
-        phone = (EditText) findViewById(R.id.et_phone);
         SharedPreferences sharedpreferences = getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
         mEmailAccount = sharedpreferences.getString(AppConstants.EMAIL_KEY, null);
         cont.setOnClickListener(this);
-        skip.setOnClickListener(this);
     }
 
 
@@ -78,10 +74,7 @@ public class GetProfileDetailsActivity extends AppCompatActivity implements View
         } else {
             pmf.setIsAlumni("N");
         }
-        String phoneNo = phone.getText().toString();
-        if (phoneNo == null) {
-            phoneNo = "";
-        }
+
         String str_batch = batch.getText().toString();
         if (str_batch == null) {
             str_batch = "";
@@ -90,7 +83,6 @@ public class GetProfileDetailsActivity extends AppCompatActivity implements View
         if (str_branch == null) {
             str_branch = "";
         }
-        pmf.setPhone(phoneNo);
         pmf.setBatch(str_batch);
         pmf.setBranch(str_branch);
 

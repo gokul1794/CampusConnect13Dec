@@ -1,6 +1,7 @@
 package com.campusconnect.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.appspot.campus_connect_2015.clubs.Clubs;
@@ -42,11 +45,23 @@ import java.util.List;
  */
 public class Signup_2Activity extends AppCompatActivity {
 
+    LinearLayout temporary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_2);
+
+        temporary = (LinearLayout)findViewById(R.id.temp);
+
+        temporary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_temp = new Intent(v.getContext(), GetProfileDetailsActivity.class);
+                startActivity(intent_temp);
+
+            }
+        });
 
 
     }

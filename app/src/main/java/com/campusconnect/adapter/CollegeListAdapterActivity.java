@@ -3,14 +3,17 @@ package com.campusconnect.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.campusconnect.activity.CategoryActivity;
+import com.campusconnect.activity.Signup_2Activity;
 import com.campusconnect.bean.CollegeListInfoBean;
 import com.campusconnect.constant.AppConstants;
 import com.campusconnect.R;
@@ -41,6 +44,17 @@ public class CollegeListAdapterActivity extends
     public void onBindViewHolder(CollegeListViewHolder group_listViewHolder, int i) {
         CollegeListInfoBean ci = CollegeList.get(i);
         group_listViewHolder.college_name.setText(ci.getName());
+        if(i==0) {
+            group_listViewHolder.college_name.setTypeface(null, Typeface.BOLD);
+            group_listViewHolder.college_name.setGravity(Gravity.CENTER);
+            group_listViewHolder.i_divider.setVisibility(View.GONE);
+            group_listViewHolder.t_divider.setVisibility(View.VISIBLE);
+        } else {
+            group_listViewHolder.college_name.setTypeface(null, Typeface.NORMAL);
+            group_listViewHolder.college_name.setGravity(Gravity.LEFT);
+            group_listViewHolder.i_divider.setVisibility(View.VISIBLE);
+            group_listViewHolder.t_divider.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -55,16 +69,20 @@ public class CollegeListAdapterActivity extends
 
         CardView college_list;
         TextView college_name;
+        View t_divider, i_divider;
+
         public CollegeListViewHolder(View v) {
             super(v);
 
             college_list = (CardView) v.findViewById(R.id.college_list);
             college_name = (TextView) v.findViewById(R.id.tv_college_name);
+            t_divider = (View) v.findViewById(R.id.title_divider);
+            i_divider = (View) v.findViewById(R.id.item_divider);
 
             college_list.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    pos=getPosition();
+                    pos=getAdapterPosition();
 
                     SharedPreferences sharedpreferences = v.getContext().getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
                     SharedPreferences.Editor edit=sharedpreferences.edit();
@@ -73,7 +91,7 @@ public class CollegeListAdapterActivity extends
                     edit.putString(AppConstants.COLLEGE_ID,CollegeList.get(pos).getCollegeId());
                     edit.commit();
 
-                    Intent intent_temp = new Intent(v.getContext(), CategoryActivity.class);
+                    Intent intent_temp = new Intent(v.getContext(), Signup_2Activity.class);
                     v.getContext().startActivity(intent_temp);
 
                 }

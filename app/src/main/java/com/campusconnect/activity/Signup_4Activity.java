@@ -56,7 +56,7 @@ public class Signup_4Activity extends AppCompatActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         group_list_at_sign_up.setLayoutManager(llm);
         group_list_at_sign_up.setItemAnimator(new DefaultItemAnimator());
-        group_list_at_sign_up.addItemDecoration(new DividerItemDecoration_college_list(this, LinearLayoutManager.VERTICAL));
+        //group_list_at_sign_up.addItemDecoration(new DividerItemDecoration_college_list(this, LinearLayoutManager.VERTICAL));
 
     }
 }
