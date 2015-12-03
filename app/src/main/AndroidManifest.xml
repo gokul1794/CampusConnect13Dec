@@ -44,7 +44,7 @@
             android:name="com.campusconnect.activity.GroupMembersPage_InAdminActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name="com.campusconnect.activity.GoogleSignin"
+            android:name="com.campusconnect.activity.SelectCollegeActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.campusconnect.activity.SelectCollegeActivity"
+            android:name="com.campusconnect.activity.GoogleSignin"
             android:label="@string/app_name"></activity>
         <activity
             android:name="com.campusconnect.activity.CategoryActivity"

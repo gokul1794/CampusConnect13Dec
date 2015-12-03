@@ -22,6 +22,7 @@ import com.campusconnect.bean.CollegeListInfoBean;
 import com.campusconnect.communicator.WebRequestTask;
 import com.campusconnect.communicator.WebServiceDetails;
 import com.campusconnect.constant.AppConstants;
+import com.campusconnect.utility.DividerItemDecoration_college_list;
 import com.campusconnect.utility.NetworkAvailablity;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.common.base.Strings;
@@ -61,6 +62,7 @@ public class SelectCollegeActivity extends AppCompatActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         college_list.setLayoutManager(llm);
         college_list.setItemAnimator(new DefaultItemAnimator());
+        college_list.addItemDecoration(new DividerItemDecoration_college_list(this, LinearLayoutManager.HORIZONTAL));
         SharedPreferences sharedpreferences = getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
         mEmailAccount = sharedpreferences.getString(AppConstants.EMAIL_KEY, null);
 
