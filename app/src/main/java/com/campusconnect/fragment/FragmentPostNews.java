@@ -20,7 +20,6 @@ import com.campusconnect.R;
 public class FragmentPostNews extends Fragment {
     RelativeLayout group_name_post;
     TextView group_selected_text_post;
-    EditText et_title,et_description,et_date,et_time,et_venue,et_tags;
     ModelsPostMiniForm pmf;
     int position;
     final String[] items = {
@@ -36,17 +35,9 @@ public class FragmentPostNews extends Fragment {
         group_name_post = (RelativeLayout) v.findViewById(R.id.group_select_when_posting);
         group_selected_text_post = (TextView) v.findViewById(R.id.tv_group_name_selected_when_posting);
 
-        et_title = (EditText) v.findViewById(R.id.et_post_title);
-        et_description = (EditText) v.findViewById(R.id.et_post_description);
-        et_date = (EditText) v.findViewById(R.id.et_date);
-        et_time = (EditText) v.findViewById(R.id.et_time);
-        et_tags = (EditText) v.findViewById(R.id.et_tags);
-
         group_name_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                 builder.setTitle("Group:");

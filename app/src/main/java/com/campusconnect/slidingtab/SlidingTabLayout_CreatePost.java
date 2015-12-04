@@ -47,9 +47,11 @@ public class SlidingTabLayout_CreatePost extends HorizontalScrollView {
 
     }
 
+    Typeface r_reg;
+
     private static final int TITLE_OFFSET_DIPS = 24;
     private static final int TAB_VIEW_PADDING_DIPS = 16;
-    private static final int TAB_VIEW_TEXT_SIZE_SP = 14;
+    private static final int TAB_VIEW_TEXT_SIZE_SP = 17;
 
     private int mTitleOffset;
 
@@ -83,6 +85,8 @@ public class SlidingTabLayout_CreatePost extends HorizontalScrollView {
 
         mTabStrip = new SlidingTabStrip_CreatePost(context);
         addView(mTabStrip, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+
+        r_reg = Typeface.createFromAsset(context.getAssets(), "font/Roboto_Regular.ttf");
     }
 
     /**
@@ -193,16 +197,11 @@ public class SlidingTabLayout_CreatePost extends HorizontalScrollView {
             if (mDistributeEvenly) {
                 LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) tabView.getLayoutParams();
                 lp.width = 0;
-                if(i==0)
-                    lp.weight = (float) 0.7;
-                else if(i==1)
-                    lp.weight = 1;
-                else if(i==2)
-                    lp.weight = (float) 1.3;
-                else if(i==3)
-                    lp.weight = 1;
+                lp.weight=1;
             }
 
+
+            tabTitleView.setTypeface(r_reg);
 
             tabTitleView.setText(adapter.getPageTitle(i));
             tabView.setOnClickListener(tabClickListener);
@@ -217,9 +216,9 @@ public class SlidingTabLayout_CreatePost extends HorizontalScrollView {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                tabTitleView.setTextColor(getResources().getColorStateList(R.color.yello, null));
+                tabTitleView.setTextColor(getResources().getColorStateList(R.color.selector_text, null));
             } else {
-                tabTitleView.setTextColor(getResources().getColorStateList(R.color.yello));
+                tabTitleView.setTextColor(getResources().getColorStateList(R.color.selector_text));
             }
             tabTitleView.setTextSize(15);
         }

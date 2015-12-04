@@ -1,12 +1,15 @@
 package com.campusconnect.activity;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,10 +28,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.appspot.campus_connect_2015.clubs.Clubs;
@@ -61,8 +67,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by RK on 07-10-2015.
@@ -70,7 +78,9 @@ import java.util.List;
 public class CreatePostActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "CreatePostActivity";
+    TextView create_post_title;
     ViewPager pager;
+    LinearLayout close;
     ViewPagerAdapter_CreatePost adapter;
     SlidingTabLayout_CreatePost tabs;
     //   public static Button  post;
@@ -78,18 +88,26 @@ public class CreatePostActivity extends AppCompatActivity {
     public ArrayList<GroupBean> groupList = new ArrayList<GroupBean>();
     List<ModelsClubMiniForm> modelsClubMiniForms;
 
+    int flag_coming_from_group_page=0;
+    String group_name_from_group_page;
+
     static SharedPreferences sharedPreferences;
     private String mEmailAccount = "";
 
     int Numboftabs = 2;
+
+    Typeface r_med;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post);
 
+        r_med = Typeface.createFromAsset(getAssets(), "font/Roboto_Medium.ttf");
 
-        // post = (Button) findViewById(R.id.b_post);
+        close = (LinearLayout) findViewById(R.id.cross_button);
+        create_post_title = (TextView) findViewById(R.id.tv_create_post);
+        create_post_title.setTypeface(r_med);
 
         pager = (ViewPager) findViewById(R.id.pager);
         tabs = (SlidingTabLayout_CreatePost) findViewById(R.id.tabs_createpost);
@@ -101,6 +119,22 @@ public class CreatePostActivity extends AppCompatActivity {
         tabs.setViewPager(pager);
         sharedPreferences = getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
         mEmailAccount = sharedPreferences.getString(AppConstants.EMAIL_KEY, null);
+
+        Bundle bun = getIntent().getExtras();
+        if(bun!=null) {
+            group_name_from_group_page = bun.getString("G_NAME");
+            flag_coming_from_group_page = bun.getInt("FLAG");
+        }
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                finish();
+
+            }
+        });
+
     }
 
     //TODO DONE getGroup in createpostActivity
@@ -397,9 +431,9 @@ public class CreatePostActivity extends AppCompatActivity {
     public class FragmentPostNews extends Fragment {
         RelativeLayout group_name_post;
         TextView group_selected_text_post;
+        EditText et_title,et_post_description, et_tags;
         ImageView iv_upload;
         Button post;
-        EditText et_title, et_description, et_date, et_time, et_venue, et_tags;
         ModelsPostMiniForm pmf = new ModelsPostMiniForm();
         int position;
         String encodedImageStr = "";
@@ -414,19 +448,27 @@ public class CreatePostActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.fragment_post_news, container, false);
 
+            Typeface r_reg = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Regular.ttf");
+
             group_name_post = (RelativeLayout) v.findViewById(R.id.group_select_when_posting);
             group_selected_text_post = (TextView) v.findViewById(R.id.tv_group_name_selected_when_posting);
 
             et_title = (EditText) v.findViewById(R.id.et_post_title);
-            et_description = (EditText) v.findViewById(R.id.et_post_description);
-            et_date = (EditText) v.findViewById(R.id.et_date);
-            et_time = (EditText) v.findViewById(R.id.et_time);
+            et_post_description = (EditText) v.findViewById(R.id.et_post_description);
+            //et_date = (EditText) v.findViewById(R.id.et_date);
+            //et_time = (EditText) v.findViewById(R.id.et_time);
             et_tags = (EditText) v.findViewById(R.id.et_tags);
             iv_upload = (ImageView) v.findViewById(R.id.iv_upload);
             post = (Button)v.findViewById(R.id.b_post);
 
+            et_title.setTypeface(r_reg);
+            et_post_description.setTypeface(r_reg);
+            et_tags.setTypeface(r_reg);
+            group_selected_text_post.setTypeface(r_reg);
+            post.setTypeface(r_reg);
+
             Toast.makeText(getActivity(), "Fragment post news", Toast.LENGTH_LONG).show();
-            et_date.setText("bsjbfjdskfjdsfkbdsk");
+            //et_date.setText("bsjbfjdskfjdsfkbdsk");
             group_name_post.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -478,7 +520,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         SharedPreferences
                                 sharedPreferences = v.getContext().getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
 
-
+/*
                         Date cDate = new Date();
                         String date = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
                         String time = new SimpleDateFormat("hh:mm:ss").format(cDate);
@@ -486,22 +528,23 @@ public class CreatePostActivity extends AppCompatActivity {
 
                         Log.e(LOG_TAG, "" + date);
                         Log.e(LOG_TAG, "" + time);
-
+*/
                         Log.e(LOG_TAG, "" + et_title.getText().toString());
-                        Log.e(LOG_TAG, "" + et_description.getText().toString());
+                        Log.e(LOG_TAG, "" + et_post_description.getText().toString());
 
-                        Log.e(LOG_TAG, "" + et_date.getText().toString());
-                        Log.e(LOG_TAG, "" + et_time.getText().toString());
+                        //Log.e(LOG_TAG, "" + et_date.getText().toString());
+                        //Log.e(LOG_TAG, "" + et_time.getText().toString());
                         Log.e(LOG_TAG, "" + et_tags.getText().toString());
                         Log.e(LOG_TAG, "" + sharedPreferences.getString(AppConstants.COLLEGE_ID, null));
                         Log.e(LOG_TAG, "" + sharedPreferences.getString(AppConstants.PERSON_PID, null));
 
                         Log.e(LOG_TAG, "" + pmf.getClubId());
-
+/*
                         pmf.setDate(date);
                         pmf.setTime(time);
+*/
                         pmf.setTitle(et_title.getText().toString());
-                        pmf.setDescription(et_description.getText().toString());
+                        pmf.setDescription(et_post_description.getText().toString());
                         pmf.setPhoto(encodedImageStr);
                         pmf.setFromPid(sharedPreferences.getString(AppConstants.PERSON_PID, null));
 
@@ -509,10 +552,10 @@ public class CreatePostActivity extends AppCompatActivity {
                         try {
                             String pid = SharedpreferenceUtility.getInstance(CreatePostActivity.this).getString(AppConstants.PERSON_PID);
                             JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("time", time);
-                            jsonObject.put("date", date);
+                          //  jsonObject.put("time", time);
+                          //  jsonObject.put("date", date);
                             jsonObject.put("title", et_title.getText().toString());
-                            jsonObject.put("description", et_description.getText().toString());
+                            jsonObject.put("description", et_post_description.getText().toString());
                             jsonObject.put("photo", encodedImageStr);
                             jsonObject.put("from_pid", pid);
                             jsonObject.put("clud_id", pid);
@@ -603,23 +646,53 @@ public class CreatePostActivity extends AppCompatActivity {
         RelativeLayout group_name_post;
         TextView group_selected_text_post;
         ModelsEventMiniForm eventMiniForm = new ModelsEventMiniForm();
-        EditText et_title, et_post_description;
+        EditText et_title,et_post_description,et_date,et_time,et_venue,et_tags;
+        TextView s_date, e_date, s_time, e_time;
+        ImageView dropdown_indicator;
         int position;
         Button post;
+
+        Calendar myCalendar_s_date, myCalendar_e_date;
+        Context context;
+        DatePickerDialog.OnDateSetListener start_date, end_date;
+        int start_hour, start_min;
 
         String test;
 
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.fragment_post_event, container, false);
+
+            Typeface r_reg = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Regular.ttf");
+
+            context = v.getContext();
+
             group_name_post = (RelativeLayout) v.findViewById(R.id.group_select_when_posting);
             group_selected_text_post = (TextView) v.findViewById(R.id.tv_group_name_selected_when_posting);
+
             et_title = (EditText) v.findViewById(R.id.et_post_title);
             et_post_description = (EditText) v.findViewById(R.id.et_post_description);
+            s_date = (TextView) v.findViewById(R.id.et_start_date);
+            e_date = (TextView) v.findViewById(R.id.et_end_date);
+            s_time = (TextView) v.findViewById(R.id.et_start_time);
+            e_time = (TextView) v.findViewById(R.id.et_end_time);
+            et_tags = (EditText) v.findViewById(R.id.et_tags);
+            dropdown_indicator = (ImageView) v.findViewById(R.id.iv_downarrow);
             post = (Button) v.findViewById(R.id.b_post);
+
+            et_title.setTypeface(r_reg);
+            et_post_description.setTypeface(r_reg);
+            s_date.setTypeface(r_reg);
+            e_date.setTypeface(r_reg);
+            s_time.setTypeface(r_reg);
+            e_time.setTypeface(r_reg);
+            et_tags.setTypeface(r_reg);
+            group_selected_text_post.setTypeface(r_reg);
+            post.setTypeface(r_reg);
 
             Toast.makeText(getActivity(), "Fragment post", Toast.LENGTH_LONG).show();
 
+            if(flag_coming_from_group_page==0) {
             group_name_post.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -647,6 +720,14 @@ public class CreatePostActivity extends AppCompatActivity {
                     }
                 }
             });
+            }
+            else
+            {
+                flag_coming_from_group_page = 0;
+                group_selected_text_post.setText(group_name_from_group_page);
+                dropdown_indicator.setVisibility(View.GONE);
+            }
+
 
 
             post.setOnClickListener(new View.OnClickListener() {
@@ -741,7 +822,157 @@ public class CreatePostActivity extends AppCompatActivity {
             });
 
 
+            myCalendar_s_date = Calendar.getInstance();
+            myCalendar_e_date = Calendar.getInstance();
+            start_date = new DatePickerDialog.OnDateSetListener() {
+
+                @Override
+                public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                      int dayOfMonth) {
+                    // TODO Auto-generated method stub
+                    myCalendar_s_date.set(Calendar.YEAR, year);
+                    myCalendar_s_date.set(Calendar.MONTH, monthOfYear);
+                    myCalendar_s_date.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    updateLabel_start();
+                }
+
+            };
+
+            end_date = new DatePickerDialog.OnDateSetListener() {
+
+                @Override
+                public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                      int dayOfMonth) {
+                    // TODO Auto-generated method stub
+                    myCalendar_e_date.set(Calendar.YEAR, year);
+                    myCalendar_e_date.set(Calendar.MONTH, monthOfYear);
+                    myCalendar_e_date.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    updateLabel_end();
+                }
+            };
+
+            s_date.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    DatePickerDialog start_date_picker = new DatePickerDialog(context, start_date, myCalendar_s_date
+                            .get(Calendar.YEAR), myCalendar_s_date.get(Calendar.MONTH),
+                            myCalendar_s_date.get(Calendar.DAY_OF_MONTH));
+
+                    start_date_picker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                    start_date_picker.show();
+                }
+            });
+
+            e_date.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    DatePickerDialog end_date_picker = new DatePickerDialog(context, end_date, myCalendar_e_date
+                            .get(Calendar.YEAR), myCalendar_e_date.get(Calendar.MONTH),
+                            myCalendar_e_date.get(Calendar.DAY_OF_MONTH));
+                    end_date_picker.getDatePicker().setMinDate(System.currentTimeMillis() + 1000);
+                    end_date_picker.show();
+                }
+            });
+
+            s_time.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    Calendar mcurrentTime = Calendar.getInstance();
+                    final int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                    final int minute = mcurrentTime.get(Calendar.MINUTE);
+                    TimePickerDialog mTimePicker;
+                    mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            start_hour = selectedHour;
+                            start_min = selectedMinute;
+                            if (selectedHour > hour)
+                                s_time.setText("" + selectedHour + ":" + selectedMinute);
+                            else if (selectedHour == hour) {
+                                if (selectedMinute > minute)
+                                    s_time.setText("" + selectedHour + ":" + selectedMinute);
+                                else
+                                    Toast.makeText(getActivity().getApplicationContext(), "The start time you entered occurred before the current time.",
+                                            Toast.LENGTH_SHORT).show();
+                            } else
+                                Toast.makeText(getActivity().getApplicationContext(), "The start time you entered occurred before the current time.",
+                                        Toast.LENGTH_SHORT).show();
+
+                        }
+                    }, hour, minute, true);
+                    mTimePicker.setTitle("Select Time");
+                    mTimePicker.show();
+
+                }
+            });
+
+            e_time.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    Calendar mcurrentTime = Calendar.getInstance();
+                    final int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                    final int minute = mcurrentTime.get(Calendar.MINUTE);
+                    TimePickerDialog mTimePicker;
+                    mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            if(selectedHour>start_hour)
+                                e_time.setText("" + selectedHour + ":" + selectedMinute);
+                            else if(selectedHour==start_hour){
+                                if(selectedMinute>start_min)
+                                    e_time.setText("" + selectedHour + ":" + selectedMinute);
+                                else
+                                    Toast.makeText(getActivity().getApplicationContext(), "The end time you entered occurred before the start time.",
+                                            Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                                Toast.makeText(getActivity().getApplicationContext(), "The end time you entered occurred before the start time.",
+                                        Toast.LENGTH_SHORT).show();
+                        }
+                    }, hour, minute, true);
+                    mTimePicker.setTitle("Select Time");
+                    mTimePicker.show();
+
+                }
+            });
+
+
             return v;
+        }
+
+        private void updateLabel_start() {
+
+            String myFormat = "MM/dd/yy"; //In which you need put here
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+            if(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) > myCalendar_s_date.get(Calendar.DAY_OF_MONTH)) {
+                s_date.setText("");
+                Toast.makeText(getActivity().getApplicationContext(), "The start date you entered occurred before the current date.",
+                        Toast.LENGTH_SHORT).show();
+            }
+            else
+                s_date.setText(sdf.format(myCalendar_s_date.getTime()));
+
+        }
+        private void updateLabel_end() {
+
+            String myFormat = "MM/dd/yy"; //In which you need put here
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            if(myCalendar_s_date.get(Calendar.DAY_OF_MONTH) > myCalendar_e_date.get(Calendar.DAY_OF_MONTH)) {
+                e_date.setText("");
+                Toast.makeText(getActivity().getApplicationContext(), "The end date you entered occurred before the start date.",
+                        Toast.LENGTH_SHORT).show();
+            }
+            else
+                e_date.setText(sdf.format(myCalendar_e_date.getTime()));
         }
 
 

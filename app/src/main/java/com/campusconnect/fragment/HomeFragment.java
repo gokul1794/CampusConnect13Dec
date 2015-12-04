@@ -96,8 +96,8 @@ public class HomeFragment extends Fragment {
     ViewPager pager;
     ViewPagerAdapter_home adapter;
     SlidingTabLayout_home tabs;
-    CharSequence Titles[] = {"Live", "MyFeed", "CampusFeed", "Groups"};
-    int Numboftabs = 4;
+    CharSequence Titles[] = {"MyFeed", "CampusFeed", "Groups"};
+    int Numboftabs = 3;
 
     private static String mEmailAccount = "";
     private static final String LOG_TAG = "HomeFragment";
@@ -972,15 +972,12 @@ public class HomeFragment extends Fragment {
         public Fragment getItem(int position) {
 
             if (position == 0) {
-                HomeFragment.FragmentLive fraglive = new HomeFragment.FragmentLive();
-                return fraglive;
-            } else if (position == 1) {
                 HomeFragment.FragmentMyFeed fragtopnews = new FragmentMyFeed();
                  //   getPersonalFeed();
                  WebApiGetPersonalFeed();
 
                 return fragtopnews;
-            } else if (position == 2) {
+            } else if (position == 1) {
                 HomeFragment.FragmentCampusFeed fragevents = new FragmentCampusFeed();
                    //    getCampusFeed();
                  webApiCampusFeed();
@@ -994,7 +991,6 @@ public class HomeFragment extends Fragment {
         }
 
         private int[] ICONS = new int[]{
-                R.drawable.selector_live,
                 R.drawable.selector_news,
                 R.drawable.selector_events,
                 R.drawable.selector_group
