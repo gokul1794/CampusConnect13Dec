@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:gravity="center"
     android:orientation="vertical"
+    android:background="@drawable/signup_back"
     android:paddingLeft="32dp"
     android:paddingRight="32dp">
 
@@ -12,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Name"
-        android:padding="16dp"
+        android:padding="12dp"
         android:background="@drawable/edittext_rounded"
         android:textSize="16sp" />
 
@@ -28,6 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:textColor="#f5b256"
             android:text="Student"/>
         <Switch
             android:id="@+id/student_alumini_switch"
@@ -35,14 +38,18 @@
             android:layout_height="wrap_content"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:layout_toRightOf="@+id/switch_student"/>
+            android:thumb="@drawable/customswitchselector"
+            android:track="@drawable/custom_track"
+            android:layout_toRightOf="@+id/switch_student"
+            android:checked="false" />
         <TextView
             android:id="@+id/switch_alumini"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:textColor="#f5b256"
             android:layout_toRightOf="@+id/student_alumini_switch"
-            android:text="Student"/>
+            android:text="Alumini"/>
     </RelativeLayout>
 
 
@@ -55,7 +62,7 @@
         android:hint="Branch"
         android:background="@drawable/edittext_rounded"
         android:layout_marginTop="5dp"
-        android:padding="16dp" />
+        android:padding="12dp" />
 
     <EditText
         android:id="@+id/et_batch"
@@ -65,7 +72,7 @@
         android:hint="Batch"
         android:layout_marginTop="5dp"
         android:background="@drawable/edittext_rounded"
-        android:padding="16dp" />
+        android:padding="12dp" />
 
     <EditText
         android:id="@+id/et_location"
@@ -75,7 +82,7 @@
         android:hint="Location"
         android:layout_marginTop="5dp"
         android:background="@drawable/edittext_rounded"
-        android:padding="16dp" />
+        android:padding="12dp" />
 
     <EditText
         android:id="@+id/et_company"
@@ -85,7 +92,7 @@
         android:hint="Company"
         android:layout_marginTop="5dp"
         android:background="@drawable/edittext_rounded"
-        android:padding="16dp" />
+        android:padding="12dp" />
 
     <Button
         android:id="@+id/b_continue"
@@ -95,7 +102,7 @@
         android:layout_below="@+id/et_company"
         android:layout_marginTop="10dp"
         android:text="CONTINUE"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
 
 </RelativeLayout>

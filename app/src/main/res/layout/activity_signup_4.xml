@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#000000"
+        android:background="@drawable/signup_back"
         android:weightSum="8">
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,12 +39,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="8" >
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_group_list_signup"
+                    android:id="@+id/rv_group_list_for_signup"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/tv_select_college"
                     android:clipToPadding="false" />
-
             </LinearLayout>
 
             <LinearLayout

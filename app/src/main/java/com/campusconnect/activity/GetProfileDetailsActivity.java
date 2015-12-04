@@ -186,13 +186,8 @@ public class GetProfileDetailsActivity extends AppCompatActivity implements View
         switch (v.getId()) {
             case R.id.b_continue:
                 createProfile(v);
-                Intent intent_temp = new Intent(v.getContext(), MainActivity.class);
+                Intent intent_temp = new Intent(v.getContext(), Signup_4Activity.class);
                 startActivity(intent_temp);
-                break;
-            case R.id.tv_skip:
-                createProfile(v);
-                Intent intent_temp1 = new Intent(v.getContext(), MainActivity.class);
-                startActivity(intent_temp1);
                 break;
         }
 
