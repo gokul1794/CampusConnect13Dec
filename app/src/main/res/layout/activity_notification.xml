@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentTop="true"
-        android:background="#303030"
+        android:background="#383838"
         android:elevation="2dp"
         android:padding="16dp">
 
@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Notification"
+            android:text="Notifications"
             android:textColor="#f6f6f6"
             android:textSize="20sp" />
     </LinearLayout>
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="5dp"
-        android:background="#f6f5f1"
+        android:background="#ffffff"
         android:clipToPadding="false"
         android:paddingBottom="?attr/actionBarSize"
         android:paddingTop="?attr/actionBarSize" />

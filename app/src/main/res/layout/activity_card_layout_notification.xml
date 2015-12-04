@@ -5,21 +5,26 @@
     android:id="@+id/top_news_card"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_marginBottom="5dp"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:orientation="vertical"
-    card_view:cardCornerRadius="3dp">
+    card_view:cardCornerRadius="0dp"
+    android:layout_margin="0dp"
+    card_view:cardElevation="0dp"
+    card_view:cardMaxElevation="0dp"
+    card_view:cardPreventCornerOverlap="false"
+    card_view:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#e8e7e3"
+        android:background="#ffffff"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:weightSum="3">
 
         <com.campusconnect.utility.CircularImageView
@@ -28,22 +33,31 @@
             android:layout_height="60dp"
             android:layout_centerVertical="true"
             android:scaleType="centerCrop"
-            android:src="@mipmap/coder"
-            app:border_color="#d9d9d9"
-            app:border_width="2dp" />
+            android:src="@mipmap/roto_logo"
+            app:border_width="0dp" />
 
         <TextView
             android:id="@+id/tv_notification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="2dp"
             android:layout_toRightOf="@+id/group_icon_notification"
-            android:alpha="0.7"
-            android:text="Your request to join Rotaract Club has been accepted."
-            android:textColor="#000000"
-            android:textSize="18sp" />
-
+            android:layout_toLeftOf="@+id/tv_notification_timestamp"
+            android:text="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            android:textColor="#383838"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/tv_notification_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_notification"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:text="10m ago"
+            android:textColor="#383838"
+            android:textSize="12sp" />
 
     </RelativeLayout>
 

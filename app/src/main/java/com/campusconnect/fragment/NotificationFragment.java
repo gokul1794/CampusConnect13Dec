@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import com.campusconnect.R;
 import com.campusconnect.adapter.NotificationAdapterActivity;
 import com.campusconnect.supportClasses.Notification_infoActivity;
+import com.campusconnect.utility.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +44,9 @@ public class NotificationFragment extends Fragment  {
             llm.setOrientation(LinearLayoutManager.VERTICAL);
             notification_list.setLayoutManager(llm);
             notification_list.setItemAnimator(new DefaultItemAnimator());
+            notification_list.addItemDecoration(new DividerItemDecoration(getActivity(),LinearLayoutManager.VERTICAL));
             NotificationAdapterActivity nl = new NotificationAdapterActivity(
-                    createList_nl(3));
+                    createList_nl(4));
             notification_list.setAdapter(nl);
 
         } catch (InflateException e) {

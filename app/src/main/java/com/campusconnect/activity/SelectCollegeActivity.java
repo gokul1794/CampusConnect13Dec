@@ -22,7 +22,6 @@ import com.campusconnect.bean.CollegeListInfoBean;
 import com.campusconnect.communicator.WebRequestTask;
 import com.campusconnect.communicator.WebServiceDetails;
 import com.campusconnect.constant.AppConstants;
-import com.campusconnect.utility.DividerItemDecoration_college_list;
 import com.campusconnect.utility.NetworkAvailablity;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.common.base.Strings;
