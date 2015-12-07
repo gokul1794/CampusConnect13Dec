@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,8 +18,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appspot.campus_connect_2015.clubs.model.ModelsClubRequestMiniForm;
@@ -50,11 +47,9 @@ import java.util.List;
  */
 public class CreateGroupActivity extends AppCompatActivity {
 
-    TextView create_group_text;
     ImageView upload;
     Button createGroup;
-    EditText groupAbbreviation, groupName, groupDescription, groupType;
-    LinearLayout close;
+    EditText groupAbbreviation, groupName, groupDescription;
     ModelsClubRequestMiniForm cbr;
     private int PICK_IMAGE_REQUEST = 1;
     static SharedPreferences sharedPreferences;
@@ -80,24 +75,13 @@ public class CreateGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
 
-        Typeface r_reg = Typeface.createFromAsset(getAssets(), "font/Roboto_Regular.ttf");
-        Typeface r_med = Typeface.createFromAsset(getAssets(), "font/Roboto_Medium.ttf");
 
-        close = (LinearLayout) findViewById(R.id.cross_button);
-
-        create_group_text = (TextView)findViewById(R.id.tv_create_group);
         createGroup = (Button) findViewById(R.id.et_createGroup);
-        groupType = (EditText) findViewById(R.id.et_group_type);
         groupName = (EditText) findViewById(R.id.et_group_name);
         groupAbbreviation = (EditText) findViewById(R.id.et_group_abbreviation);
         groupDescription = (EditText) findViewById(R.id.et_group_description);
         upload = (ImageView) findViewById(R.id.group_icon_group);
 
-        create_group_text.setTypeface(r_med);
-        groupType.setTypeface(r_reg);
-        groupName.setTypeface(r_reg);
-        groupAbbreviation.setTypeface(r_reg);
-        groupDescription.setTypeface(r_reg);
 
         sharedPreferences = getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
         mEmailAccount = sharedPreferences.getString(AppConstants.EMAIL_KEY, null);
@@ -127,14 +111,6 @@ public class CreateGroupActivity extends AppCompatActivity {
                 startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
                 //break;
 
-
-            }
-        });
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                finish();
 
             }
         });

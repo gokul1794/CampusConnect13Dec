@@ -36,9 +36,10 @@
             android:id="@+id/tv_group_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:alpha="0.55"
             android:layout_centerVertical="true"
             android:text="Group Name"
-            android:textColor="#383838"
+            android:textColor="#000000"
             android:textSize="16sp" />
 
         <TextView
@@ -48,9 +49,10 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_alignTop="@+id/tv_group_name"
+            android:alpha="0.81"
             android:background="@drawable/border_follow"
             android:text="FOLLOW"
-            android:textColor="#383838"
+            android:textColor="#000000"
             android:textSize="14sp" />
 
         <TextView

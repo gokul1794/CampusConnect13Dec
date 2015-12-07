@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#eaebec">
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -20,46 +19,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentTop="true"
-                android:background="#383838"
+                android:background="@color/carbonColor"
                 android:elevation="2dp"
-                android:orientation="horizontal"
-                android:weightSum="100">
+                android:padding="16dp">
 
-                <LinearLayout
-                    android:id="@+id/cross_button"
-                    android:layout_width="0dp"
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="15"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/cross" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="70">
-
-                    <TextView
-                        android:id="@+id/tv_create_group"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="Create Group"
-                        android:textColor="#ffffff"
-                        android:textSize="18sp"></TextView>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="15"
-                    android:gravity="center">
-
-                </LinearLayout>
+                    android:gravity="center"
+                    android:text="Create Group"
+                    android:textColor="#f6f6f6"
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <ImageView
@@ -67,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:layout_below="@+id/custom_toolbar"
-                android:background="@mipmap/upload"
+                android:background="#e8e7e3"
                 android:gravity="center_vertical" />
 
             <RelativeLayout
@@ -81,13 +51,13 @@
                     android:id="@+id/et_group_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:background="@drawable/edittext_rounded"
                     android:hint="Group Type"
                     android:padding="10dp"
-                    android:textColor="#383838"
-                    android:textColorHint="#a0a0a0"
-                    android:textSize="14sp" />
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grey_select"
+                    android:textSize="17sp" />
 
                 <EditText
                     android:id="@+id/et_group_name"
@@ -98,9 +68,9 @@
                     android:background="@drawable/edittext_rounded"
                     android:hint="Group Name"
                     android:padding="10dp"
-                    android:textColor="#383838"
-                    android:textColorHint="#a0a0a0"
-                    android:textSize="14sp" />
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grey_select"
+                    android:textSize="17sp" />
 
                 <EditText
                     android:id="@+id/et_group_abbreviation"
@@ -111,9 +81,9 @@
                     android:background="@drawable/edittext_rounded"
                     android:hint="Group Abbreviation"
                     android:padding="10dp"
-                    android:textColor="#383838"
-                    android:textColorHint="#a0a0a0"
-                    android:textSize="14sp" />
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grey_select"
+                    android:textSize="17sp" />
 
                 <EditText
                     android:id="@+id/et_group_description"
@@ -128,9 +98,9 @@
                     android:lines="5"
                     android:padding="10dp"
                     android:singleLine="false"
-                    android:textColor="#383838"
-                    android:textColorHint="#a0a0a0"
-                    android:textSize="14sp" />
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grey_select"
+                    android:textSize="17sp" />
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
@@ -138,9 +108,9 @@
     <Button
         android:id="@+id/et_createGroup"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"
-        android:background="#383838"
+        android:background="@color/blueNavy"
         android:gravity="center"
         android:text="Create Group"
         android:textColor="#ffffff"

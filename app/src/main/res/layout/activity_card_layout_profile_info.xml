@@ -21,7 +21,7 @@
             android:id="@+id/profile_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#eaebec"
+            android:background="#dedede"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:padding="16dp">
@@ -32,9 +32,9 @@
                 android:layout_height="125dp"
                 android:layout_centerHorizontal="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/default_profile"
-                app:border_color="#383838"
-                app:border_width="3dp" />
+                android:src="@drawable/default_profile_image"
+                app:border_color="#FFFFFF"
+                app:border_width="5dp" />
 
             <TextView
                 android:id="@+id/profile_name"
@@ -42,9 +42,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_image"
                 android:gravity="center"
-                android:text="Aayush Agarwal"
                 android:paddingTop="8dp"
-                android:textColor="#383838"
+                android:textColor="#000000"
                 android:textSize="20dp" />
 
             <TextView
@@ -52,86 +51,84 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_name"
+                android:alpha="0.75"
                 android:gravity="center"
                 android:paddingLeft="35dp"
                 android:paddingRight="35dp"
                 android:paddingTop="6dp"
-                android:textColor="#383838"
-                android:textSize="18dp" />
+                android:textColor="#000000"
+                android:textSize="16dp" />
 
-            <LinearLayout
-                android:id="@+id/profile_extra_info"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_batch_of"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_alignParentLeft="true"
                 android:layout_below="@+id/profile_tag"
-                android:weightSum="2">
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.9">
-                    <TextView
-                        android:id="@+id/tv_batch_of"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginLeft="20dp"
-                        android:paddingTop="16dp"
-                        android:textColor="#383838"
-                        android:textSize="15dp" />
-                    <TextView
-                        android:id="@+id/tv_city"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignLeft="@+id/tv_batch_of"
-                        android:layout_below="@+id/tv_batch_of"
-                        android:paddingTop="5dp"
-                        android:textColor="#383838"
-                        android:textSize="15dp" />
+                android:layout_marginLeft="20dp"
+                android:alpha="0.6"
+                android:paddingTop="16dp"
+                android:textColor="#000000"
+                android:textSize="16dp" />
 
-                </RelativeLayout>
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2">
+            <TextView
+                android:id="@+id/tv_branch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/tv_batch_of"
+                android:layout_marginRight="20dp"
+                android:alpha="0.6"
+                android:paddingTop="10dp"
+                android:textColor="#000000"
+                android:textSize="16dp" />
 
-                </RelativeLayout>
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.9">
-                    <TextView
-                        android:id="@+id/tv_branch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="20dp"
-                        android:paddingTop="16dp"
-                        android:textColor="#383838"
-                        android:textSize="15dp" />
+            <TextView
+                android:id="@+id/tv_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tv_batch_of"
+                android:layout_below="@+id/tv_batch_of"
+                android:alpha="0.6"
+                android:paddingTop="5dp"
+                android:text="Bangalore"
+                android:textColor="#000000"
+                android:textSize="16dp" />
 
-                    <TextView
-                        android:id="@+id/tv_random"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignLeft="@+id/tv_branch"
-                        android:layout_below="@+id/tv_branch"
-                        android:paddingTop="5dp"
-                        android:textColor="#383838"
-                        android:textSize="15dp" />
+            <TextView
+                android:id="@+id/tv_random"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tv_branch"
+                android:layout_below="@+id/tv_branch"
+                android:alpha="0.6"
+                android:paddingTop="5dp"
+                android:text="Drive U"
+                android:textColor="#000000"
+                android:textSize="16dp" />
 
-                </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/icons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_city"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp">
 
-            </LinearLayout>
-
+                <ImageView
+                    android:id="@+id/iv_fb_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/facebook" />
 
                 <ImageView
                     android:id="@+id/iv_gmail_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/profile_extra_info"
+                    android:layout_marginLeft="30dp"
+                    android:layout_toRightOf="@+id/iv_fb_icon"
                     android:src="@mipmap/gmail" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <TextView
@@ -139,12 +136,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/profile_info"
-            android:background="#ffffff"
+            android:alpha="0.8"
+            android:background="#ededed"
             android:paddingBottom="7dp"
+            android:paddingLeft="10dp"
             android:paddingTop="7dp"
-            android:gravity="center"
-            android:text="Groups Joined"
-            android:textColor="#383838"
+            android:text="Groups Joined:"
+            android:textColor="#000000"
             android:textSize="16sp" />
     </RelativeLayout>
 

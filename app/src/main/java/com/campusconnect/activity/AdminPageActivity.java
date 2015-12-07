@@ -2,7 +2,6 @@ package com.campusconnect.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,24 +21,17 @@ public class AdminPageActivity extends AppCompatActivity {
     ImageButton close;
     Button request,members;
     RelativeLayout admin_group;
-    TextView admin_group_selected_text, admin_text;
+    TextView admin_group_selected_text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_page);
-
-        Typeface r_lig = Typeface.createFromAsset(getAssets(), "font/Roboto_Light.ttf");
-        Typeface r_med = Typeface.createFromAsset(getAssets(), "font/Roboto_Medium.ttf");
 
         request = (Button) findViewById(R.id.b_request);
         members = (Button) findViewById(R.id.b_members);
         close = (ImageButton) findViewById(R.id.ib_cancel);
         admin_group = (RelativeLayout) findViewById(R.id.group_select);
         admin_group_selected_text = (TextView) findViewById(R.id.tv_group_name_selected);
-        admin_text = (TextView) findViewById(R.id.tv_admin_text);
-
-        admin_group_selected_text.setTypeface(r_lig);
-        admin_text.setTypeface(r_med);
 
         request.setOnClickListener(new View.OnClickListener() {
             @Override

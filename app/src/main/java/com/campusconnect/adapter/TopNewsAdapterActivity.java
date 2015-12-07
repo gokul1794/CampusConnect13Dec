@@ -131,7 +131,7 @@ public class TopNewsAdapterActivity extends
         public TopNewsViewHolder(View v) {
             super(v);
 
-            my_feed = (CardView) v.findViewById(R.id.college_feed_card);
+            my_feed = (CardView) v.findViewById(R.id.top_news_card);
             event_title = (TextView) v.findViewById(R.id.tv_event);
             group_name = (TextView) v.findViewById(R.id.tv_group);
             timestamp = (TextView) v.findViewById(R.id.tv_timestamp);

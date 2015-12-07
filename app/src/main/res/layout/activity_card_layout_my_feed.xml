@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/college_feed_card"
+    android:id="@+id/top_news_card"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_marginBottom="10dp"
@@ -18,7 +18,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
+        android:background="#f2f2f2"
         android:orientation="vertical">
 
         <LinearLayout
@@ -31,7 +31,8 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.6"
+                android:layout_weight="0.7"
+                android:background="#dedede"
                 android:orientation="vertical"
                 android:paddingBottom="10dp"
                 android:paddingLeft="5dp"
@@ -50,7 +51,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:alpha="0.5"
-                        android:background="#ffffff"
+                        android:background="#dedede"
                         android:src="@mipmap/share" />
                 </LinearLayout>
 
@@ -64,19 +65,15 @@
                         android:id="@+id/iv_going"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="#ffffff"
+                        android:background="#dedede"
                         android:src="@mipmap/going" />
                 </LinearLayout>
             </LinearLayout>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="#eaebec" />
 
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3.4">
+                android:layout_weight="3.3">
 
                 <ImageView
                     android:id="@+id/iv_event_photo"
@@ -89,12 +86,12 @@
 
                 <RelativeLayout
                     android:layout_width="60dp"
-                    android:layout_height="80dp"
+                    android:layout_height="70dp"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="15dp"
-                    android:background="@drawable/tag"
+                    android:background="#f6b051"
+                    android:gravity="center"
                     android:paddingLeft="2dp"
-                    android:paddingTop="5dp"
                     android:paddingRight="2dp">
 
                     <TextView
@@ -139,28 +136,24 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#eaebec"
-            android:layout_alignBottom="@id/top_part"/>
-
         <RelativeLayout
             android:id="@+id/bottom_part"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/top_part"
+            android:background="#c9c9c9"
             android:padding="12dp">
 
             <com.campusconnect.utility.CircularImageView
                 android:id="@+id/group_image"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/coder"
-                app:border_width="0dp" />
+                app:border_color="#FFFFFF"
+                app:border_width="2dp" />
 
             <TextView
                 android:id="@+id/tv_event"
@@ -169,10 +162,11 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginLeft="16dp"
                 android:layout_toRightOf="@id/group_image"
+                android:alpha="0.87"
                 android:gravity="right"
                 android:text="Classical Dance Performance"
-                android:textColor="#383838"
-                android:textSize="16sp" />
+                android:textColor="#000000"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tv_group"
@@ -181,10 +175,11 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/tv_event"
                 android:layout_toRightOf="@id/group_image"
+                android:alpha="0.65"
                 android:gravity="right"
                 android:text="Rotaract Club"
-                android:textColor="#383838"
-                android:textSize="15sp" />
+                android:textColor="#000000"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_timestamp"
@@ -194,10 +189,11 @@
                 android:layout_below="@id/tv_group"
                 android:layout_marginTop="10dp"
                 android:layout_toRightOf="@id/group_image"
+                android:alpha="0.5"
                 android:gravity="right"
                 android:text="10 mins ago"
-                android:textColor="#383838"
-                android:textSize="12sp" />
+                android:textColor="#000000"
+                android:textSize="14sp" />
         </RelativeLayout>
     </RelativeLayout>
 

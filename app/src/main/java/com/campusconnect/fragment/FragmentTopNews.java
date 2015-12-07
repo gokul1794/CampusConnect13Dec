@@ -30,12 +30,14 @@ import java.util.List;
 public class FragmentTopNews extends Fragment {
 
     RecyclerView topnews;
+    FloatingActionButton fab;
     public static int pos=0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =inflater.inflate(R.layout.fragment_top_news,container,false);
 
+        fab=(FloatingActionButton)v.findViewById(R.id.fab_add);
         topnews = (RecyclerView) v.findViewById(R.id.rv_top_news);
         topnews.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(v.getContext());
@@ -50,6 +52,16 @@ public class FragmentTopNews extends Fragment {
             @Override
             public void onItemClick(View v , int position) {
                 pos=position;
+            }
+        });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent_temp = new Intent(v.getContext(), CreatePostActivity.class);
+                startActivity(intent_temp);
+
             }
         });
 

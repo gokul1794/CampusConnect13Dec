@@ -1,12 +1,17 @@
 package com.campusconnect.viewpager;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.campusconnect.fragment.calender.FragmentFriday;
 import com.campusconnect.fragment.calender.FragmentMonday;
+import com.campusconnect.fragment.calender.FragmentSaturday;
+import com.campusconnect.fragment.calender.FragmentSunday;
+import com.campusconnect.fragment.calender.FragmentThursday;
+import com.campusconnect.fragment.calender.FragmentTuesday;
+import com.campusconnect.fragment.calender.FragmentWednesday;
 
 
 /**
@@ -30,13 +35,41 @@ public class ViewPagerAdapter_Calendar extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
 
-        FragmentMonday frag_mon = new FragmentMonday();
-
-            Bundle bundleFeatures = new Bundle();
-            bundleFeatures.putInt("POS", position);
-            frag_mon.setArguments(bundleFeatures);
+        if(position == 0)
+        {
+            FragmentMonday frag_mon = new FragmentMonday();
             return frag_mon;
-
+        }
+        else if(position == 1)
+        {
+            FragmentTuesday frag_tue = new FragmentTuesday();
+            return frag_tue;
+        }
+        else if(position == 2)
+        {
+            FragmentWednesday frag_wed = new FragmentWednesday();
+            return frag_wed;
+        }
+        else if(position == 3)
+        {
+            FragmentThursday frag_thu = new FragmentThursday();
+            return frag_thu;
+        }
+        else if(position == 4)
+        {
+            FragmentFriday frag_fri = new FragmentFriday();
+            return frag_fri;
+        }
+        else if(position == 5)
+        {
+            FragmentSaturday frag_sat = new FragmentSaturday();
+            return frag_sat;
+        }
+        else
+        {
+            FragmentSunday frag_sun = new FragmentSunday();
+            return frag_sun;
+        }
 
     }
 
