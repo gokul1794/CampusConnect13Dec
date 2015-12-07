@@ -2,38 +2,47 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f6f5f1"
+    android:background="#eaebec"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/b_create_group"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:gravity="center"
-        android:text="Create Group" />
-
-    <TextView
-        android:id="@+id/tv_groups"
+    <RelativeLayout
+        android:id="@+id/create_group_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/b_create_group"
-        android:layout_marginTop="5dp"
-        android:alpha="0.75"
-        android:background="#cccccc"
-        android:paddingBottom="8dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="8dp"
-        android:text="GROUPS"
-        android:textColor="#000000"
-        android:textSize="16sp" />
+        android:gravity="center"
+        android:background="#ffffff">
+
+    <TextView
+        android:id="@+id/b_create_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:text="Create Group" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/b_create_group"
+            android:background="#ffffff"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/plus_black"/>
+    </RelativeLayout>
+
+   <View
+       android:id="@+id/divider"
+       android:layout_width="match_parent"
+       android:layout_height="1dp"
+       android:layout_below="@+id/create_group_group"
+       android:background="#eaebec" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_group_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tv_groups"
-        android:layout_marginTop="5dp"
-        android:background="#f6f5f1"
+        android:layout_below="@+id/divider"
+        android:background="#eaebec"
         android:clipToPadding="false"
         android:paddingBottom="?attr/actionBarSize" />
 

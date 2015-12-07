@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentTop="true"
-        android:background="#303030"
+        android:background="#383838"
         android:elevation="2dp"
         android:orientation="horizontal"
         android:weightSum="100">
@@ -17,41 +17,46 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="60"
+            android:layout_weight="75"
             android:gravity="center"
             android:padding="16dp">
 
             <TextView
+                android:id="@+id/tv_profile_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:text="Profile"
-                android:textColor="#f6f6f6"
-                android:textSize="20sp" />
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
         </LinearLayout>
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="20">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@mipmap/edit" />
-        </RelativeLayout>
-
         <LinearLayout
+            android:id="@+id/plus"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="20"
+            android:layout_weight="15"
             android:gravity="center">
-
-            <ImageView
+            <ImageButton
+                android:id="@+id/ib_create_post"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:background="#383838"
+                android:src="@mipmap/edit" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/settings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:gravity="center">
+            <ImageButton
+                android:id="@+id/ib_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="#383838"
                 android:src="@mipmap/settings_profile" />
         </LinearLayout>
     </LinearLayout>

@@ -3,6 +3,7 @@ package com.campusconnect.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +27,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +53,7 @@ import com.campusconnect.communicator.WebServiceDetails;
 import com.campusconnect.constant.AppConstants;
 import com.campusconnect.slidingtab.SlidingTabLayout_home;
 import com.campusconnect.supportClasses.Live_infoActivity;
+import com.campusconnect.utility.DividerItemDecoration;
 import com.campusconnect.utility.NetworkAvailablity;
 import com.campusconnect.utility.SharedpreferenceUtility;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -59,6 +63,7 @@ import org.apache.http.NameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -90,9 +95,9 @@ public class HomeFragment extends Fragment {
     RecyclerView college_feed;
     RecyclerView topnews;
     FrameLayout frame_layout;
-    ImageButton admin;
+    LinearLayout admin, add_post, settings;
+    ImageButton i_admin,i_add_post,i_settings;
     ImageButton noti, profile, home, calendar, search;
-    static TextView title, title_two;
     ViewPager pager;
     ViewPagerAdapter_home adapter;
     SlidingTabLayout_home tabs;
@@ -242,10 +247,13 @@ public class HomeFragment extends Fragment {
             mRootView = inflater.inflate(R.layout.activity_home, container, false);
 
             Log.d("HomeFragment", "Entered");
-            admin = (ImageButton) mRootView.findViewById(R.id.ib_admin);
+            admin = (LinearLayout) mRootView.findViewById(R.id.admin);
+            add_post = (LinearLayout) mRootView.findViewById(R.id.plus);
+            settings = (LinearLayout) mRootView.findViewById(R.id.settings);
 
-            title = (TextView) mRootView.findViewById(R.id.title_home);
-            title_two = (TextView) mRootView.findViewById(R.id.title_home_two);
+            i_admin = (ImageButton) mRootView.findViewById(R.id.ib_admin);
+            i_add_post = (ImageButton) mRootView.findViewById(R.id.ib_create_post);
+            i_settings = (ImageButton) mRootView.findViewById(R.id.ib_settings);
 
             pager = (ViewPager) mRootView.findViewById(R.id.pager);
             tabs = (SlidingTabLayout_home) mRootView.findViewById(R.id.tabs);
@@ -270,6 +278,32 @@ public class HomeFragment extends Fragment {
                     startActivity(intent_temp);
                 }
             });
+            i_admin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent_temp = new Intent(v.getContext(), AdminPageActivity.class);
+                    startActivity(intent_temp);
+                }
+            });
+            add_post.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent_temp = new Intent(v.getContext(), CreatePostActivity.class);
+                    startActivity(intent_temp);
+
+                }
+            });
+            i_add_post.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent_temp = new Intent(v.getContext(), CreatePostActivity.class);
+                    startActivity(intent_temp);
+
+                }
+            });
+
         } catch (InflateException e) {
             e.printStackTrace();
         }
@@ -772,7 +806,8 @@ public class HomeFragment extends Fragment {
 
         private static final String LOG_TAG = "FragmentGroups";
 
-        Button create_group;
+        RelativeLayout create_group;
+        TextView create_group_text;
 
         private String mEmailAccount = "";
 
@@ -785,13 +820,18 @@ public class HomeFragment extends Fragment {
             View v = inflater.inflate(R.layout.fragment_groups, container, false);
 
             group_list = (RecyclerView) v.findViewById(R.id.rv_group_list);
-            create_group = (Button) v.findViewById(R.id.b_create_group);
+            create_group = (RelativeLayout) v.findViewById(R.id.create_group_group);
+            create_group_text = (TextView) v.findViewById(R.id.b_create_group);
+
+            Typeface r_reg = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Regular.ttf");
+            create_group_text.setTypeface(r_reg);
 
             //group_list.setHasFixedSize(true);
             LinearLayoutManager llm = new LinearLayoutManager(v.getContext());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
             group_list.setLayoutManager(llm);
             group_list.setItemAnimator(new DefaultItemAnimator());
+            group_list.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             if (gl == null) {
                 try {
                     gl = new GroupListAdapterActivity(createList_gl(1));
@@ -830,7 +870,6 @@ public class HomeFragment extends Fragment {
 
     public class FragmentCampusFeed extends Fragment {
         private static final String LOG_TAG = "FragmentCampusFeed";
-        FloatingActionButton fab;
         String collegeId;
         String mEmailAccount = "";
 
@@ -838,7 +877,6 @@ public class HomeFragment extends Fragment {
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.fragment_events, container, false);
 
-            fab = (FloatingActionButton) v.findViewById(R.id.fab_add);
             college_feed = (RecyclerView) v.findViewById(R.id.rv_college_feed);
             college_feed.setHasFixedSize(false);
             LinearLayoutManager llm = new LinearLayoutManager(v.getContext());
@@ -855,15 +893,7 @@ public class HomeFragment extends Fragment {
             collegeId = sharedpreferences.getString(AppConstants.COLLEGE_ID, null);
             mEmailAccount = sharedpreferences.getString(AppConstants.EMAIL_KEY, null);
 
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
 
-                    Intent intent_temp = new Intent(v.getContext(), CreatePostActivity.class);
-                    startActivity(intent_temp);
-
-                }
-            });
             return v;
         }
 
@@ -882,14 +912,12 @@ public class HomeFragment extends Fragment {
 
     public class FragmentMyFeed extends Fragment {
 
-        FloatingActionButton fab;
         public int pos = 0;
 
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.fragment_top_news, container, false);
 
-            fab = (FloatingActionButton) v.findViewById(R.id.fab_add);
             topnews = (RecyclerView) v.findViewById(R.id.rv_top_news);
             topnews.setHasFixedSize(true);
             LinearLayoutManager llm = new LinearLayoutManager(v.getContext());
@@ -902,15 +930,6 @@ public class HomeFragment extends Fragment {
             }
             topnews.setAdapter(tn);
 
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Intent intent_temp = new Intent(v.getContext(), CreatePostActivity.class);
-                    startActivity(intent_temp);
-
-                }
-            });
 
             return v;
         }
@@ -1192,6 +1211,12 @@ public class HomeFragment extends Fragment {
                 group_list.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        Typeface r_reg = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Regular.ttf");
+                        group_title.setTypeface(r_reg);
+                        follow.setTypeface(r_reg);
+                        following.setTypeface(r_reg);
+
                         Intent intent_temp = new Intent(v.getContext(), GroupPageActivity.class);
                         posi = getPosition();
 
