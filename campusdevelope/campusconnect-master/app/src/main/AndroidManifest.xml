@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.campusconnect">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".activity.MainActivity"
+            android:label="@string/app_name">
+         <!--  <intent-filter>
+                <action android:name="android.intent.action.MAIN"></action>
+                <category android:name="android.intent.category.LAUNCHER"></category>
+            </intent-filter>-->
+
+        </activity>
+        <activity
+            android:name="com.campusconnect.activity.CreateGroupActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+        <activity
+            android:name="com.campusconnect.activity.GroupPageActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name="com.campusconnect.activity.InEventActivity"
+            android:label="@string/app_name"></activity>
+
+        <activity
+            android:name="com.campusconnect.activity.AdminPageActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name="com.campusconnect.activity.RequestsPage_InAdminActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name="com.campusconnect.activity.GroupMembersPage_InAdminActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name="com.campusconnect.activity.GoogleSignin"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.campusconnect.activity.SelectCollegeActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name="com.campusconnect.activity.CategoryActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name="com.campusconnect.activity.GetProfileDetailsActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name="com.campusconnect.activity.CreatePostActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+
+    </application>
+
+</manifest>

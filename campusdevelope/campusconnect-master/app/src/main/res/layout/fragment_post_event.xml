@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="?attr/actionBarSize">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/group_select_when_posting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:background="#e8e7e3"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/tv_group_name_selected_when_posting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:alpha="0.75"
+                    android:text="Group"
+                    android:textColor="#000000"
+                    android:textSize="17sp" />
+
+                <ImageView
+                    android:id="@+id/iv_downarrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/tv_group_name_selected_when_posting"
+                    android:src="@mipmap/down_arrow" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/post_photo_group"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_below="@+id/group_select_when_posting"
+                android:layout_marginTop="10dp"
+                android:background="#e8e7e3"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tv_upload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Upload Photo"
+                    android:textColor="#444444"
+                    android:textSize="22sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_upload"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15dp"
+                    android:src="@mipmap/upload" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/post_photo_group"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <EditText
+                    android:id="@+id/et_post_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/edittext_rounded"
+                    android:hint="Title"
+                    android:padding="10dp"
+                    android:textColor="#000000"
+                    android:textColorHint="#d9d9d9"
+                    android:textSize="17sp" />
+
+                <EditText
+                    android:id="@+id/et_post_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_post_title"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_rounded"
+                    android:gravity="top|left"
+                    android:hint="Description"
+                    android:inputType="textMultiLine"
+                    android:lines="5"
+                    android:padding="10dp"
+                    android:singleLine="false"
+                    android:textColor="#000000"
+                    android:textColorHint="#d9d9d9"
+                    android:textSize="17sp" />
+
+                <LinearLayout
+                    android:id="@+id/date_time_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_post_description"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <EditText
+                        android:id="@+id/et_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_rounded"
+                        android:hint="Date"
+                        android:padding="10dp"
+                        android:textColor="#000000"
+                        android:textColorHint="#d9d9d9"
+                        android:textSize="17sp" />
+
+                    <EditText
+                        android:id="@+id/et_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_rounded"
+                        android:hint="Time"
+                        android:padding="10dp"
+                        android:textColor="#000000"
+                        android:textColorHint="#d9d9d9"
+                        android:textSize="17sp" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/et_venue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/date_time_group"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_rounded"
+                    android:hint="Venue"
+                    android:padding="10dp"
+                    android:textColor="#000000"
+                    android:textColorHint="#d9d9d9"
+                    android:textSize="17sp" />
+
+                <EditText
+                    android:id="@+id/et_tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_venue"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_rounded"
+                    android:hint="Tags"
+                    android:padding="10dp"
+                    android:textColor="#000000"
+                    android:textColorHint="#d9d9d9"
+                    android:textSize="17sp" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+    <Button
+        android:id="@+id/b_post"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="Post"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+</RelativeLayout>

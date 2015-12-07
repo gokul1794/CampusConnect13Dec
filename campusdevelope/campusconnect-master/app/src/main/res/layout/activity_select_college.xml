@@ -1,0 +1,31 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_select_college"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f2f2f2"
+        android:padding="20dp"
+        android:text="Select your College:"
+        android:textSize="22sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_college_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_select_college"
+        android:clipToPadding="false" />
+
+    <TextView
+        android:id="@+id/tv_not_found"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#f2f2f2"
+        android:padding="25dp"
+        android:text="If you do not find your college here, contact us here."
+        android:textSize="18sp" />
+
+</RelativeLayout>
