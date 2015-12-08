@@ -48,9 +48,11 @@ public class SlidingTabLayout_home extends HorizontalScrollView {
 
     }
 
+    Typeface r_reg;
+
     private static final int TITLE_OFFSET_DIPS = 24;
     private static final int TAB_VIEW_PADDING_DIPS = 16;
-    private static final int TAB_VIEW_TEXT_SIZE_SP = 14;
+    private static final int TAB_VIEW_TEXT_SIZE_SP = 17;
 
     private int mTitleOffset;
 
@@ -84,6 +86,7 @@ public class SlidingTabLayout_home extends HorizontalScrollView {
 
         mTabStrip = new SlidingTabStrip_home(context);
         addView(mTabStrip, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        r_reg = Typeface.createFromAsset(context.getAssets(), "font/Roboto_Regular.ttf");
     }
 
     /**
@@ -197,6 +200,7 @@ public class SlidingTabLayout_home extends HorizontalScrollView {
                 lp.weight=1;
             }
 
+            tabTitleView.setTypeface(r_reg);
 
             tabTitleView.setText(adapter.getPageTitle(i));
             tabView.setOnClickListener(tabClickListener);

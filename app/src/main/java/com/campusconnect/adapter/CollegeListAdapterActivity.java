@@ -13,7 +13,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.campusconnect.activity.CategoryActivity;
+import com.campusconnect.activity.GetProfileDetailsActivity;
+import com.campusconnect.activity.MainActivity;
 import com.campusconnect.activity.Signup_2Activity;
+import com.campusconnect.activity.Signup_4Activity;
 import com.campusconnect.bean.CollegeListInfoBean;
 import com.campusconnect.constant.AppConstants;
 import com.campusconnect.R;
@@ -91,7 +94,7 @@ public class CollegeListAdapterActivity extends
                     edit.putString(AppConstants.COLLEGE_ID,CollegeList.get(pos).getCollegeId());
                     edit.commit();
 
-                    Intent intent_temp = new Intent(v.getContext(), Signup_2Activity.class);
+                    Intent intent_temp = new Intent(v.getContext(), MainActivity.class);
                     v.getContext().startActivity(intent_temp);
 
                 }

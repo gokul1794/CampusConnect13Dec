@@ -21,8 +21,8 @@ public class CalenderFragment extends Fragment {
 
     ImageButton noti,profile,home,calendar,search;
 
-    ViewPager pager;
-    ViewPagerAdapter_Calendar adapter;
+    ViewPager pager_calendar;
+    ViewPagerAdapter_Calendar adapter_calendar;
     SlidingTabLayout_Calendar tabs;
     CharSequence Titles[]={"Mon 5","Tue 6","Wed 7","Thu 8","Fri 9","Sat 10","Sun 11"};
     int Numboftabs = 7;
@@ -39,7 +39,16 @@ public class CalenderFragment extends Fragment {
                 parent.removeView(mRootView);
         }
         try {
-            mRootView = inflater.inflate(R.layout.activity_calendar_to_be_deleted, container, false);
+            mRootView = inflater.inflate(R.layout.activity_calendar, container, false);
+
+            pager_calendar = (ViewPager) mRootView.findViewById(R.id.pager_cal);
+            tabs = (SlidingTabLayout_Calendar) mRootView.findViewById(R.id.tabs_calendar);
+            adapter_calendar =  new ViewPagerAdapter_Calendar(getActivity().getSupportFragmentManager(),Titles,Numboftabs,getActivity());
+
+            pager_calendar.setAdapter(adapter_calendar);
+
+            tabs.setDistributeEvenly(true);
+            tabs.setViewPager(pager_calendar);
 
         } catch (InflateException e) {
             e.printStackTrace();
@@ -127,6 +136,7 @@ public class CalenderFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 */
+    /*
     private List<Notification_infoActivity> createList_nl(int size) {
         List<Notification_infoActivity> result = new ArrayList<Notification_infoActivity>();
         for (int i = 1; i <= size; i++) {
@@ -137,5 +147,6 @@ public class CalenderFragment extends Fragment {
         return result;
     }
 
-
+*/
 }
+

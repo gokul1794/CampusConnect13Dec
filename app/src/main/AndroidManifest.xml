@@ -64,15 +64,32 @@
             android:name="com.campusconnect.activity.Signup_2Activity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name="com.campusconnect.activity.Signup_4Activity"
-            android:label="@string/app_name"></activity>
-        <activity
             android:name="com.campusconnect.activity.CreatePostActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateAlwaysHidden"></activity>
         <activity
             android:name="com.campusconnect.utility.GalleryUtil"
             android:label="@string/app_name"></activity>
+        <activity
+            android:name="com.campusconnect.activity.AboutGroupActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.campusconnect.activity.GroupMembersByGroupActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.campusconnect.activity.UpcomingEventsActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.campusconnect.activity.NewsPostsByGroupActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.campusconnect.activity.PreviousEventsActivity"
+            android:label="@string/app_name" >
+        </activity>
 
     </application>
 

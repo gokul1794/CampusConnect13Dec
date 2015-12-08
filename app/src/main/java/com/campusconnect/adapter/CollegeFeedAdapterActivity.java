@@ -3,6 +3,7 @@ package com.campusconnect.adapter;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +31,7 @@ import java.util.List;
 public class CollegeFeedAdapterActivity extends
         RecyclerView.Adapter<CollegeFeedAdapterActivity.CollegeFeedViewHolder> {
 
+    public static Typeface r_med, r_reg;
     private List<ModelsFeed> CollegeFeedList;
     int posi=0;
     int going_click_count=0;
@@ -149,6 +151,9 @@ public class CollegeFeedAdapterActivity extends
         public CollegeFeedViewHolder(View v) {
             super(v);
 
+            r_med = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Medium.ttf");
+            r_reg = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Regular.ttf");
+
             college_feed = (CardView)v.findViewById(R.id.college_feed_card);
             event_title = (TextView) v.findViewById(R.id.tv_event);
             group_name = (TextView) v.findViewById(R.id.tv_group);
@@ -161,6 +166,10 @@ public class CollegeFeedAdapterActivity extends
             date_month = (TextView) v.findViewById(R.id.tv_date_month);
             time = (TextView) v.findViewById(R.id.tv_time);
             group_icon = (CircularImageView) v.findViewById(R.id.group_image);
+
+            event_title.setTypeface(r_med);
+            group_name.setTypeface(r_reg);
+            timestamp.setTypeface(r_reg);
 
             college_feed.setOnClickListener(new View.OnClickListener() {
                 @Override
