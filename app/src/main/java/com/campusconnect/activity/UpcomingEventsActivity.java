@@ -1,5 +1,6 @@
 package com.campusconnect.activity;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -7,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.campusconnect.R;
 import com.campusconnect.adapter.UpcomingEventsAdapterActivity;
@@ -21,14 +24,21 @@ import java.util.List;
 public class UpcomingEventsActivity extends ActionBarActivity {
 
     RecyclerView upcoming_events;
-    ImageButton close;
+    LinearLayout close;
+    Typeface r_med;
+    TextView upcoming_events_text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upcoming_events);
 
-        close = (ImageButton) findViewById(R.id.ib_cancel);
+        r_med = Typeface.createFromAsset(getAssets(), "font/Roboto_Medium.ttf");
+
+        close = (LinearLayout) findViewById(R.id.cross_button);
+        upcoming_events_text = (TextView) findViewById(R.id.tv_upcoming_events);
+        upcoming_events_text.setTypeface(r_med);
+
 
         upcoming_events = (RecyclerView) findViewById(R.id.rv_upcoming_events);
         upcoming_events.setHasFixedSize(true);

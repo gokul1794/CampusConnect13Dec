@@ -12,76 +12,79 @@ import android.widget.TextView;
 
 import com.campusconnect.R;
 import com.campusconnect.activity.InEventActivity;
-import com.campusconnect.supportClasses.NewsPostsByGroup_infoActivity;
+import com.campusconnect.supportClasses.UpcomingEvents_infoActivity;
 import com.campusconnect.utility.CircularImageView;
 
 import java.util.List;
 
 /**
- * Created by RK on 06/11/2015.
+ * Created by RK on 05/11/2015.
  */
-public class NewsPostsByGroupAdapterActivity extends
-        RecyclerView.Adapter<NewsPostsByGroupAdapterActivity.NewsPostsByGroupViewHolder> {
+public class PreviousEventsAdapterActivity extends
+        RecyclerView.Adapter<PreviousEventsAdapterActivity.PreviousEventsViewHolder> {
 
-    private List<NewsPostsByGroup_infoActivity> NewsPostsByGroupList;
+    private List<UpcomingEvents_infoActivity> PreviousEventsList;
     int going_click_count=0;
     int share_click_count=0;
 
-    public NewsPostsByGroupAdapterActivity(List<NewsPostsByGroup_infoActivity> NewsPostsByGroupList) {
-        this.NewsPostsByGroupList = NewsPostsByGroupList;
+    public PreviousEventsAdapterActivity(List<UpcomingEvents_infoActivity> PreviousEventsList) {
+        this.PreviousEventsList = PreviousEventsList;
     }
 
     @Override
     public int getItemCount() {
-        return NewsPostsByGroupList.size();
+        return PreviousEventsList.size();
     }
 
 
     @Override
-    public void onBindViewHolder(NewsPostsByGroupViewHolder news_posts_by_groupViewHolder, int i) {
-        NewsPostsByGroup_infoActivity ci = NewsPostsByGroupList.get(i);
+    public void onBindViewHolder(PreviousEventsViewHolder upcoming_eventsViewHolder, int i) {
+        UpcomingEvents_infoActivity ci = PreviousEventsList.get(i);
 
 
     }
 
     @Override
-    public NewsPostsByGroupViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public PreviousEventsViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
-                R.layout.activity_card_layout_news_posts, viewGroup, false);
+                R.layout.activity_card_layout_my_feed, viewGroup, false);
 
-        return new NewsPostsByGroupViewHolder(itemView);
+        return new PreviousEventsViewHolder(itemView);
     }
 
 
 
-    public class NewsPostsByGroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class PreviousEventsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        CardView news_feed;
-        TextView event_title, group_name, timestamp;
-        ImageView event_photo,news_icon,like,share;
+        CardView my_feed;
+        TextView event_title, group_name, timestamp, day,date_month,time;
+        ImageView event_photo,news_icon,going,share;
         CircularImageView group_icon;
 
-        public NewsPostsByGroupViewHolder(View v) {
+        public PreviousEventsViewHolder(View v) {
             super(v);
 
             Typeface r_med = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Medium.ttf");
             Typeface r_reg = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Regular.ttf");
 
-            news_feed = (CardView) v.findViewById(R.id.news_feed_card);
+            my_feed = (CardView) v.findViewById(R.id.college_feed_card);
             event_title = (TextView) v.findViewById(R.id.tv_event);
             group_name = (TextView) v.findViewById(R.id.tv_group);
             timestamp = (TextView) v.findViewById(R.id.tv_timestamp);
             event_photo = (ImageView) v.findViewById(R.id.iv_event_photo);
             news_icon = (ImageView) v.findViewById(R.id.iv_news_icon);
-            like = (ImageView) v.findViewById(R.id.iv_like);
+            going = (ImageView) v.findViewById(R.id.iv_going);
             share = (ImageView) v.findViewById(R.id.iv_share);
+            day = (TextView) v.findViewById(R.id.tv_day);
+            date_month = (TextView) v.findViewById(R.id.tv_date_month);
+            time = (TextView) v.findViewById(R.id.tv_time);
             group_icon = (CircularImageView) v.findViewById(R.id.group_image);
 
             event_title.setTypeface(r_med);
             group_name.setTypeface(r_reg);
             timestamp.setTypeface(r_reg);
 
-            news_feed.setOnClickListener(new View.OnClickListener() {
+            my_feed.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -103,14 +106,14 @@ public class NewsPostsByGroupAdapterActivity extends
                     v.getContext().startActivity(intent_temp);
                 }
             });
-            like.setAlpha((float) 0.5);
-            like.setOnClickListener(new View.OnClickListener() {
+            going.setAlpha((float) 0.5);
+            going.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (going_click_count % 2 == 0) {
-                        like.setAlpha((float) 1);
+                        going.setAlpha((float) 1);
                     } else {
-                        like.setAlpha((float) 0.5);
+                        going.setAlpha((float) 0.5);
                     }
                     going_click_count++;
                 }
@@ -137,5 +140,4 @@ public class NewsPostsByGroupAdapterActivity extends
         }
     }
 }
-
 

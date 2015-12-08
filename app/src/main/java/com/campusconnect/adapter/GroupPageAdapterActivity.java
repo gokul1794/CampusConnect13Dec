@@ -3,6 +3,7 @@ package com.campusconnect.adapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -104,17 +105,29 @@ public class GroupPageAdapterActivity extends
     }
     public class GroupInfoViewHolder extends GroupPageAdapterActivity.GroupPageHolder{
 
-        TextView group_name,members_count,followers_count;
+        TextView group_name,members_count,followers_count, followers_text, members_text;
         CircularImageView group_icon;
         ToggleButton tbtn_follow,tbtn_member;
         public GroupInfoViewHolder(View itemView) {
             super(itemView);
+
+            Typeface r_reg = Typeface.createFromAsset(itemView.getContext().getAssets(), "font/Roboto_Regular.ttf");
+            Typeface r_lig = Typeface.createFromAsset(itemView.getContext().getAssets(), "font/Roboto_Light.ttf");
+
             group_name = (TextView)itemView.findViewById(R.id.group_name);
             members_count = (TextView)itemView.findViewById(R.id.tv_members_count);
             followers_count = (TextView)itemView.findViewById(R.id.tv_followers_count);
+            followers_text = (TextView)itemView.findViewById(R.id.tv_followers);
+            members_text = (TextView)itemView.findViewById(R.id.tv_members);
             group_icon = (CircularImageView)itemView.findViewById(R.id.group_image);
             tbtn_follow = (ToggleButton)itemView.findViewById(R.id.tb_followers);
             tbtn_member = (ToggleButton)itemView.findViewById(R.id.tb_members);
+
+            group_name.setTypeface(r_reg);
+            members_count.setTypeface(r_reg);
+            followers_count.setTypeface(r_reg);
+            followers_text.setTypeface(r_lig);
+            members_text.setTypeface(r_lig);
 
             Bundle bundle =((Activity)itemView.getContext()).getIntent().getExtras();
             g_name = bundle.getString("G_NAME");

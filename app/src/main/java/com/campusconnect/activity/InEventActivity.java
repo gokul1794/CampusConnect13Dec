@@ -83,12 +83,12 @@ public class InEventActivity extends AppCompatActivity {
         pos_top = bundle.getInt("POSITION_TOP");
         pos_cf = bundle.getInt("POSITION_CF");
 
-    /*    e_name.setText(e_Name);
+        e_name.setText(e_Name);
         e_time.setText(e_Time);
         e_date.setText(e_Date);
         g_name.setText(g_Name);
         v_name.setText(v_Name);
-        e_description.setText(e_Description);     */
+        e_description.setText(e_Description);
         event_photo.setImageResource(e_Photo);
         g_icon.setImageResource(g_Logo);
 

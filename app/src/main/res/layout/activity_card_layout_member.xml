@@ -5,17 +5,19 @@
     android:id="@+id/top_news_card"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_marginBottom="5dp"
+    android:background="#ffffff"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:orientation="vertical"
-    card_view:cardCornerRadius="3dp">
+    card_view:cardElevation="0dp"
+    card_view:cardMaxElevation="0dp"
+    card_view:cardPreventCornerOverlap="false"
+    card_view:cardUseCompatPadding="true">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="#dedede"
         android:padding="16dp"
         android:weightSum="3">
         <com.campusconnect.utility.CircularImageView
@@ -23,10 +25,9 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:scaleType="centerCrop"
-            android:src="@mipmap/coder"
+            android:src="@drawable/default_profile"
             android:layout_centerVertical="true"
-            app:border_color="#d9d9d9"
-            app:border_width="2dp" />
+            app:border_width="0dp" />
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -39,8 +40,7 @@
             android:layout_height="wrap_content"
             android:text="Aayush Agrawal"
             android:textSize="18sp"
-            android:textColor="#000000"
-            android:alpha="0.83"/>
+            android:textColor="#383838"/>
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,8 +55,7 @@
                 android:paddingBottom="3dp"
                 android:layout_centerVertical="true"
                 android:textSize="14sp"
-                android:textColor="#000000"
-                android:alpha="0.7"/>
+                android:textColor="#383838"/>
             <View
                 android:id="@+id/divider"
                 android:layout_width="1dp"
@@ -65,8 +64,7 @@
                 android:layout_alignBottom="@+id/tv_member_branch"
                 android:layout_toRightOf="@+id/tv_member_batch"
                 android:layout_marginLeft="10dp"
-                android:background="#000000"
-                android:alpha="0.18"/>
+                android:background="#a0a0a0"/>
             <TextView
                 android:id="@+id/tv_member_branch"
                 android:layout_width="wrap_content"
@@ -77,8 +75,7 @@
                 android:paddingBottom="3dp"
                 android:layout_marginLeft="10dp"
                 android:textSize="14sp"
-                android:textColor="#000000"
-                android:alpha="0.7"/>
+                android:textColor="#383838"/>
             </RelativeLayout>
         </RelativeLayout>
 

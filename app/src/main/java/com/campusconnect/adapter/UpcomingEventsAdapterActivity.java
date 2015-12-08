@@ -1,6 +1,7 @@
 package com.campusconnect.adapter;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -63,7 +64,10 @@ public class UpcomingEventsAdapterActivity extends
         public UpcomingEventsViewHolder(View v) {
             super(v);
 
-            my_feed = (CardView) v.findViewById(R.id.top_news_card);
+            Typeface r_med = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Medium.ttf");
+            Typeface r_reg = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Regular.ttf");
+
+            my_feed = (CardView) v.findViewById(R.id.college_feed_card);
             event_title = (TextView) v.findViewById(R.id.tv_event);
             group_name = (TextView) v.findViewById(R.id.tv_group);
             timestamp = (TextView) v.findViewById(R.id.tv_timestamp);
@@ -75,6 +79,10 @@ public class UpcomingEventsAdapterActivity extends
             date_month = (TextView) v.findViewById(R.id.tv_date_month);
             time = (TextView) v.findViewById(R.id.tv_time);
             group_icon = (CircularImageView) v.findViewById(R.id.group_image);
+
+            event_title.setTypeface(r_med);
+            group_name.setTypeface(r_reg);
+            timestamp.setTypeface(r_reg);
 
             my_feed.setOnClickListener(new View.OnClickListener() {
                 @Override

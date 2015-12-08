@@ -1,5 +1,6 @@
 package com.campusconnect.activity;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -7,10 +8,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.campusconnect.R;
 import com.campusconnect.adapter.GroupMembersByGroupAdapterActivity;
 import com.campusconnect.supportClasses.GroupMembersByGroup_infoActivity;
+import com.campusconnect.utility.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +25,21 @@ import java.util.List;
 public class GroupMembersByGroupActivity extends ActionBarActivity {
 
     RecyclerView members_list;
-    ImageButton close;
+    LinearLayout close;
+    TextView members_text;
+    Typeface r_med;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_members);
 
-        close = (ImageButton) findViewById(R.id.ib_cancel);
+        r_med = Typeface.createFromAsset(getAssets(), "font/Roboto_Medium.ttf");
+
+
+        close = (LinearLayout) findViewById(R.id.cross_button);
+        members_text = (TextView) findViewById(R.id.tv_title);
+        members_text.setTypeface(r_med);
 
         members_list = (RecyclerView) findViewById(R.id.rv_members_list);
         members_list.setHasFixedSize(true);
@@ -36,6 +47,7 @@ public class GroupMembersByGroupActivity extends ActionBarActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         members_list.setLayoutManager(llm);
         members_list.setItemAnimator(new DefaultItemAnimator());
+        members_list.addItemDecoration(new DividerItemDecoration(this,LinearLayoutManager.VERTICAL));
         GroupMembersByGroupAdapterActivity gm = new GroupMembersByGroupAdapterActivity(
                 createList_gm(3));
         members_list.setAdapter(gm);
