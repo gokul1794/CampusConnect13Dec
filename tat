@@ -1,0 +1,93 @@
+[33mcommit 5d3e45cac6c68abf2aa1525c7402347ca22e2417[m
+Merge: b45abb3 3cac5c7
+Author: Rakesh <rk211195@gmail.com>
+Date:   Mon Dec 7 12:21:36 2015 +0530
+
+    Merge remote-tracking branch 'refs/remotes/rishabkdoshi/campusdevelope'
+
+[33mcommit b45abb38218df5fa956f56615631780131cff124[m
+Author: Rakesh <rk211195@gmail.com>
+Date:   Mon Dec 7 12:21:25 2015 +0530
+
+    Revert "UI changes - Home, Admin, Create Post"
+    
+    This reverts commit 1c7bcff8da3c48d140a67a15cdd76c5fd9cbba29.
+
+[33mcommit 1c7bcff8da3c48d140a67a15cdd76c5fd9cbba29[m
+Author: Rakesh <rk211195@gmail.com>
+Date:   Mon Dec 7 12:20:07 2015 +0530
+
+    UI changes - Home, Admin, Create Post
+
+[33mcommit 309a800d1134cee0e55f321264633501dd557d6c[m
+Author: Rakesh <rk211195@gmail.com>
+Date:   Fri Dec 4 22:14:24 2015 +0530
+
+    CreatePost - frontend
+    
+    Frontend work has been completely done.
+
+[33mcommit 5a73d5a0f073e96fcd66e4a0b5d3697b6e857387[m
+Author: Rakesh <rk211195@gmail.com>
+Date:   Fri Dec 4 16:52:52 2015 +0530
+
+    Notification Layout finished
+    
+    Backend work yet to be attached.
+
+[33mcommit d2e3e4402d61cd6cc33fcfdbc1bce907249da726[m
+Author: Rakesh <rk211195@gmail.com>
+Date:   Fri Dec 4 11:13:46 2015 +0530
+
+    Sign up - frontend finished
+    
+    Google Sign up/in has to be integrated in between. Group List has to
+    populated.
+
+[33mcommit 81453948d5851aa0c096dcb7a9f9fbda51e685f6[m
+Author: Rakesh <rk211195@gmail.com>
+Date:   Thu Dec 3 14:36:46 2015 +0530
+
+    Linked the first three login pages
+    
+    Google Sign is now part of signup_2Activity class. Backend code has to
+    be integrated into it.
+
+[33mcommit 13129c56dcc9a25d50a229390a964ad3161df043[m
+Author: Rakesh <rk211195@gmail.com>
+Date:   Thu Dec 3 10:56:18 2015 +0530
+
+    Login Pages addition
+    
+    ...except the last one...no links provided between them.
+
+[33mcommit 3cac5c7679f6af852580533ab7dc756027b5cf11[m
+Author: Ajay Patidar <ajaypatidar20@gmail.com>
+Date:   Mon Nov 30 22:14:00 2015 +0530
+
+    Intial Commit_30Nov15
+
+[33mcommit 9ccd99640e07cd1e9d6e026dee5f38973cfbcc91[m
+Merge: 79ef02f a50bd16
+Author: Ajay Patidar <ajaypatidar20@gmail.com>
+Date:   Mon Nov 30 22:12:08 2015 +0530
+
+    Merge branch 'campusdevelope' of https://github.com:/rishabkdoshi/campusconnect into campusdevelope
+
+[33mcommit 79ef02fe4c5947f1885d926ba06149a484efca55[m
+Author: Ajay Patidar <ajaypatidar20@gmail.com>
+Date:   Mon Nov 30 22:02:47 2015 +0530
+
+    initial committ
+
+[33mcommit 02d5f1398704790708bd01f6fdf830e742ee5321[m
+Author: rishabkdoshi <rishabketandoshi@gmail.com>
+Date:   Sat Nov 28 23:25:41 2015 +0530
+
+    first commit
+
+[33mcommit a50bd16b138554b7d11e126d380559b61f7d0757[m
+Author: canopus <canopus@canopus-System-Product-Name.(none)>
+Date:   Fri Feb 27 16:10:13 2015 +0530
+
+    first commit
