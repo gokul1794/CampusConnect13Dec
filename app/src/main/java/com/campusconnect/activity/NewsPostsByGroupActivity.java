@@ -1,5 +1,6 @@
 package com.campusconnect.activity;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -7,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.campusconnect.R;
 import com.campusconnect.adapter.NewsPostsByGroupAdapterActivity;
@@ -21,14 +24,20 @@ import java.util.List;
 public class NewsPostsByGroupActivity extends ActionBarActivity {
 
     RecyclerView news_posts_by_group;
-    ImageButton close;
+    LinearLayout close;
+    Typeface r_med;
+    TextView news_posts_text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_posts_by_group);
 
-        close = (ImageButton) findViewById(R.id.ib_cancel);
+        r_med = Typeface.createFromAsset(getAssets(), "font/Roboto_Medium.ttf");
+
+        close = (LinearLayout) findViewById(R.id.cross_button);
+        news_posts_text = (TextView) findViewById(R.id.tv_news_posts_text);
+        news_posts_text.setTypeface(r_med);
 
         news_posts_by_group = (RecyclerView) findViewById(R.id.rv_news_posts_by_group);
         news_posts_by_group.setHasFixedSize(true);

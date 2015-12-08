@@ -1,5 +1,6 @@
 package com.campusconnect.activity;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -7,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.campusconnect.R;
 import com.campusconnect.adapter.GroupPageAdapterActivity;
@@ -19,6 +21,8 @@ import java.util.List;
 public class GroupPageActivity extends ActionBarActivity {
 
     RecyclerView group_page;
+    Typeface r_med;
+    TextView group_page_title;
 
     private static final String LOG_TAG="GroupPageActivity";
 
@@ -27,7 +31,10 @@ public class GroupPageActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_page);
 
+        r_med = Typeface.createFromAsset(getAssets(), "font/Roboto_Medium.ttf");
+
         group_page = (RecyclerView) findViewById(R.id.recycler_group_page);
+        group_page_title = (TextView) findViewById(R.id.tv_title);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);

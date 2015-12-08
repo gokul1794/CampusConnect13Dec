@@ -1,14 +1,17 @@
 package com.campusconnect.activity;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.campusconnect.R;
+import com.campusconnect.adapter.PreviousEventsAdapterActivity;
 import com.campusconnect.adapter.UpcomingEventsAdapterActivity;
 import com.campusconnect.supportClasses.UpcomingEvents_infoActivity;
 
@@ -21,14 +24,18 @@ import java.util.List;
 public class PreviousEventsActivity extends ActionBarActivity {
 
     RecyclerView previous_events;
-    ImageButton close;
+    LinearLayout close;
+    Typeface r_med;
+    TextView previous_events_text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_previous_events);
 
-        close = (ImageButton) findViewById(R.id.ib_cancel);
+        close = (LinearLayout) findViewById(R.id.cross_button);
+        previous_events_text = (TextView) findViewById(R.id.tv_previous_events);
+        previous_events_text.setTypeface(r_med);
 
         previous_events = (RecyclerView) findViewById(R.id.rv_previous_events);
         previous_events.setHasFixedSize(true);
@@ -36,10 +43,10 @@ public class PreviousEventsActivity extends ActionBarActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         previous_events.setLayoutManager(llm);
         previous_events.setItemAnimator(new DefaultItemAnimator());
-        //I guess we can use the UpcomingEventsAdapter for this one. :/
-        UpcomingEventsAdapterActivity upcomingEventsAdapterActivity = new UpcomingEventsAdapterActivity(
-                createList_upcomingEventsAdapterActivity(3));
-        previous_events.setAdapter(upcomingEventsAdapterActivity);
+
+        PreviousEventsAdapterActivity previousEventsAdapterActivity = new PreviousEventsAdapterActivity(
+                createList_previousEventsAdapterActivity(3));
+        previous_events.setAdapter(previousEventsAdapterActivity);
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,7 +59,7 @@ public class PreviousEventsActivity extends ActionBarActivity {
 
     }
 
-    private List<UpcomingEvents_infoActivity> createList_upcomingEventsAdapterActivity(int size) {
+    private List<UpcomingEvents_infoActivity> createList_previousEventsAdapterActivity(int size) {
         List<UpcomingEvents_infoActivity> result = new ArrayList<UpcomingEvents_infoActivity>();
         for (int i = 1; i <= size; i++) {
             UpcomingEvents_infoActivity ci = new UpcomingEvents_infoActivity();
