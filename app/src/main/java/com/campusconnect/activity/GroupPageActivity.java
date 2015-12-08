@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import com.campusconnect.R;
 import com.campusconnect.adapter.GroupPageAdapterActivity;
 import com.campusconnect.adapter.GroupPage_infoActivity;
+import com.campusconnect.utility.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class GroupPageActivity extends ActionBarActivity {
         group_page.setLayoutManager(llm);
         group_page.setHasFixedSize(true);
         group_page.setItemAnimator(new DefaultItemAnimator());
+        group_page.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
         GroupPageAdapterActivity gp = new GroupPageAdapterActivity(
                 createList_group_page(6));
