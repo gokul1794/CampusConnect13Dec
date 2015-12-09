@@ -12,6 +12,15 @@ public class GroupBean implements Serializable {
     private String clubId;
     private String Abb;
     private String name;
+    private String follow;
+
+    public String getFollow() {
+        return follow;
+    }
+
+    public void setFollow(String follow) {
+        this.follow = follow;
+    }
 
     public String getDescription() {
         return description;

@@ -3,7 +3,6 @@ package com.campusconnect.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +29,7 @@ public class ProfilePageAdapterActivity extends
     int posi=0;
     SharedPreferences sharedPreferences;
     ProfileInfoViewHolder holder1;
-    TextView profile_name,profile_tags,tv_branch,tv_batch_of,tv_city, tv_random, groups_joined_text;
+    TextView profile_name,profile_tags,tv_branch,tv_batch_of;
     GroupsJoinedListHolder holder2;
     CharSequence GroupsJoined[]={"Rotaract Club","Football Team"};
     private static int[] GroupLogo = new int[] {
@@ -100,30 +99,26 @@ public class ProfilePageAdapterActivity extends
     }
 
     public static class GroupsViewHolder extends RecyclerView.ViewHolder {
-
+        TextView group_joined;
         public GroupsViewHolder(View v) {
             super(v);
-
+            group_joined = (TextView)v.findViewById(R.id.tv_group_joined_name);
         }
 
     }
     public class GroupsJoinedListHolder extends ProfilePageAdapterActivity.GroupsViewHolder {
         CardView card_g_joined;
-        TextView group_joined;
+
         public GroupsJoinedListHolder(View itemView) {
             super(itemView);
             card_g_joined = (CardView) itemView.findViewById(R.id.cv_groups_joined);
-            group_joined = (TextView)itemView.findViewById(R.id.tv_group_joined_name);
-
-            Typeface r_reg = Typeface.createFromAsset(itemView.getContext().getAssets(), "font/Roboto_Regular.ttf");
-            group_joined.setTypeface(r_reg);
 
             card_g_joined.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     Intent intent_temp = new Intent(v.getContext(), GroupPageActivity.class);
-                    posi=getAdapterPosition()-1;
+                    posi=getPosition()-1;
 
                     Bundle bundle = new Bundle();
                     bundle.putString("G_NAME", (String) GroupsJoined[posi]);
@@ -143,26 +138,10 @@ public class ProfilePageAdapterActivity extends
 
         public ProfileInfoViewHolder(View itemView) {
             super(itemView);
-
-            Typeface r_lig = Typeface.createFromAsset(itemView.getContext().getAssets(), "font/Roboto_Light.ttf");
-            Typeface r_reg = Typeface.createFromAsset(itemView.getContext().getAssets(), "font/Roboto_Regular.ttf");
-            Typeface r_med = Typeface.createFromAsset(itemView.getContext().getAssets(), "font/Roboto_Medium.ttf");
-
             profile_name=(TextView)itemView.findViewById(R.id.profile_name);
             profile_tags=(TextView)itemView.findViewById(R.id.profile_tag);
             tv_branch=(TextView)itemView.findViewById(R.id.tv_branch);
             tv_batch_of=(TextView)itemView.findViewById(R.id.tv_batch_of);
-            tv_city=(TextView)itemView.findViewById(R.id.tv_city);
-            tv_random=(TextView)itemView.findViewById(R.id.tv_random);
-            groups_joined_text=(TextView)itemView.findViewById(R.id.tv_groups_joined_text);
-
-            profile_name.setTypeface(r_med);
-            profile_tags.setTypeface(r_reg);
-            groups_joined_text.setTypeface(r_reg);
-            tv_branch.setTypeface(r_lig);
-            tv_batch_of.setTypeface(r_lig);
-            tv_city.setTypeface(r_lig);
-            tv_random.setTypeface(r_lig);
         }
     }
 

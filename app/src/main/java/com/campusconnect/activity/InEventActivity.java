@@ -2,16 +2,33 @@ package com.campusconnect.activity;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
 import android.text.style.TypefaceSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.campusconnect.R;
+import com.campusconnect.bean.CampusFeedBean;
+import com.campusconnect.communicator.WebRequestTask;
+import com.campusconnect.communicator.WebServiceDetails;
+import com.campusconnect.constant.AppConstants;
 import com.campusconnect.utility.CircularImageView;
 import com.campusconnect.utility.CustomTypefaceSpan;
+import com.campusconnect.utility.SharedpreferenceUtility;
+import com.squareup.picasso.Picasso;
+
+import org.apache.http.NameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by RK on 22-09-2015.
@@ -23,13 +40,13 @@ public class InEventActivity extends AppCompatActivity {
 
     String attending=" attending";
     SpannableStringBuilder attendees_text;
-    int going_click_count=0, no_of_attendees;
-    int share_click_count=0;
+    int no_of_attendees;
     Boolean flag_news,flag_selected_share,flag_selected_attend_like;
     Boolean flag_attended_clicked=false, flag_share_clicked=false;
     ImageView event_photo,location_icon, going,share;
     TextView e_name, e_time, e_date, g_name, v_name, e_description, attendees_count;
     CircularImageView g_icon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,10 +70,9 @@ public class InEventActivity extends AppCompatActivity {
         g_icon = (CircularImageView) findViewById(R.id.group_icon);
         attendees_count = (TextView) findViewById(R.id.tv_attendees_count);
 
-
         no_of_attendees = 255; //Value has to be taken from the server
         attendees_text = new SpannableStringBuilder("+"+no_of_attendees + attending);
-        attendees_text.setSpan(robotoRegularSpan_for_attendees, 0, Integer.toString(no_of_attendees).length()+1, 0);
+        attendees_text.setSpan(robotoRegularSpan_for_attendees, 0, Integer.toString(no_of_attendees).length() + 1, 0);
         attendees_count.setText(attendees_text);
 
         e_name.setTypeface(r_med);
@@ -68,28 +84,9 @@ public class InEventActivity extends AppCompatActivity {
         attendees_count.setTypeface(r_lig);
 
         Bundle bundle = getIntent().getExtras();
-
-//Extract the data…
-        String e_Name = bundle.getString("E_NAME");
-        String e_Time = bundle.getString("E_TIME");
-        String e_Date = bundle.getString("E_DATE");
-        String g_Name = bundle.getString("G_NAME");
-        String v_Name = bundle.getString("V_NAME");
-        String e_Description = bundle.getString("E_DESCRIPTION");
-        Integer e_Photo = bundle.getInt("E_PHOTO");
-        Integer g_Logo = bundle.getInt("G_PHOTO");
         flag_news = bundle.getBoolean("FLAG_NEWS");
         flag_selected_share = bundle.getBoolean("FLAG_SELECTED_SHARE");
         flag_selected_attend_like = bundle.getBoolean("FLAG_SELECTED_ATTEND/LIKE");
-
-        e_name.setText(e_Name);
-        e_time.setText(e_Time);
-        e_date.setText(e_Date);
-        g_name.setText(g_Name);
-        v_name.setText(v_Name);
-        e_description.setText(e_Description);
-        event_photo.setImageResource(e_Photo);
-        g_icon.setImageResource(g_Logo);
 
         if (flag_news) {
             location_icon.setVisibility(View.GONE);
@@ -99,6 +96,55 @@ public class InEventActivity extends AppCompatActivity {
             location_icon.setVisibility(View.VISIBLE);
             going.setImageResource(R.mipmap.going);
         }
+
+        final CampusFeedBean bean = (CampusFeedBean) getIntent().getSerializableExtra("BEAN");
+
+        if (bean != null) {
+
+            bean.getClubid();
+            bean.getCollegeId();
+            bean.getViews();
+            g_name.setText("" + bean.getClubid());
+            e_time.setText("" + bean.getStart_time());
+            e_name.setText("" + bean.getTitle());
+            e_description.setText("" + bean.getDescription());
+            v_name.setText("" + bean.getVenue());
+            String url = "http://admin.bookieboost.com/admin/images/2015-02-0116-17-50.jpg";
+            Picasso.with(InEventActivity.this).load(url).into(g_icon);
+
+
+
+          /* flag_news_top = bundle.getInt("FLAG_NEWS_TOP");
+           flag_news_college_feed = bundle.getInt("FLAG_NEWS_CF");
+           pos_top = bundle.getInt("POSITION_TOP");
+           pos_cf = bundle.getInt("POSITION_CF");
+*/
+          /* e_name.setText(e_Name);
+           e_time.setText(e_Time);
+           e_date.setText(e_Date);
+           g_name.setText(g_Name);
+           v_name.setText(v_Name);
+           e_description.setText(e_Description);
+           event_photo.setImageResource(e_Photo);
+           g_icon.setImageResource(g_Logo);
+*/
+            /*if (pos_top == 1 || pos_top == 3 || pos_cf == 4 || pos_cf == 6) {
+                location_icon.setVisibility(View.INVISIBLE);
+                going.setImageResource(R.drawable.selector_heart);
+            } else {
+                location_icon.setVisibility(View.VISIBLE);
+                going.setImageResource(R.mipmap.going);
+            }
+
+            going.setAlpha((float) 0.5);
+*/
+
+        }
+
+
+//Extract the data…
+
+
 
         if(flag_selected_share)
         {
@@ -128,6 +174,18 @@ public class InEventActivity extends AppCompatActivity {
         going.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    String persoPid = SharedpreferenceUtility.getInstance(InEventActivity.this).getString(AppConstants.PERSON_PID);
+                    String pid = bean.getPid();
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("eventId", "4713227854282752");
+                    jsonObject.put("from_pid", persoPid);
+                    WebApiAttending(jsonObject);
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+                }
+
                 if (flag_attended_clicked) {
                     if(flag_news)
                         going.setImageResource(R.mipmap.heart);
@@ -143,6 +201,7 @@ public class InEventActivity extends AppCompatActivity {
                 }
             }
         });
+
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,6 +217,52 @@ public class InEventActivity extends AppCompatActivity {
         });
 
 
+    }
+
+
+    public void WebApiAttending(JSONObject jsonObject) {
+
+        List<NameValuePair> param = new ArrayList<NameValuePair>();
+        String url = WebServiceDetails.DEFAULT_BASE_URL + "attendEvent";
+        Log.e("", jsonObject.toString());
+        Log.e("", url);
+        new WebRequestTask(InEventActivity.this, param, _handler, WebRequestTask.POST, jsonObject, WebServiceDetails.PID_ATTENDING,
+                true, url).execute();
+
 
     }
+
+    private final Handler _handler = new Handler() {
+        public void handleMessage(Message msg) {
+            int response_code = msg.what;
+            if (response_code != 0 && response_code != 204) {
+                String strResponse = (String) msg.obj;
+                Log.v("Response", strResponse);
+                if (strResponse != null && strResponse.length() > 0) {
+                    switch (response_code) {
+                        case WebServiceDetails.PID_ATTENDING: {
+                            try {
+                                JSONObject jsonObject = new JSONObject(strResponse);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+
+                        default:
+                            break;
+                    }
+                } else {
+                    Toast.makeText(InEventActivity.this, "SERVER_ERROR", Toast.LENGTH_LONG).show();
+                }
+            }
+            if (response_code == 204) {
+                Toast.makeText(InEventActivity.this, "Attending", Toast.LENGTH_LONG).show();
+
+            } else {
+                Toast.makeText(InEventActivity.this, "SERVER_ERROR", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
 }

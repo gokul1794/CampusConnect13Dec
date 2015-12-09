@@ -3,7 +3,6 @@ package com.campusconnect.adapter;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -31,13 +30,11 @@ import java.util.List;
 public class CollegeFeedAdapterActivity extends
         RecyclerView.Adapter<CollegeFeedAdapterActivity.CollegeFeedViewHolder> {
 
-    public static Typeface r_med, r_reg;
     private List<ModelsFeed> CollegeFeedList;
-    boolean[] flag_news;
-    boolean[] flag_attending_clicked, flag_share_clicked;
     int posi=0;
     int going_click_count=0;
     int share_click_count=0;
+    int flag_news=0;
     CharSequence EventTitles[]={"Roto Annual Play Auditions","Spark Session 4","E-Cell Startup Selection Drive","NITK Beach Clean-Up Drive","New Recruits List","Football Team Tryouts","Football Team Reaches Quarters of Independence Cup"};
     CharSequence GroupNames[]={"Rotaract Club","IE NITK","E-Cell","Rotaract Club","E-Cell","Football Team","Football Team"};
     CharSequence Timestamp[]={"1 day ago","2 days ago","Posted 10 days ago","11 days ago","Posted 15 days ago","Posted 20 days ago","Posted 30 days ago"};
@@ -68,9 +65,6 @@ public class CollegeFeedAdapterActivity extends
 
     public CollegeFeedAdapterActivity(List<ModelsFeed> CollegeFeedList) {
         this.CollegeFeedList = CollegeFeedList;
-        flag_news = new boolean[getItemCount()];
-        flag_attending_clicked = new boolean[getItemCount()];
-        flag_share_clicked = new boolean[getItemCount()];
     }
 
     @Override
@@ -108,12 +102,11 @@ public class CollegeFeedAdapterActivity extends
            college_feedViewHolder.date_month.setVisibility(View.GONE);
            college_feedViewHolder.time.setVisibility(View.GONE);
             college_feedViewHolder.news_icon.setVisibility(View.VISIBLE);
-            flag_news[i]=true;
-            college_feedViewHolder.going.setImageResource(R.mipmap.heart);
+            flag_news=1;
+            college_feedViewHolder.going.setImageResource(R.drawable.selector_heart);
         }
 
         else {
-            flag_news[i]=false;
             SimpleDateFormat inFormat = new SimpleDateFormat("dd-MM-yyyy");
             Date date = null;
             try {
@@ -156,9 +149,6 @@ public class CollegeFeedAdapterActivity extends
         public CollegeFeedViewHolder(View v) {
             super(v);
 
-            r_med = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Medium.ttf");
-            r_reg = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Regular.ttf");
-
             college_feed = (CardView)v.findViewById(R.id.college_feed_card);
             event_title = (TextView) v.findViewById(R.id.tv_event);
             group_name = (TextView) v.findViewById(R.id.tv_group);
@@ -172,67 +162,52 @@ public class CollegeFeedAdapterActivity extends
             time = (TextView) v.findViewById(R.id.tv_time);
             group_icon = (CircularImageView) v.findViewById(R.id.group_image);
 
-            event_title.setTypeface(r_med);
-            group_name.setTypeface(r_reg);
-            timestamp.setTypeface(r_reg);
-
             college_feed.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     Intent intent_temp = new Intent(v.getContext(), InEventActivity.class);
-                    posi = getAdapterPosition();
+                    posi=getPosition();
                     //Create the bundle
                     Bundle bundle = new Bundle();
-                    Log.e("Selected", CollegeFeedList.get(posi).toString());
+                    Log.e("Selected",CollegeFeedList.get(posi).toString());
                     bundle.putString("E_NAME", CollegeFeedList.get(posi).getTitle());
-                    bundle.putString("E_TIME", CollegeFeedList.get(posi).getStartTime());
-                    bundle.putString("E_DATE", CollegeFeedList.get(posi).getStartDate());
-                    bundle.putString("G_NAME", CollegeFeedList.get(posi).getClubId());
-                    bundle.putString("V_NAME", CollegeFeedList.get(posi).getVenue());
-                    bundle.putString("E_DESCRIPTION", CollegeFeedList.get(posi).getDescription());
-                    //       bundle.putInt("E_PHOTO", event_photos[posi]);
-                    //     bundle.putInt("G_PHOTO",GroupLogo[posi]);
-                    bundle.putBoolean("FLAG_NEWS", flag_news[posi]);
-                    bundle.putBoolean("FLAG_SELECTED_SHARE", flag_share_clicked[posi]);
-                    bundle.putBoolean("FLAG_SELECTED_ATTEND/LIKE", flag_attending_clicked[posi]);
+                    bundle.putString("E_TIME",CollegeFeedList.get(posi).getStartTime());
+                    bundle.putString("E_DATE",CollegeFeedList.get(posi).getStartDate());
+                    bundle.putString("G_NAME",CollegeFeedList.get(posi).getClubId());
+                    bundle.putString("V_NAME",CollegeFeedList.get(posi).getVenue());
+                    bundle.putString("E_DESCRIPTION",CollegeFeedList.get(posi).getDescription());
+             //       bundle.putInt("E_PHOTO", event_photos[posi]);
+               //     bundle.putInt("G_PHOTO",GroupLogo[posi]);
+                    bundle.putInt("FLAG_NEWS_TOP",flag_news);
+                    bundle.putInt("POSITION_CF",posi);
                     intent_temp.putExtras(bundle);
                     v.getContext().startActivity(intent_temp);
                 }
             });
 
-
+            going.setAlpha((float) 0.5);
             going.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int pos_for_going = getAdapterPosition();
-                    if (flag_attending_clicked[pos_for_going]) {
-                        if(flag_news[pos_for_going])
-                            going.setImageResource(R.mipmap.heart);
-                        else
-                            going.setImageResource(R.mipmap.going);
-                        flag_attending_clicked[pos_for_going] = false;
+                    if (going_click_count % 2 == 0) {
+                        going.setAlpha((float) 1);
                     } else {
-                        if(flag_news[pos_for_going])
-                            going.setImageResource(R.mipmap.heart_selected);
-                        else
-                            going.setImageResource(R.mipmap.going_selected);
-                        flag_attending_clicked[pos_for_going] = true;
+                        going.setAlpha((float) 0.5);
                     }
+                    going_click_count++;
                 }
             });
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int pos_for_share = getAdapterPosition();
-                    if(flag_share_clicked[pos_for_share]) {
-                        share.setAlpha((float) 0.5);
-                        flag_share_clicked[pos_for_share] = false;
+                    if(share_click_count%2==0) {
+                        share.setAlpha((float) 1);
                     }
                     else {
-                        share.setAlpha((float) 1);
-                        flag_share_clicked[pos_for_share] = true;
+                        share.setAlpha((float) 0.5);
                     }
+                    share_click_count++;
                 }
             });
 

@@ -8,11 +8,6 @@ import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.text.style.TypefaceSpan;
 
-import android.graphics.Paint;
-import android.graphics.Typeface;
-import android.text.TextPaint;
-import android.text.style.TypefaceSpan;
-
 public class CustomTypefaceSpan extends TypefaceSpan {
     private final Typeface newType;
 

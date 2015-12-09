@@ -4,42 +4,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Created by canopus on 27/11/15.
+ * Created by canopus on 30/11/15.
  */
-public class CampusFeedBean implements Serializable {
-
-    /* "event_creator":"Anirudh",
-                       "description":"SAMPLE PHOTO",
-                       "views":"0",
-                       "photo":"/9j/45c8k3aLbSnKKvzKT2glvt0bVz/9k=",
-                       "club_id":"Institute of Engineers",
-                       "pid":"5073076857339904",
-                       "timestamp":"2017-12-12 11:11:11",
-                       "title":"PHOTO OP",
-                       "collegeId":"National Institute of Technology Karnataka",
-                       "kind":"clubs#resourcesItem"*/
-
-
-    /*{title , description , club_id(name of the club) , venue , start_date , start_time ,
-    end_date , end_time ,
-     attendees(Use this to distinguish between posts and events) ,
-     completed , views , isAlumni , event_creator(returning back the name)
-      , collegeId(sending back the name of the college not ID) ,
-       pid(refers to the post/eventId) , tags , likers(is a list) ,
-         timestamp, photo, clubphoto*/
+public class MyFeedBean implements Serializable {
 
 
     String eventCreator;
     String description;
     String views;
-    String photo;
-    String clubid;
+    String photo ;
+    String clubid ;
 
-    String pid;
+    String pid ;
     String timeStamp;
-    String title;
+    String title ;
     String collegeId;
-    String kind;
+    String kind ;
 
     String venue;
     String start_date;
@@ -52,6 +32,8 @@ public class CampusFeedBean implements Serializable {
     ArrayList tag;
     String likers;
     String clubphoto;
+
+
 
 
     public String getCompleted() {
@@ -70,7 +52,7 @@ public class CampusFeedBean implements Serializable {
         this.tag = tag;
     }
 
-    public String getLikers() {
+    public String  getLikers() {
         return likers;
     }
 
@@ -213,6 +195,8 @@ public class CampusFeedBean implements Serializable {
     public void setKind(String kind) {
         this.kind = kind;
     }
+
+
 
 
 }

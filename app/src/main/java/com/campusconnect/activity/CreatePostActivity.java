@@ -2,19 +2,23 @@ package com.campusconnect.activity;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -38,25 +42,32 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.appspot.campus_connect_2015.clubs.Clubs;
-import com.appspot.campus_connect_2015.clubs.model.ModelsClubListResponse;
-import com.appspot.campus_connect_2015.clubs.model.ModelsClubMiniForm;
-import com.appspot.campus_connect_2015.clubs.model.ModelsClubRetrievalMiniForm;
 import com.appspot.campus_connect_2015.clubs.model.ModelsEventMiniForm;
 import com.appspot.campus_connect_2015.clubs.model.ModelsMessageResponse;
-import com.appspot.campus_connect_2015.clubs.model.ModelsPostMiniForm;
 import com.campusconnect.R;
 import com.campusconnect.bean.GroupBean;
 import com.campusconnect.communicator.WebRequestTask;
 import com.campusconnect.communicator.WebServiceDetails;
 import com.campusconnect.constant.AppConstants;
 import com.campusconnect.slidingtab.SlidingTabLayout_CreatePost;
-import com.campusconnect.utility.GalleryUtil;
 import com.campusconnect.utility.NetworkAvailablity;
 import com.campusconnect.utility.SharedpreferenceUtility;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.common.base.Strings;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,9 +75,9 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -79,24 +90,36 @@ public class CreatePostActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "CreatePostActivity";
     TextView create_post_title;
-    ViewPager pager;
     LinearLayout close;
+    ViewPager pager;
     ViewPagerAdapter_CreatePost adapter;
     SlidingTabLayout_CreatePost tabs;
+    String Tag = "CreatePostActivity";
     //   public static Button  post;
     CharSequence Titles[] = {"Event", "News"};
     public ArrayList<GroupBean> groupList = new ArrayList<GroupBean>();
-    List<ModelsClubMiniForm> modelsClubMiniForms;
-
-    int flag_coming_from_group_page=0;
-    String group_name_from_group_page;
+    // List<ModelsClubMiniForm> modelsClubMiniForms;
 
     static SharedPreferences sharedPreferences;
     private String mEmailAccount = "";
 
-    int Numboftabs = 2;
+    private final int GALLERY_ACTIVITY_CODE = 200;
+    private final int RESULT_CROP = 400;
+    static String imageUrlForUpload = "";
 
+
+    int Numboftabs = 2;
     Typeface r_med;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
+    public CreatePostActivity() {
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,12 +142,9 @@ public class CreatePostActivity extends AppCompatActivity {
         tabs.setViewPager(pager);
         sharedPreferences = getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
         mEmailAccount = sharedPreferences.getString(AppConstants.EMAIL_KEY, null);
-
-        Bundle bun = getIntent().getExtras();
-        if(bun!=null) {
-            group_name_from_group_page = bun.getString("G_NAME");
-            flag_coming_from_group_page = bun.getInt("FLAG");
-        }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,7 +154,6 @@ public class CreatePostActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
     //TODO DONE getGroup in createpostActivity
@@ -144,7 +163,7 @@ public class CreatePostActivity extends AppCompatActivity {
             String pid = SharedpreferenceUtility.getInstance(CreatePostActivity.this).getString(AppConstants.PERSON_PID);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("college_id", collegeId);
-            jsonObject.put("pid", pid);
+            //   jsonObject.put("pid", pid);
             List<NameValuePair> param = new ArrayList<NameValuePair>();
             String url = WebServiceDetails.DEFAULT_BASE_URL + "getClubList";
             new WebRequestTask(CreatePostActivity.this, param, _handler, WebRequestTask.POST, jsonObject, WebServiceDetails.PID_GET_GROUPS,
@@ -155,6 +174,7 @@ public class CreatePostActivity extends AppCompatActivity {
         }
     }
 
+/*
 
     public void getGroups() {
         //TODO network check
@@ -204,7 +224,7 @@ public class CreatePostActivity extends AppCompatActivity {
                             if (cList != null) {
                                 try {
                                     Log.e(LOG_TAG, cList.toPrettyString());
-                                    modelsClubMiniForms = displayClubs(cList);
+                                    groupList = displayClubs(cList);
                                     Log.e(LOG_TAG, modelsClubMiniForms.toString());
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -221,19 +241,20 @@ public class CreatePostActivity extends AppCompatActivity {
         }
     }
 
+*/
 
-    private List<ModelsClubMiniForm> displayClubs(ModelsClubListResponse... response) {
-        Log.e(LOG_TAG, response.toString());
+    /*  private List<ModelsClubMiniForm> displayClubs(ModelsClubListResponse... response) {
+          Log.e(LOG_TAG, response.toString());
 
-        if (response == null || response.length < 1) {
-            return null;
-        } else {
-            Log.d(LOG_TAG, "Displaying " + response.length + " colleges.");
-            List<ModelsClubListResponse> clubList = Arrays.asList(response);
-            return clubList.get(0).getList();
-        }
-    }
-
+          if (response == null || response.length < 1) {
+              return null;
+          } else {
+              Log.d(LOG_TAG, "Displaying " + response.length + " colleges.");
+              List<ModelsClubListResponse> clubList = Arrays.asList(response);
+              return clubList.get(0).getList();
+          }
+      }
+  */
     private boolean isSignedIn() {
         if (!Strings.isNullOrEmpty(mEmailAccount)) {
             return true;
@@ -253,11 +274,13 @@ public class CreatePostActivity extends AppCompatActivity {
             "photo" ->
             "time" -> "04:29:51"
             "title" ->*/
-
           /*  from_pid,club_id,title,description,likers(not compulsory),date(eg 2012-02-12),time(11:12:12)*/
 
             List<NameValuePair> param = new ArrayList<NameValuePair>();
-            String url = WebServiceDetails.DEFAULT_BASE_URL + "eventEntry";
+            String url = WebServiceDetails.DEFAULT_BASE_URL + "postEntry";
+            Log.e("post Enrty url", "" + url);
+            Log.e("request", "" + jsonObject.toString());
+
             new WebRequestTask(CreatePostActivity.this, param, _handler, WebRequestTask.POST, jsonObject, WebServiceDetails.PID_CREATE_POST,
                     true, url).execute();
 
@@ -268,7 +291,7 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
 
-    public void createPost(ModelsPostMiniForm postMiniForm) {
+  /*  public void createPost(ModelsPostMiniForm postMiniForm) {
         if (!isSignedIn()) {
             Toast.makeText(CreatePostActivity.this, "You must sign in for this action.", Toast.LENGTH_LONG).show();
             return;
@@ -314,13 +337,15 @@ public class CreatePostActivity extends AppCompatActivity {
                 };
         createFeed.execute((ModelsPostMiniForm) postMiniForm);
     }
-
+*/
 
     public void webApiCreateEvent(JSONObject jsonObject) {
 
 
         List<NameValuePair> param = new ArrayList<NameValuePair>();
         String url = WebServiceDetails.DEFAULT_BASE_URL + "eventEntry";
+        Log.e("event entry  url", "" + url);
+        Log.e("request", "" + jsonObject.toString());
         new WebRequestTask(CreatePostActivity.this, param, _handler, WebRequestTask.POST, jsonObject, WebServiceDetails.PID_CREATE_EVENT,
                 true, url).execute();
 
@@ -378,6 +403,57 @@ public class CreatePostActivity extends AppCompatActivity {
         createEvent.execute((ModelsEventMiniForm) eventMiniForm);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        try {
+
+
+            // ATTENTION: This was auto-generated to implement the App Indexing API.
+            // See https://g.co/AppIndexing/AndroidStudio for more information.
+            client.connect();
+            Action viewAction = Action.newAction(
+                    Action.TYPE_VIEW, // TODO: choose an action type.
+                    "CreatePost Page", // TODO: Define a title for the content shown.
+                    // TODO: If you have web page content that matches this app activity's content,
+                    // make sure this auto-generated web page URL is correct.
+                    // Otherwise, set the URL to null.
+                    Uri.parse("http://host/path"),
+                    // TODO: Make sure this auto-generated app deep link URI is correct.
+                    Uri.parse("android-app://com.campusconnect.activity/http/host/path")
+            );
+            AppIndex.AppIndexApi.start(client, viewAction);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        try {
+
+            // ATTENTION: This was auto-generated to implement the App Indexing API.
+            // See https://g.co/AppIndexing/AndroidStudio for more information.
+            Action viewAction = Action.newAction(
+                    Action.TYPE_VIEW, // TODO: choose an action type.
+                    "CreatePost Page", // TODO: Define a title for the content shown.
+                    // TODO: If you have web page content that matches this app activity's content,
+                    // make sure this auto-generated web page URL is correct.
+                    // Otherwise, set the URL to null.
+                    Uri.parse("http://host/path"),
+                    // TODO: Make sure this auto-generated app deep link URI is correct.
+                    Uri.parse("android-app://com.campusconnect.activity/http/host/path")
+            );
+            AppIndex.AppIndexApi.end(client, viewAction);
+            client.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public class ViewPagerAdapter_CreatePost extends FragmentPagerAdapter {
 
         CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter_home is created
@@ -398,14 +474,14 @@ public class CreatePostActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
 
             //TODO removed old api here
-           // webApiGetGroups();
-              CreatePostActivity.this.getGroups();
-            Fragment fragment=null;
+            webApiGetGroups();
+            // CreatePostActivity.this.getGroups();
+            Fragment fragment = null;
             if (position == 0) {
-                fragment= new FragmentPostEvent();
+                fragment = new FragmentPostEvent();
                 return fragment;
             } else if (position == 1) {
-                fragment= new FragmentPostNews();
+                fragment = new FragmentPostNews();
                 return fragment;
             }
             return fragment;
@@ -428,18 +504,55 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
 
+    private void performCrop(String picUri) {
+        try {
+            //Start Crop Activity
+
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            // indicate image type and Uri
+            File f = new File(picUri);
+            Uri contentUri = Uri.fromFile(f);
+
+            cropIntent.setDataAndType(contentUri, "image/*");
+            // set crop properties
+            cropIntent.putExtra("crop", "true");
+            // indicate aspect of desired crop
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            // indicate output X and Y
+            cropIntent.putExtra("outputX", 280);
+            cropIntent.putExtra("outputY", 280);
+
+            // retrieve data on return
+            cropIntent.putExtra("return-data", true);
+            // start the activity - we handle returning in onActivityResult
+            startActivityForResult(cropIntent, RESULT_CROP);
+        }
+        // respond to users whose devices do not support the crop action
+        catch (ActivityNotFoundException anfe) {
+            // display an error message
+            String errorMessage = "your device doesn't support the crop action!";
+            Toast toast = Toast.makeText(CreatePostActivity.this, errorMessage, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+
     public class FragmentPostNews extends Fragment {
         RelativeLayout group_name_post;
         TextView group_selected_text_post;
-        EditText et_title,et_post_description, et_tags;
         ImageView iv_upload;
         Button post;
-        ModelsPostMiniForm pmf = new ModelsPostMiniForm();
+        EditText et_title, et_description, et_tags;
+        GroupBean gpBean = new GroupBean();
+        //  ModelsPostMiniForm pmf = new ModelsPostMiniForm();
         int position;
         String encodedImageStr = "";
+        String Clubid = "";
 
-        private final int GALLERY_ACTIVITY_CODE = 200;
-        private final int RESULT_CROP = 400;
+        public FragmentPostNews() {
+
+        }
 
         private static final String LOG_TAG = "CreatePostActivity";
 
@@ -454,42 +567,40 @@ public class CreatePostActivity extends AppCompatActivity {
             group_selected_text_post = (TextView) v.findViewById(R.id.tv_group_name_selected_when_posting);
 
             et_title = (EditText) v.findViewById(R.id.et_post_title);
-            et_post_description = (EditText) v.findViewById(R.id.et_post_description);
-            //et_date = (EditText) v.findViewById(R.id.et_date);
-            //et_time = (EditText) v.findViewById(R.id.et_time);
+            et_description = (EditText) v.findViewById(R.id.et_post_description);
+
             et_tags = (EditText) v.findViewById(R.id.et_tags);
             iv_upload = (ImageView) v.findViewById(R.id.iv_upload);
-            post = (Button)v.findViewById(R.id.b_post);
+            post = (Button) v.findViewById(R.id.b_post);
 
             et_title.setTypeface(r_reg);
-            et_post_description.setTypeface(r_reg);
+            et_description.setTypeface(r_reg);
             et_tags.setTypeface(r_reg);
             group_selected_text_post.setTypeface(r_reg);
             post.setTypeface(r_reg);
 
-            Toast.makeText(getActivity(), "Fragment post news", Toast.LENGTH_LONG).show();
-            //et_date.setText("bsjbfjdskfjdsfkbdsk");
+            //    Toast.makeText(getActivity(), "Fragment post news", Toast.LENGTH_LONG).show();
             group_name_post.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-
                     AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                     builder.setTitle("Group:");
-                    if (CreatePostActivity.this.modelsClubMiniForms == null) {
+                    if (CreatePostActivity.this.groupList == null) {
                         group_selected_text_post.setText("Loading Groups");
                     } else {
-                        String[] groupList = new String[CreatePostActivity.this.modelsClubMiniForms.size()];
-                        for (int i = 0; i < modelsClubMiniForms.size(); i++) {
-                            groupList[i] = modelsClubMiniForms.get(i).getAbbreviation();
+                        final String[] groupList = new String[CreatePostActivity.this.groupList.size()];
+                        for (int i = 0; i < CreatePostActivity.this.groupList.size(); i++) {
+                            groupList[i] = CreatePostActivity.this.groupList.get(i).getAbb();
                         }
                         builder.setItems(groupList, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int item) {
                                 // Do something with the selection
                                 position = item;
-                                group_selected_text_post.setText(CreatePostActivity.this.modelsClubMiniForms.get(position).getAbbreviation());
-                                pmf.setClubId(CreatePostActivity.this.modelsClubMiniForms.get(position).getClubId());
-                                Log.e(LOG_TAG + "CLUB", pmf.getClubId() + " " + group_selected_text_post);
+                                group_selected_text_post.setText(CreatePostActivity.this.groupList.get(position).getAbb());
+                                // pmf.setClubId(CreatePostActivity.this.groupList.get(position).getClubId());
+                                Clubid = CreatePostActivity.this.groupList.get(position).getClubId();
+                                Log.e(LOG_TAG + "CLUB", Clubid + " " + group_selected_text_post.getText());
                             }
                         });
                         AlertDialog alert = builder.create();
@@ -503,9 +614,11 @@ public class CreatePostActivity extends AppCompatActivity {
             iv_upload.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     //Start Activity To Select Image From Gallery
-                    Intent gallery_Intent = new Intent(getApplicationContext(), GalleryUtil.class);
-                    startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
+                  /*  Intent gallery_Intent = new Intent(getApplicationContext(), GalleryUtil.class);
+                    startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);*/
                     //break;
+                    uploadImage();
+
                 }
             });
 
@@ -514,53 +627,49 @@ public class CreatePostActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     //TODO network Check
+
+
                     if (NetworkAvailablity.hasInternetConnection(CreatePostActivity.this)) {
-                        String test = et_title.getText().toString();
+
+
+                        String title = et_title.getText().toString();
                         //CreatePostActivity.post.setText(test);
                         SharedPreferences
                                 sharedPreferences = v.getContext().getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
 
-/*
+
                         Date cDate = new Date();
                         String date = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
                         String time = new SimpleDateFormat("hh:mm:ss").format(cDate);
 
-
-                        Log.e(LOG_TAG, "" + date);
-                        Log.e(LOG_TAG, "" + time);
-*/
-                        Log.e(LOG_TAG, "" + et_title.getText().toString());
-                        Log.e(LOG_TAG, "" + et_post_description.getText().toString());
-
-                        //Log.e(LOG_TAG, "" + et_date.getText().toString());
-                        //Log.e(LOG_TAG, "" + et_time.getText().toString());
-                        Log.e(LOG_TAG, "" + et_tags.getText().toString());
-                        Log.e(LOG_TAG, "" + sharedPreferences.getString(AppConstants.COLLEGE_ID, null));
-                        Log.e(LOG_TAG, "" + sharedPreferences.getString(AppConstants.PERSON_PID, null));
-
-                        Log.e(LOG_TAG, "" + pmf.getClubId());
-/*
-                        pmf.setDate(date);
+                     /*   pmf.setDate(date);
                         pmf.setTime(time);
-*/
                         pmf.setTitle(et_title.getText().toString());
-                        pmf.setDescription(et_post_description.getText().toString());
+                        pmf.setDescription(et_description.getText().toString());
                         pmf.setPhoto(encodedImageStr);
                         pmf.setFromPid(sharedPreferences.getString(AppConstants.PERSON_PID, null));
+                        pmf.getClubId();*/
 
+
+                        if (imageUrlForUpload.isEmpty() || title.isEmpty() || et_description.getText().toString().isEmpty()) {
+                            Toast.makeText(getActivity(), "Please Fill all data", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         try {
                             String pid = SharedpreferenceUtility.getInstance(CreatePostActivity.this).getString(AppConstants.PERSON_PID);
                             JSONObject jsonObject = new JSONObject();
-                          //  jsonObject.put("time", time);
-                          //  jsonObject.put("date", date);
+                            jsonObject.put("time", time);
+                            jsonObject.put("date", date);
                             jsonObject.put("title", et_title.getText().toString());
-                            jsonObject.put("description", et_post_description.getText().toString());
-                            jsonObject.put("photo", encodedImageStr);
+                            jsonObject.put("description", et_description.getText().toString());
+                            jsonObject.put("photo", "" + imageUrlForUpload);
                             jsonObject.put("from_pid", pid);
-                            jsonObject.put("clud_id", pid);
+                            jsonObject.put("club_id", Clubid);
+                           /* jsonObject.put("clud_id", groupList.get(position).getClubId());*/
 
-                            //    webApiCreatePost(jsonObject);
+
+                            webApiCreatePost(jsonObject);
 
 
                         } catch (Exception e) {
@@ -568,7 +677,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         }
 
 
-                        CreatePostActivity.this.createPost(pmf);
+                        /*CreatePostActivity.this.createPost(pmf);*/
                     } else {
                         Toast.makeText(CreatePostActivity.this, "Network is not available.", Toast.LENGTH_SHORT).show();
                     }
@@ -579,44 +688,142 @@ public class CreatePostActivity extends AppCompatActivity {
             return v;
         }
 
+        void showAlertDialog(final File imageFile) {
 
-        private void performCrop(String picUri) {
-            try {
-                //Start Crop Activity
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreatePostActivity.this);
+            alertDialog.setTitle("Select image");
+            alertDialog.setMessage("Do you want to select this image?");
+            // Setting Positive "Yes" Button
+            alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    new Blob(getContext(), imageFile).execute();
+                }
+            });
+            // Setting Negative "NO" Button
+            alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
 
-                Intent cropIntent = new Intent("com.android.camera.action.CROP");
-                // indicate image type and Uri
-                File f = new File(picUri);
-                Uri contentUri = Uri.fromFile(f);
-
-                cropIntent.setDataAndType(contentUri, "image/*");
-                // set crop properties
-                cropIntent.putExtra("crop", "true");
-                // indicate aspect of desired crop
-                cropIntent.putExtra("aspectX", 1);
-                cropIntent.putExtra("aspectY", 1);
-                // indicate output X and Y
-                cropIntent.putExtra("outputX", 280);
-                cropIntent.putExtra("outputY", 280);
-
-                // retrieve data on return
-                cropIntent.putExtra("return-data", true);
-                // start the activity - we handle returning in onActivityResult
-                startActivityForResult(cropIntent, RESULT_CROP);
-            }
-            // respond to users whose devices do not support the crop action
-            catch (ActivityNotFoundException anfe) {
-                // display an error message
-                String errorMessage = "your device doesn't support the crop action!";
-                Toast toast = Toast.makeText(CreatePostActivity.this, errorMessage, Toast.LENGTH_SHORT);
-                toast.show();
-            }
         }
 
+        void uploadImage() {
+            final CharSequence[] items = {"Take Photo", "Choose from Library",
+                    "Cancel"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Add Photo!");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+                    if (items[item].equals("Take Photo")) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, 0);
+                    } else if (items[item].equals("Choose from Library")) {
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        startActivityForResult(
+                                Intent.createChooser(intent, "Select File"), 1);
+                    } else if (items[item].equals("Cancel")) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+            builder.show();
+
+        }
+
+        public byte[] getBytesFromBitmap(Bitmap bitmap) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+            return stream.toByteArray();
+        }
+
+        public Uri getImageUri(Context inContext, Bitmap inImage) {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "image", null);
+            return Uri.parse(path);
+        }
+
+        public String getPath(Uri uri, Activity activity) {
+            String[] projection = {MediaStore.MediaColumns.DATA};
+            @SuppressWarnings("deprecation")
+            Cursor cursor = activity
+                    .managedQuery(uri, projection, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+
+        /*    public String getRealPathFromURI(Uri uri) {
+                Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+                cursor.moveToFirst();
+                int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                return cursor.getString(idx);
+            }*/
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-            if (requestCode == GALLERY_ACTIVITY_CODE) {
+
+            Bitmap bitmap = null;
+
+            switch (requestCode) {
+                case 0:
+                    try {
+                        bitmap = (Bitmap) data.getExtras().get("data");
+                        //  _addPhotoBitmap = bitmap;
+                        iv_upload.setImageBitmap(bitmap);
+                        iv_upload.setScaleType(ImageView.ScaleType.FIT_XY);
+
+                       /* ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        byte[] _byteArray = baos.toByteArray();
+                        encodedImageStr = Base64.encodeToString(_byteArray, Base64.DEFAULT);*/
+
+                        Uri selectedImageUri = getImageUri(getContext(), bitmap);
+                        File finalFile = new File(getPath(selectedImageUri, getActivity()));
+                        if (finalFile.exists()) {
+                            showAlertDialog(finalFile);
+                        }
+
+
+                    } catch (OutOfMemoryError e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case 1:
+                    try {
+                        Uri selectedImageUri = data.getData();
+                        String tempPath = getPath(selectedImageUri, getActivity());
+                        File finalFile = new File(getPath(selectedImageUri, getActivity()));
+                        if (finalFile.exists()) {
+                            showAlertDialog(finalFile);
+
+                        }
+                        Bitmap bm;
+                        BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+                        bm = BitmapFactory.decodeFile(tempPath, btmapOptions);
+                        iv_upload.setImageBitmap(bm);
+                        encodedImageStr = Base64.encodeToString(getBytesFromBitmap(bm), Base64.NO_WRAP);
+
+                    } catch (OutOfMemoryError e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "Image size is too large.Please upload small image.", Toast.LENGTH_SHORT).show();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+
+
+           /* if (requestCode == GALLERY_ACTIVITY_CODE) {
                 if (resultCode == Activity.RESULT_OK) {
                     String picturePath = data.getStringExtra("picturePath");
                     //perform Crop on the Image Selected from Gallery
@@ -638,6 +845,7 @@ public class CreatePostActivity extends AppCompatActivity {
                     iv_upload.setScaleType(ImageView.ScaleType.CENTER);
                 }
             }
+        }*/
         }
     }
 
@@ -645,19 +853,18 @@ public class CreatePostActivity extends AppCompatActivity {
 
         RelativeLayout group_name_post;
         TextView group_selected_text_post;
-        ModelsEventMiniForm eventMiniForm = new ModelsEventMiniForm();
-        EditText et_title,et_post_description,et_date,et_time,et_venue,et_tags;
-        TextView s_date, e_date, s_time, e_time;
-        ImageView dropdown_indicator;
+        // ModelsEventMiniForm eventMiniForm = new ModelsEventMiniForm();
+        EditText et_title, et_post_description, et_tags, et_venue;
         int position;
         Button post;
-
+        TextView s_date, e_date, s_time, e_time, et_end_time;
         Calendar myCalendar_s_date, myCalendar_e_date;
-        Context context;
         DatePickerDialog.OnDateSetListener start_date, end_date;
         int start_hour, start_min;
-
-        String test;
+        Context context;
+        ImageView iv_upload;
+        String encodedImageStr = "";
+        String clubid = "";
 
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -665,20 +872,21 @@ public class CreatePostActivity extends AppCompatActivity {
 
             Typeface r_reg = Typeface.createFromAsset(v.getContext().getAssets(), "font/Roboto_Regular.ttf");
 
-            context = v.getContext();
-
             group_name_post = (RelativeLayout) v.findViewById(R.id.group_select_when_posting);
             group_selected_text_post = (TextView) v.findViewById(R.id.tv_group_name_selected_when_posting);
-
             et_title = (EditText) v.findViewById(R.id.et_post_title);
             et_post_description = (EditText) v.findViewById(R.id.et_post_description);
+            post = (Button) v.findViewById(R.id.b_post);
+
             s_date = (TextView) v.findViewById(R.id.et_start_date);
             e_date = (TextView) v.findViewById(R.id.et_end_date);
             s_time = (TextView) v.findViewById(R.id.et_start_time);
             e_time = (TextView) v.findViewById(R.id.et_end_time);
             et_tags = (EditText) v.findViewById(R.id.et_tags);
-            dropdown_indicator = (ImageView) v.findViewById(R.id.iv_downarrow);
-            post = (Button) v.findViewById(R.id.b_post);
+            et_end_time = (TextView) v.findViewById(R.id.et_end_time);
+            et_venue = (EditText) v.findViewById(R.id.et_venue);
+            iv_upload = (ImageView) v.findViewById(R.id.iv_upload);
+            context = v.getContext();
 
             et_title.setTypeface(r_reg);
             et_post_description.setTypeface(r_reg);
@@ -690,9 +898,8 @@ public class CreatePostActivity extends AppCompatActivity {
             group_selected_text_post.setTypeface(r_reg);
             post.setTypeface(r_reg);
 
-            Toast.makeText(getActivity(), "Fragment post", Toast.LENGTH_LONG).show();
+            //  Toast.makeText(getActivity(), "Fragment post", Toast.LENGTH_LONG).show();
 
-            if(flag_coming_from_group_page==0) {
             group_name_post.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -700,19 +907,20 @@ public class CreatePostActivity extends AppCompatActivity {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                     builder.setTitle("Group:");
-                    if (CreatePostActivity.this.modelsClubMiniForms == null) {
+                    if (CreatePostActivity.this.groupList == null) {
                         group_selected_text_post.setText("Loading Groups");
                     } else {
-                        String[] groupList = new String[CreatePostActivity.this.modelsClubMiniForms.size()];
-                        for (int i = 0; i < modelsClubMiniForms.size(); i++) {
-                            groupList[i] = modelsClubMiniForms.get(i).getAbbreviation();
+                        final String[] groupList = new String[CreatePostActivity.this.groupList.size()];
+                        for (int i = 0; i < CreatePostActivity.this.groupList.size(); i++) {
+                            groupList[i] = CreatePostActivity.this.groupList.get(i).getAbb();
                         }
                         builder.setItems(groupList, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int item) {
                                 position = item;
-                                group_selected_text_post.setText(CreatePostActivity.this.modelsClubMiniForms.get(position).getAbbreviation());
-                                eventMiniForm.setClubId(CreatePostActivity.this.modelsClubMiniForms.get(position).getClubId());
-                                Log.e(LOG_TAG + "CLUB", eventMiniForm.getClubId() + " " + group_selected_text_post);
+                                group_selected_text_post.setText(CreatePostActivity.this.groupList.get(position).getAbb());
+                                //eventMiniForm.setClubId(CreatePostActivity.this.groupList.get(position).getClubId());
+                                clubid = CreatePostActivity.this.groupList.get(position).getClubId();
+                                Log.e(LOG_TAG + "CLUB", clubid + " " + group_selected_text_post);
                             }
                         });
                         AlertDialog alert = builder.create();
@@ -720,14 +928,12 @@ public class CreatePostActivity extends AppCompatActivity {
                     }
                 }
             });
-            }
-            else
-            {
-                flag_coming_from_group_page = 0;
-                group_selected_text_post.setText(group_name_from_group_page);
-                dropdown_indicator.setVisibility(View.GONE);
-            }
 
+            iv_upload.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    uploadImage();
+                }
+            });
 
 
             post.setOnClickListener(new View.OnClickListener() {
@@ -740,22 +946,19 @@ public class CreatePostActivity extends AppCompatActivity {
                         String test = et_title.getText().toString();
                         SharedPreferences
                                 sharedPreferences = v.getContext().getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
-
-
                         Date cDate = new Date();
                         String date = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
                         String time = new SimpleDateFormat("hh:mm:ss").format(cDate);
 
+                        Log.e(LOG_TAG, "" + date);
+                        Log.e(LOG_TAG, "" + time);
+                        Log.e(LOG_TAG, "" + et_title.getText().toString());
+                        Log.e(LOG_TAG, "" + et_post_description.getText().toString());
 
-                        Log.e(LOG_TAG,""+ date);
-                        Log.e(LOG_TAG,""+ time);
-                        Log.e(LOG_TAG,""+ et_title.getText().toString());
-                        Log.e(LOG_TAG, ""+et_post_description.getText().toString());
+                        Log.e(LOG_TAG, "" + sharedPreferences.getString(AppConstants.COLLEGE_ID, null));
+                        Log.e(LOG_TAG, "" + sharedPreferences.getString(AppConstants.PERSON_PID, null));
 
-                        Log.e(LOG_TAG,""+ sharedPreferences.getString(AppConstants.COLLEGE_ID, null));
-                        Log.e(LOG_TAG,""+ sharedPreferences.getString(AppConstants.PERSON_PID, null));
-
-                        Log.e(LOG_TAG,""+ eventMiniForm.getClubId());
+                       /* Log.e(LOG_TAG, "" + eventMiniForm.getClubId());
 
 
                         //eventMiniForm.setClubId();
@@ -770,12 +973,11 @@ public class CreatePostActivity extends AppCompatActivity {
                         //eventMiniForm.setEndTime();
                         eventMiniForm.setEventCreator(sharedPreferences.getString(AppConstants.PERSON_PID, null));
                         //eventMiniForm.setTags();
-                        eventMiniForm.setIsAlumni(sharedPreferences.getString(AppConstants.ALUMNI, null));
-                         //eventMiniForm.setTitle();
+                        eventMiniForm.setIsAlumni(sharedPreferences.getString(AppConstants.ALUMNI, null));*/
+                        //eventMiniForm.setTitle();
                         //eventMiniForm.setVenue();
                         //eventMiniForm.set
                         try {
-
                             /*title,
                             description
                             ,clubId
@@ -790,37 +992,119 @@ public class CreatePostActivity extends AppCompatActivity {
                             attendees(PID)
                             ,tags
                             ,views*/
+/*
+                            {
+                                "club_id": "6281948016148480",
+                                    "date": "2015-12-03",
+                                    "description": "test description",
+                                    "completed": "No",
+                                    "end_date": "2015-12-03",
+                                    "start_date": "2015-12-03",
+                                    "end_time": "15:00:00",
+                                    "venue": "SAC",
+                                    "title": "Event1",
+                                    "isAlumni": "No",
+                                    "time": "15:00:00",
+                                    "start_time": "12:00:00",
+                                    "event_creator": "4834276138811392"
+                            }*/
+
+
+
+                        /*    {
+                                "status": "2",
+                                    "text": "Could not insert",
+                                    "kind": "clubs#resourcesItem",
+                                    "etag": "\"KF6I-46FHtkmq1NnKBWjgYzpvcs/4_4CPmnvJ9H91631TVAP57KBGqA\""
+                            }
+*/
                             String pid = SharedpreferenceUtility.getInstance(getActivity()).getString(AppConstants.PERSON_PID);
+                            String isAlumni = SharedpreferenceUtility.getInstance(getActivity()).getString(AppConstants.ALUMNI);
+                            if (isAlumni.equalsIgnoreCase("") || isAlumni.isEmpty()) {
+                                isAlumni = "N";
+                            }
                             JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("title", et_title.getText().toString());
-                            jsonObject.put("description", ""+et_post_description.getText().toString());
-                            jsonObject.put("clubId", ""+eventMiniForm.getClubId());
-                            jsonObject.put("views", "");
-                            jsonObject.put("event_creator", ""+pid);
-                            jsonObject.put("venue", "indore");
-                            jsonObject.put("date", "11-12-2015");
-                            jsonObject.put("time", "12:25 Am");
-                            jsonObject.put("start_time", "12:25 Am");
-                            jsonObject.put("start_date", "12-12-2015");
-                            jsonObject.put("end_time", "");
-                            jsonObject.put("attendees", "225315151");
-                            jsonObject.put("tags", "gfhgfhfgh");
-                            jsonObject.put("views", "fghfghfgfg");
+                      /*      jsonObject.put("title", et_title.getText().toString());
+                            jsonObject.put("description", "" + et_post_description.getText().toString());
+                            jsonObject.put("club_id", "" + clubid);
+                            jsonObject.put("views", "2");
+                            jsonObject.put("event_creator", "" + pid);
+                            jsonObject.put("venue", "" + et_venue.getText().toString());
+                            jsonObject.put("date", "" + date);
+                            jsonObject.put("time", "" + time);
+
+                            String startDate = s_date.getText().toString();
+                            String endDate = e_date.getText().toString();
+                            startDate.replace("/", "-");
+                            jsonObject.put("start_time", "" + s_time.getText().toString());
+                            jsonObject.put("start_date", "" + startDate);
+                            jsonObject.put("end_time", "" + et_end_time.getText().toString());
+                            jsonObject.put("attendees", "" + pid);
+                            jsonObject.put("end_date", "" + endDate);
+                            jsonObject.put("tags", "" + et_tags.getText().toString());
+                            jsonObject.put("views", "0");
+                            jsonObject.put("isAlumni", "" + isAlumni);
+                            jsonObject.put("completed", "N");
+                            jsonObject.put("photo", "" + encodedImageStr);*/
 
 
+                            /* "club_id": "6281948016148480",
+                                    "date": "2015-12-03",
+                                    "description": "test description",
+                                    "completed": "No",
+                                    "end_date": "2015-12-03",
+                                    "start_date": "2015-12-03",
+                                    "end_time": "15:00:00",
+                                    "venue": "SAC",
+                                    "title": "Event1",
+                                    "isAlumni": "No",
+                                    "time": "15:00:00",
+                                    "start_time": "12:00:00",
+                                    "event_creator": "4834276138811392"*/
 
+
+                            String startDate = s_date.getText().toString();
+                            String endDate = e_date.getText().toString();
+                            startDate = startDate.replaceAll("/", "-");
+                            startDate = startDate.replaceAll("\\/", "");
+                            endDate = endDate.replace("/", "-");
+                            endDate = endDate.replaceAll("\\/", "");
+                            String vanue = et_venue.getText().toString();
+                            String s_timestr = s_time.getText().toString();
+                            String title = et_title.getText().toString();
+                            String description = et_post_description.getText().toString();
+                            String endTime = e_time.getText().toString();
+
+                            if (title.isEmpty() || vanue.isEmpty() || description.isEmpty() || endTime.isEmpty() || s_timestr.isEmpty()
+                                    || startDate.isEmpty() || endDate.isEmpty() || clubid.isEmpty() || imageUrlForUpload.isEmpty()
+                                    ) {
+                                Toast.makeText(getActivity(), "Please fill all data", Toast.LENGTH_SHORT).show();
+                            }
+                            jsonObject.put("club_id", "" + clubid);
+                            jsonObject.put("date", "" + date);
+                            jsonObject.put("description", description);
+                            jsonObject.put("completed", "No");
+                            jsonObject.put("end_date", "" + endDate);
+                            jsonObject.put("start_date", "" + startDate);
+                            jsonObject.put("end_time", "" + endTime);
+                            jsonObject.put("venue", "" + vanue);
+                            jsonObject.put("title", "" + title);
+                            jsonObject.put("isAlumni", "" + isAlumni);
+                            jsonObject.put("time", "" + time);
+                            jsonObject.put("start_time", "" + s_timestr);
+                            jsonObject.put("event_creator", "" + pid);
+                            jsonObject.put("photo", "" + imageUrlForUpload);
+                            /* calling webserivice here*/
                             webApiCreateEvent(jsonObject);
-
                         } catch (Exception e) {
 
                         }
-                        CreatePostActivity.this.createEvent(eventMiniForm);
+                        //  CreatePostActivity.this.createEvent(eventMiniForm);
                     } else {
                         Toast.makeText(CreatePostActivity.this, "Network is not available.", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-
 
             myCalendar_s_date = Calendar.getInstance();
             myCalendar_e_date = Calendar.getInstance();
@@ -911,7 +1195,6 @@ public class CreatePostActivity extends AppCompatActivity {
 
                 }
             });
-
             e_time.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -924,16 +1207,15 @@ public class CreatePostActivity extends AppCompatActivity {
                     mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                            if(selectedHour>start_hour)
+                            if (selectedHour > start_hour)
                                 e_time.setText("" + selectedHour + ":" + selectedMinute);
-                            else if(selectedHour==start_hour){
-                                if(selectedMinute>start_min)
+                            else if (selectedHour == start_hour) {
+                                if (selectedMinute > start_min)
                                     e_time.setText("" + selectedHour + ":" + selectedMinute);
                                 else
                                     Toast.makeText(getActivity().getApplicationContext(), "The end time you entered occurred before the start time.",
                                             Toast.LENGTH_SHORT).show();
-                            }
-                            else
+                            } else
                                 Toast.makeText(getActivity().getApplicationContext(), "The end time you entered occurred before the start time.",
                                         Toast.LENGTH_SHORT).show();
                         }
@@ -943,38 +1225,171 @@ public class CreatePostActivity extends AppCompatActivity {
 
                 }
             });
-
-
             return v;
         }
 
-        private void updateLabel_start() {
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == GALLERY_ACTIVITY_CODE) {
+                if (resultCode == Activity.RESULT_OK) {
+                    String picturePath = data.getStringExtra("picturePath");
+                    //perform Crop on the Image Selected from Gallery
+                    performCrop(picturePath);
+                }
+            }
 
-            String myFormat = "MM/dd/yy"; //In which you need put here
+            Bitmap bitmap = null;
+            switch (requestCode) {
+                case 0:
+                    try {
+                        bitmap = (Bitmap) data.getExtras().get("data");
+                        //  _addPhotoBitmap = bitmap;
+                        iv_upload.setImageBitmap(bitmap);
+                        iv_upload.setScaleType(ImageView.ScaleType.FIT_XY);
+
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        byte[] _byteArray = baos.toByteArray();
+                        encodedImageStr = Base64.encodeToString(_byteArray, Base64.DEFAULT);
+
+
+                        Uri selectedImageUri = getImageUri(getContext(), bitmap);
+                        File finalFile = new File(getPath(selectedImageUri, getActivity()));
+                        if (finalFile.exists()) {
+                            showAlertDialog(finalFile);
+                        }
+                    } catch (OutOfMemoryError e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case 1:
+                    try {
+                        Uri selectedImageUri = data.getData();
+                        String tempPath = getPath(selectedImageUri, getActivity());
+                        File finalFile = new File(tempPath);
+                        if (finalFile.exists()) {
+                            showAlertDialog(finalFile);
+                        }
+
+                        Bitmap bm;
+                        BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+                        bm = BitmapFactory.decodeFile(tempPath, btmapOptions);
+                        iv_upload.setImageBitmap(bm);
+                        encodedImageStr = Base64.encodeToString(getBytesFromBitmap(bm), Base64.NO_WRAP);
+
+                    } catch (OutOfMemoryError e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "Image size is too large.Please upload small image.", Toast.LENGTH_SHORT).show();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+        }
+
+
+        void uploadImage() {
+            final CharSequence[] items = {"Take Photo", "Choose from Library",
+                    "Cancel"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Add Photo!");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+                    if (items[item].equals("Take Photo")) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, 0);
+                    } else if (items[item].equals("Choose from Library")) {
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        startActivityForResult(
+                                Intent.createChooser(intent, "Select File"), 1);
+                    } else if (items[item].equals("Cancel")) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+            builder.show();
+
+        }
+
+
+        public Uri getImageUri(Context inContext, Bitmap inImage) {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "image", null);
+            return Uri.parse(path);
+        }
+
+        public byte[] getBytesFromBitmap(Bitmap bitmap) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+            return stream.toByteArray();
+        }
+
+        public String getPath(Uri uri, Activity activity) {
+            String[] projection = {MediaStore.MediaColumns.DATA};
+            @SuppressWarnings("deprecation")
+            Cursor cursor = activity
+                    .managedQuery(uri, projection, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+
+        private void updateLabel_start() {
+            /*String myFormat = "MM/dd/yy"*/
+            String myFormat = "YY/MM/DD"; //In which you need put here
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-            if(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) > myCalendar_s_date.get(Calendar.DAY_OF_MONTH)) {
+            if (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) > myCalendar_s_date.get(Calendar.DAY_OF_MONTH)) {
                 s_date.setText("");
                 Toast.makeText(getActivity().getApplicationContext(), "The start date you entered occurred before the current date.",
                         Toast.LENGTH_SHORT).show();
-            }
-            else
+            } else
                 s_date.setText(sdf.format(myCalendar_s_date.getTime()));
 
         }
+
+
+        void showAlertDialog(final File imageFile) {
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreatePostActivity.this);
+            alertDialog.setTitle("Select image");
+            alertDialog.setMessage("Do you want to select this image?");
+            // Setting Positive "Yes" Button
+            alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    new Blob(getContext(), imageFile).execute();
+                }
+            });
+            // Setting Negative "NO" Button
+            alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+
+        }
+
         private void updateLabel_end() {
 
-            String myFormat = "MM/dd/yy"; //In which you need put here
+            String myFormat = "YY/MM/DD"; //In which you need put here
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-            if(myCalendar_s_date.get(Calendar.DAY_OF_MONTH) > myCalendar_e_date.get(Calendar.DAY_OF_MONTH)) {
+            if (myCalendar_s_date.get(Calendar.DAY_OF_MONTH) > myCalendar_e_date.get(Calendar.DAY_OF_MONTH)) {
                 e_date.setText("");
                 Toast.makeText(getActivity().getApplicationContext(), "The end date you entered occurred before the start date.",
                         Toast.LENGTH_SHORT).show();
-            }
-            else
+            } else
                 e_date.setText(sdf.format(myCalendar_e_date.getTime()));
         }
-
 
     }
 
@@ -1011,9 +1426,7 @@ public class CreatePostActivity extends AppCompatActivity {
                                         bean.setDescription(description);
                                         groupList.add(bean);
                                     }
-
                                 }
-
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -1021,13 +1434,55 @@ public class CreatePostActivity extends AppCompatActivity {
                         }
                         break;
                         case WebServiceDetails.PID_CREATE_POST: {
+                            try {
+                                JSONObject createPost = new JSONObject(strResponse);
+                                String status = createPost.optString("status");
+                                String text = createPost.optString("text");
+                                //    Toast.makeText(CreatePostActivity.this, "" + text, Toast.LENGTH_SHORT).show();
 
+                                if (status.equals("1")) {
+                                    Toast.makeText(CreatePostActivity.this, "Your News has been posted" + text, Toast.LENGTH_SHORT).show();
+                                    CreatePostActivity.this.finish();
+                                } else if (status.equals("2")) {
+                                    Toast.makeText(CreatePostActivity.this, "Your News has been sent to admin for approval" + text, Toast.LENGTH_SHORT).show();
+                                } else if (status.equals("3")) {
+                                    Toast.makeText(CreatePostActivity.this, "Invalid Entries, please check" + text, Toast.LENGTH_SHORT).show();
 
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                         break;
-                        case WebServiceDetails.PID_CREATE_EVENT:
+                        case WebServiceDetails.PID_CREATE_EVENT: {
+                           /* "status": "2",
+                                    "text": "Could not insert",
+                                    "kind": "clubs#resourcesItem",
+                                    "etag": "\"JLMOwqwHg7-XCgdx_V36F7oMtu8/4_4CPmnvJ9H91631TVAP57KBGqA\""*/
+                            try {
 
-                            break;
+                                JSONObject grpJson = new JSONObject(strResponse);
+
+                                String status = grpJson.optString("status");
+                                String text = grpJson.optString("text");
+                                //  Toast.makeText(CreatePostActivity.this, "" + text, Toast.LENGTH_SHORT).show();
+                                if (status.equals("1")) {
+                                    Toast.makeText(CreatePostActivity.this, "Your Event has been posted" + text, Toast.LENGTH_SHORT).show();
+                                    CreatePostActivity.this.finish();
+                                } else if (status.equals("2")) {
+                                    Toast.makeText(CreatePostActivity.this, "Your Event has been sent to admin for approval" + text, Toast.LENGTH_SHORT).show();
+                                } else if (status.equals("3")) {
+                                    Toast.makeText(CreatePostActivity.this, "Invalid Entries, please check" + text, Toast.LENGTH_SHORT).show();
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                        break;
                         default:
                             break;
                     }
@@ -1039,5 +1494,100 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         }
     };
+
+    public class Blob extends AsyncTask<Void, Integer, String> {
+        String url;
+        File imageFIle;
+
+        public Blob(String Url) {
+            this.url = Url;
+        }
+
+        private ProgressDialog dialog;
+        private Context context;
+        private Handler handler;
+        public static final int POST = 1;
+        private boolean showDialog;
+        String responseStringfianl;
+
+        private int type;
+
+
+        public Blob(Context context, File imageFIle) {
+            this.context = context;
+            this.url = url;
+            this.imageFIle = imageFIle;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            try {
+                dialog = new ProgressDialog(context);
+                dialog.setCancelable(false);
+                dialog.setMessage("Please wait...");
+                dialog.show();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                if (dialog != null)
+                    dialog.dismiss();
+                super.onPostExecute(result);
+
+                imageUrlForUpload = result;
+
+                Toast.makeText(context, "" + result, Toast.LENGTH_SHORT).show();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpGet httpget = new HttpGet("http://campus-connect-2015.appspot.com/get_upload_url");
+                httpget.setHeader("Content-Type", "application/json");
+                httpget.setHeader("Accept-Encoding", "gzip");
+                //  httpget.setHeader("");
+                //  entity.setContentType("application/x-www-form-urlencoded;charset=UTF-8");//text/plain;charset=UTF-8
+                HttpResponse response = httpClient.execute(httpget);
+                int responsecode = response.getStatusLine().getStatusCode();
+                String responseString = EntityUtils.toString(response.getEntity());
+                Log.v("", "responsessdf : " + responseString);
+                if (responseString != null) {
+                    SharedpreferenceUtility.getInstance(context).putString(AppConstants.BLOB_URL, responseString);
+                }
+
+
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost httppost = new HttpPost(responseString);
+                String BOUNDARY = "Boundary-8B33EF29-2436-47F6-A415-62EF61F62D14";
+
+                FileBody fileBody = new FileBody(imageFIle);
+                MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, BOUNDARY, Charset.defaultCharset());
+                entity.addPart("file", fileBody);
+                httppost.setEntity(entity);
+                HttpResponse response1 = httpclient.execute(httppost);
+                responseStringfianl = EntityUtils.toString(response1.getEntity());
+                Log.e("response String", responseStringfianl.toString());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return responseStringfianl;
+        }
+
+
+    }
+
 
 }

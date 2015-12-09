@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.campusconnect">
 
+    <permission
+        android:name="android.permission.WAKE_LOCK"
+        android:protectionLevel="signatureOrSystem" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -14,8 +19,36 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.google.cloud.samples.campusconnect" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".gcm.MyGcmListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".gcm.MyInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name=".gcm.RegistrationIntentService"
+            android:exported="false">
+        </service>
         <activity
             android:name=".activity.MainActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name">
          <!--  <intent-filter>
                 <action android:name="android.intent.action.MAIN"></action>
@@ -26,25 +59,35 @@
         <activity
             android:name="com.campusconnect.activity.CreateGroupActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden"></activity>
         <activity
             android:name="com.campusconnect.activity.GroupPageActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"></activity>
         <activity
             android:name="com.campusconnect.activity.InEventActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"></activity>
 
         <activity
             android:name="com.campusconnect.activity.AdminPageActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"></activity>
         <activity
             android:name="com.campusconnect.activity.RequestsPage_InAdminActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"></activity>
         <activity
             android:name="com.campusconnect.activity.GroupMembersPage_InAdminActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"></activity>
         <activity
             android:name="com.campusconnect.activity.SelectCollegeActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name=".activity.FlashActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,22 +96,19 @@
         </activity>
         <activity
             android:name="com.campusconnect.activity.GoogleSignin"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"></activity>
         <activity
             android:name="com.campusconnect.activity.CategoryActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"></activity>
         <activity
             android:name="com.campusconnect.activity.GetProfileDetailsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"></activity>
         <activity
             android:name="com.campusconnect.activity.Signup_2Activity"
-            android:label="@string/app_name"></activity>
-        <activity
-            android:name="com.campusconnect.activity.CreatePostActivity"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
-        <activity
-            android:name="com.campusconnect.utility.GalleryUtil"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"></activity>
         <activity
             android:name="com.campusconnect.activity.AboutGroupActivity"
@@ -90,6 +130,15 @@
             android:name="com.campusconnect.activity.PreviousEventsActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name="com.campusconnect.activity.CreatePostActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
     </application>
 

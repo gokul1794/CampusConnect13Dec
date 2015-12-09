@@ -7,7 +7,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -47,7 +46,7 @@ public class GroupMembersByGroupActivity extends ActionBarActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         members_list.setLayoutManager(llm);
         members_list.setItemAnimator(new DefaultItemAnimator());
-        members_list.addItemDecoration(new DividerItemDecoration(this,LinearLayoutManager.VERTICAL));
+        members_list.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         GroupMembersByGroupAdapterActivity gm = new GroupMembersByGroupAdapterActivity(
                 createList_gm(3));
         members_list.setAdapter(gm);

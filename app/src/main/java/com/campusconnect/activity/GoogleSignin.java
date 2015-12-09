@@ -5,6 +5,7 @@ package com.campusconnect.activity;
  */
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -30,6 +31,7 @@ import com.campusconnect.R;
 import com.campusconnect.communicator.WebRequestTask;
 import com.campusconnect.communicator.WebServiceDetails;
 import com.campusconnect.constant.AppConstants;
+import com.campusconnect.gcm.RegistrationIntentService;
 import com.campusconnect.utility.NetworkAvailablity;
 import com.campusconnect.utility.SharedpreferenceUtility;
 import com.google.android.gms.common.ConnectionResult;
@@ -116,6 +118,12 @@ public class GoogleSignin extends Activity implements View.OnClickListener,
         btnRevokeAccess.setOnClickListener(this);
         temporary.setOnClickListener(this);
 
+        boolean gcmstatus = sharedpreferences.getBoolean("gcm_generated", false);
+        if (gcmstatus == false) {
+            Log.e(TAG, "here now");
+            Intent m = new Intent(GoogleSignin.this, RegistrationIntentService.class);
+            ComponentName a = startService(m);
+        }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this).
                 addConnectionCallbacks(this).
@@ -250,8 +258,8 @@ public class GoogleSignin extends Activity implements View.OnClickListener,
                 mEmailAccount = email;
 
 
-                SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.EMAIL_KEY,email);
-                SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.PERSON_NAME,personName);
+                SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.EMAIL_KEY, email);
+                SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.PERSON_NAME, personName);
 
 
               /*  SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -307,26 +315,26 @@ public class GoogleSignin extends Activity implements View.OnClickListener,
             case R.id.temporary:
                 //TODO  network check
                 if (NetworkAvailablity.hasInternetConnection(GoogleSignin.this)) {
-                 //   checkExists(v);
+                    //   checkExists(v);
                     //TODO removed old calling
-                    webApi();
+                    webApiProfile();
                 } else {
                     Toast.makeText(GoogleSignin.this, "Network is not available.", Toast.LENGTH_SHORT).show();
                 }
         }
     }
 
-    private void webApi() {
+    private void webApiProfile() {
         if (!isSignedIn()) {
             Toast.makeText(this, "You must sign in for this action.", Toast.LENGTH_LONG).show();
             return;
         }
-        JSONObject obj=new JSONObject();
-
+        JSONObject obj = new JSONObject();
         List<NameValuePair> param = new ArrayList<NameValuePair>();
         String url = WebServiceDetails.DEFAULT_BASE_URL + "profile?email=" + mEmailAccount;
-        //  Log.e(TAG ,"get profile"+url);
-        new WebRequestTask(GoogleSignin.this, param, _handler, WebRequestTask.GET,obj, WebServiceDetails.PID_GET_PROFILE,
+        Log.e(TAG, "get profile" + url);
+
+        new WebRequestTask(GoogleSignin.this, param, _handler, WebRequestTask.GET, obj, WebServiceDetails.PID_GET_PROFILE,
                 true, url).execute();
     }
 
@@ -335,8 +343,6 @@ public class GoogleSignin extends Activity implements View.OnClickListener,
             Toast.makeText(this, "You must sign in for this action.", Toast.LENGTH_LONG).show();
             return;
         }
-
-
 
 
         AsyncTask<Void, Void, ModelsProfileMiniForm> getProfile =
@@ -487,79 +493,83 @@ public class GoogleSignin extends Activity implements View.OnClickListener,
                     switch (response_code) {
                         case WebServiceDetails.PID_GET_PROFILE: {
                             try {
+                                Log.e("Profile Response", strResponse);
                                 JSONObject jsonResponse = new JSONObject(strResponse);
 
 
-                                if(strResponse!=null){
+                                if (jsonResponse.getString("success").equalsIgnoreCase("true")) {
+                                    JSONObject JsonResultObj = jsonResponse.optJSONObject("result");
 
-                                String name = jsonResponse.optString("name");
-                                String pid = jsonResponse.optString("pid");
-                                String batch = jsonResponse.optString("batch");
-                                String collegeId = jsonResponse.optString("collegeId");
-                                String phone = jsonResponse.optString("phone");
-                                String branch = jsonResponse.optString("branch");
-                                String isAlumni = jsonResponse.optString("isAlumni");
-                                String email = jsonResponse.optString("email");
-                                String kind = jsonResponse.optString("kind");
-                                String etag = jsonResponse.optString("etag");
+                                    if (strResponse != null) {
+
+                                        String name = JsonResultObj.optString("name");
+                                        String pid = JsonResultObj.optString("pid");
+                                        String batch = JsonResultObj.optString("batch");
+                                        String collegeId = JsonResultObj.optString("collegeId");
+                                        String phone = JsonResultObj.optString("phone");
+                                        String branch = JsonResultObj.optString("branch");
+                                        String isAlumni = JsonResultObj.optString("isAlumni");
+                                        String email = JsonResultObj.optString("email");
+                                        String kind = JsonResultObj.optString("kind");
+                                        String etag = JsonResultObj.optString("etag");
 
 
-                              //  String followsStr=null;
-                              //  String followsNames = null;
-                                JSONArray followArray=null;
-                                JSONArray followNamesArray=null;
-                                if(jsonResponse.has("follows")){
-                               //  followsNames=  jsonResponse.getJSONArray("follows_names").toString();
-                                    followArray=jsonResponse.getJSONArray("follows");
-                              }
-                                if(jsonResponse.has("follows_names")) {
-                                    followNamesArray=jsonResponse.getJSONArray("follows_names");
-
-                                   // followsStr = jsonResponse.getJSONArray("follows").toString();
-                                }
-
-                                SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.BATCH, batch);
-                                SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.BRANCH, branch);
-                                SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.PHONE, phone);
-                                SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.COLLEGE_ID, collegeId);
-                                SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.PERSON_PID, pid);
-                              //  SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.FOLLOW, followsStr);
-                               // SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.FOLLOW_NAMES, followsNames);
-
-                                if(isAlumni.equalsIgnoreCase("Y")){
-                                    SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.PROFILE_CATEGORY, AppConstants.ALUMNI);
-                                }else{
-                                    SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.PROFILE_CATEGORY, AppConstants.STUDENT);
-                                }
-
-                                //writing into the files
-
-                                BufferedWriter bfr = null;
-                                FileOutputStream fos = null;
-                                if (followArray != null&&followArray.length()>0) {
-                                    if (!follows.exists()) {
-                                        try {
-                                            follows.createNewFile();
-                                            Log.e(LOG_TAG, Boolean.valueOf(follows.exists()).toString());
-
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
+                                        //  String followsStr=null;
+                                        //  String followsNames = null;
+                                        JSONArray followArray = null;
+                                        JSONArray followNamesArray = null;
+                                        if (jsonResponse.has("follows")) {
+                                            //  followsNames=  jsonResponse.getJSONArray("follows_names").toString();
+                                            followArray = jsonResponse.getJSONArray("follows");
                                         }
-                                    }
-                                    try {
-                                        fos = new FileOutputStream(follows);
-                                    } catch (FileNotFoundException e) {
-                                        e.printStackTrace();
-                                    }
-                                    bfr = new BufferedWriter(new OutputStreamWriter(fos));
-                                    StringBuilder sb = new StringBuilder();
+                                        if (jsonResponse.has("follows_names")) {
+                                            followNamesArray = jsonResponse.getJSONArray("follows_names");
 
-                                    for (int i = 0; i < followArray.length(); i++) {
+                                            // followsStr = jsonResponse.getJSONArray("follows").toString();
+                                        }
 
-                                       String followstr = followArray.get(i).toString();
-                                       String followNamesStr= followNamesArray.get(i).toString();
-                                        sb.append(followstr+ "|" + followNamesStr+ "\n");
-                                    }
+                                        SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.BATCH, batch);
+                                        SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.BRANCH, branch);
+                                        SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.PHONE, phone);
+                                        SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.COLLEGE_ID, collegeId);
+                                        SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.PERSON_PID, pid);
+                                        //  SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.FOLLOW, followsStr);
+                                        // SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.FOLLOW_NAMES, followsNames);
+
+                                        if (isAlumni.equalsIgnoreCase("Y")) {
+                                            SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.PROFILE_CATEGORY, AppConstants.ALUMNI);
+                                        } else {
+                                            SharedpreferenceUtility.getInstance(GoogleSignin.this).putString(AppConstants.PROFILE_CATEGORY, AppConstants.STUDENT);
+                                        }
+
+                                        //writing into the files
+
+                                        BufferedWriter bfr = null;
+                                        FileOutputStream fos = null;
+                                        if (followArray != null && followArray.length() > 0) {
+                                            if (!follows.exists()) {
+                                                try {
+                                                    follows.createNewFile();
+                                                    Log.e(LOG_TAG, Boolean.valueOf(follows.exists()).toString());
+
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                            try {
+                                                fos = new FileOutputStream(follows);
+                                            } catch (FileNotFoundException e) {
+                                                e.printStackTrace();
+                                            }
+                                            bfr = new BufferedWriter(new OutputStreamWriter(fos));
+                                            StringBuilder sb = new StringBuilder();
+
+                                            for (int i = 0; i < followArray.length(); i++) {
+
+                                                String followstr = followArray.get(i).toString();
+                                                String followNamesStr = followNamesArray.get(i).toString();
+                                                sb.append(followstr + "|" + followNamesStr + "\n");
+                                            }
 
                                    /* for (int i = 0; i < mpList.getFollows().size(); i++) {
                                         sb.append(mpList.getFollows().get(i) + "|" + mpList.getFollowsNames().get(i) + "\n");
@@ -572,32 +582,30 @@ public class GoogleSignin extends Activity implements View.OnClickListener,
                                             sb.append(mpList.getClubNames().get(i).getClubId() + "|" + mpList.getClubNames().get(i).getName() + "\n");
                                         }
                                     }*/
-                                    try {
-                                        bfr.write(sb.toString());
-                                        bfr.close();
-                                        fos.close();
-                                        Log.e("file", "written succes");
-                                        //bfr=null;
-                                        //sb.delete(0,sb.toString().length());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                            try {
+                                                bfr.write(sb.toString());
+                                                bfr.close();
+                                                fos.close();
+                                                Log.e("file", "written succes");
+                                                //bfr=null;
+                                                //sb.delete(0,sb.toString().length());
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+
                                     }
+                                    startActivity(new Intent(GoogleSignin.this, MainActivity.class));
+                                } else {
+                                    startActivity(new Intent(GoogleSignin.this, SelectCollegeActivity.class));
                                 }
-                                startActivity(new Intent(GoogleSignin.this,MainActivity.class));
 
-                                }
-                                else{
-                                    startActivity(new Intent(GoogleSignin.this,SelectCollegeActivity.class));
-
-                                }
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
-
-
                         }
+
                         break;
 
                         default:

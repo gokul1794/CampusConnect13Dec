@@ -26,8 +26,9 @@ import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.campusconnect.R;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 /**
  * Handles the GCM notifications for the application.
  */

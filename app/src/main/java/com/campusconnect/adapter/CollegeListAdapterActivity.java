@@ -12,14 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.campusconnect.activity.CategoryActivity;
-import com.campusconnect.activity.GetProfileDetailsActivity;
-import com.campusconnect.activity.MainActivity;
+import com.campusconnect.R;
 import com.campusconnect.activity.Signup_2Activity;
-import com.campusconnect.activity.Signup_4Activity;
 import com.campusconnect.bean.CollegeListInfoBean;
 import com.campusconnect.constant.AppConstants;
-import com.campusconnect.R;
+import com.campusconnect.utility.SharedpreferenceUtility;
 
 import java.util.List;
 
@@ -30,12 +27,13 @@ import java.util.List;
 public class CollegeListAdapterActivity extends
         RecyclerView.Adapter<CollegeListAdapterActivity.CollegeListViewHolder> {
 
-   private static List<CollegeListInfoBean> CollegeList;
-
+    private static List<CollegeListInfoBean> CollegeList;
     static int pos;
+    Context context;
 
-    public CollegeListAdapterActivity(List<CollegeListInfoBean> CollegeList) {
+    public CollegeListAdapterActivity(List<CollegeListInfoBean> CollegeList,Context context) {
         this.CollegeList = CollegeList;
+        this.context=context;
     }
 
     @Override
@@ -45,18 +43,27 @@ public class CollegeListAdapterActivity extends
 
     @Override
     public void onBindViewHolder(CollegeListViewHolder group_listViewHolder, int i) {
-        CollegeListInfoBean ci = CollegeList.get(i);
-        group_listViewHolder.college_name.setText(ci.getName());
-        if(i==0) {
-            group_listViewHolder.college_name.setTypeface(null, Typeface.BOLD);
-            group_listViewHolder.college_name.setGravity(Gravity.CENTER);
-            group_listViewHolder.i_divider.setVisibility(View.GONE);
-            group_listViewHolder.t_divider.setVisibility(View.VISIBLE);
-        } else {
-            group_listViewHolder.college_name.setTypeface(null, Typeface.NORMAL);
-            group_listViewHolder.college_name.setGravity(Gravity.LEFT);
-            group_listViewHolder.i_divider.setVisibility(View.VISIBLE);
-            group_listViewHolder.t_divider.setVisibility(View.GONE);
+        try {
+           /* final float scale = context.getResources().getDisplayMetrics().density;
+            group_listViewHolder.college_list.setElevation(0f * scale);*/
+
+            CollegeListInfoBean ci = CollegeList.get(i);
+
+
+            group_listViewHolder.college_name.setText(ci.getName());
+            if (i == 0) {
+                group_listViewHolder.college_name.setTypeface(null, Typeface.BOLD);
+                group_listViewHolder.college_name.setGravity(Gravity.CENTER);
+                group_listViewHolder.i_divider.setVisibility(View.GONE);
+                group_listViewHolder.t_divider.setVisibility(View.VISIBLE);
+            } else {
+                group_listViewHolder.college_name.setTypeface(null, Typeface.NORMAL);
+                group_listViewHolder.college_name.setGravity(Gravity.LEFT);
+                group_listViewHolder.i_divider.setVisibility(View.VISIBLE);
+                group_listViewHolder.t_divider.setVisibility(View.GONE);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -85,16 +92,19 @@ public class CollegeListAdapterActivity extends
             college_list.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    pos=getAdapterPosition();
+                    pos = getAdapterPosition();
 
+                    SharedpreferenceUtility.getInstance(v.getContext()).putString(AppConstants.COLLEGE_NAME, CollegeList.get(pos).getName());
+                    SharedpreferenceUtility.getInstance(v.getContext()).putString(AppConstants.COLLEGE_LOCATION, CollegeList.get(pos).getLocation());
+                    SharedpreferenceUtility.getInstance(v.getContext()).putString(AppConstants.COLLEGE_ID, CollegeList.get(pos).getCollegeId());
                     SharedPreferences sharedpreferences = v.getContext().getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
-                    SharedPreferences.Editor edit=sharedpreferences.edit();
-                    edit.putString(AppConstants.COLLEGE_NAME,CollegeList.get(pos).getName());
-                    edit.putString(AppConstants.COLLEGE_LOCATION,CollegeList.get(pos).getLocation());
-                    edit.putString(AppConstants.COLLEGE_ID,CollegeList.get(pos).getCollegeId());
+                    SharedPreferences.Editor edit = sharedpreferences.edit();
+                    edit.putString(AppConstants.COLLEGE_NAME, CollegeList.get(pos).getName());
+                    edit.putString(AppConstants.COLLEGE_LOCATION, CollegeList.get(pos).getLocation());
+                    edit.putString(AppConstants.COLLEGE_ID, CollegeList.get(pos).getCollegeId());
                     edit.commit();
 
-                    Intent intent_temp = new Intent(v.getContext(), MainActivity.class);
+                    Intent intent_temp = new Intent(v.getContext(), Signup_2Activity.class);
                     v.getContext().startActivity(intent_temp);
 
                 }

@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.campusconnect.R;
-import com.campusconnect.supportClasses.Notification_infoActivity;
+import com.campusconnect.bean.NotificationBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,10 +100,10 @@ public class SearchFragment extends Fragment  {
         return super.onOptionsItemSelected(item);
     }*/
 
-    private List<Notification_infoActivity> createList_nl(int size) {
-        List<Notification_infoActivity> result = new ArrayList<Notification_infoActivity>();
+    private List<NotificationBean> createList_nl(int size) {
+        List<NotificationBean> result = new ArrayList<NotificationBean>();
         for (int i = 1; i <= size; i++) {
-            Notification_infoActivity ci = new Notification_infoActivity();
+            NotificationBean ci = new NotificationBean();
             result.add(ci);
         }
 

@@ -5,7 +5,6 @@ package com.campusconnect.fragment;
  */
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,10 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.appspot.campus_connect_2015.clubs.model.ModelsFeed;
-import com.campusconnect.activity.CreatePostActivity;
+import com.campusconnect.R;
 import com.campusconnect.adapter.CollegeFeedAdapterActivity;
 import com.campusconnect.constant.AppConstants;
-import com.campusconnect.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +31,14 @@ import java.util.List;
 public class FragmentEvents extends Fragment {
     private static final String LOG_TAG="FragmentEvents";
     RecyclerView college_feed;
+    FloatingActionButton fab;
     String collegeId;
     String mEmailAccount = "";
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =inflater.inflate(R.layout.fragment_events,container,false);
 
+/*        fab=(FloatingActionButton)v.findViewById(R.id.fab_add);*/
         college_feed = (RecyclerView) v.findViewById(R.id.rv_college_feed);
         college_feed.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(v.getContext());
@@ -52,6 +53,14 @@ public class FragmentEvents extends Fragment {
         collegeId=sharedpreferences.getString(AppConstants.COLLEGE_ID,null);
         mEmailAccount=sharedpreferences.getString(AppConstants.EMAIL_KEY,null);
 
+       /* fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent_temp = new Intent(v.getContext(), CreatePostActivity.class);
+                startActivity(intent_temp);
+            }
+        });*/
         return v;
     }
     private List<ModelsFeed> createList_cf(int size) {

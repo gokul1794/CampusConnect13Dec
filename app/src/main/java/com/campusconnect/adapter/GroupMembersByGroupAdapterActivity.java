@@ -10,8 +10,6 @@ import android.widget.TextView;
 import com.campusconnect.R;
 import com.campusconnect.supportClasses.GroupMembersByGroup_infoActivity;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 /**

@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.campusconnect.R;
 import com.campusconnect.adapter.PreviousEventsAdapterActivity;
-import com.campusconnect.adapter.UpcomingEventsAdapterActivity;
 import com.campusconnect.supportClasses.UpcomingEvents_infoActivity;
 
 import java.util.ArrayList;

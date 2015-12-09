@@ -34,5 +34,7 @@ public class WebServiceDetails {
 	public static final int PID_CREATE_GROUP=10;
 	public static final int PID_CREATE_POST=11;
 	public static final int PID_CREATE_EVENT=12;
-
+	public static final int PID_GET_GCM_PROFILE=13;
+	public static final int PID_ATTENDING=14;
+	public static final int PID_NOTIFICATION=15;
 }

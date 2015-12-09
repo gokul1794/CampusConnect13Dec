@@ -79,7 +79,7 @@ public class WebRequestTask extends AsyncTask<Void, Integer, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-
+        int statuscode = 0;
         HttpClient httpClient = new DefaultHttpClient();
         if (type == GET) {
             try {
@@ -95,10 +95,8 @@ public class WebRequestTask extends AsyncTask<Void, Integer, Void> {
             } catch (Exception e) {
                 e.printStackTrace();
                 Message message = handler.obtainMessage();
-
                 message.what = 0;
                 handler.sendMessage(message);
-
             }
 
         } else if (type == POST) {
@@ -115,7 +113,7 @@ public class WebRequestTask extends AsyncTask<Void, Integer, Void> {
                 //	url.setContentType("application/json");
                 //	httpPost.setEntity(url);
                 HttpResponse response = httpClient.execute(httpPost);
-                int statuscode = response.getStatusLine().getStatusCode();
+                statuscode = response.getStatusLine().getStatusCode();
                 String responseString = EntityUtils.toString(response.getEntity());
 
                 Log.v("", "responsessdf : " + responseString);
@@ -128,7 +126,11 @@ public class WebRequestTask extends AsyncTask<Void, Integer, Void> {
             } catch (Exception e) {
                 e.printStackTrace();
                 Message message = handler.obtainMessage();
-                message.what = 0;
+                if(statuscode==204) {
+                    message.what = statuscode;
+                }else{
+                    message.what=0;
+                }
                 handler.sendMessage(message);
 
             }

@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 
 import com.campusconnect.R;
 import com.campusconnect.slidingtab.SlidingTabLayout_Calendar;
-import com.campusconnect.supportClasses.Notification_infoActivity;
+import com.campusconnect.bean.NotificationBean;
 import com.campusconnect.viewpager.ViewPagerAdapter_Calendar;
 
 import java.util.ArrayList;
@@ -21,10 +21,10 @@ public class CalenderFragment extends Fragment {
 
     ImageButton noti,profile,home,calendar,search;
 
-    ViewPager pager_calendar;
-    ViewPagerAdapter_Calendar adapter_calendar;
+    ViewPager pager;
+    ViewPagerAdapter_Calendar adapter;
     SlidingTabLayout_Calendar tabs;
-    CharSequence Titles[]={"Mon 5","Tue 6","Wed 7","Thu 8","Fri 9","Sat 10","Sun 12"};
+    CharSequence Titles[]={"Mon 5","Tue 6","Wed 7","Thu 8","Fri 9","Sat 10","Sun 11"};
     int Numboftabs = 7;
 
 
@@ -39,16 +39,7 @@ public class CalenderFragment extends Fragment {
                 parent.removeView(mRootView);
         }
         try {
-            mRootView = inflater.inflate(R.layout.activity_calendar, container, false);
-
-            pager_calendar = (ViewPager) mRootView.findViewById(R.id.pager_cal);
-            tabs = (SlidingTabLayout_Calendar) mRootView.findViewById(R.id.tabs_calendar);
-            adapter_calendar =  new ViewPagerAdapter_Calendar(getActivity().getSupportFragmentManager(),Titles,Numboftabs,getActivity());
-
-            pager_calendar.setAdapter(adapter_calendar);
-
-            tabs.setDistributeEvenly(true);
-            tabs.setViewPager(pager_calendar);
+            mRootView = inflater.inflate(R.layout.activity_calendar_to_be_deleted, container, false);
 
         } catch (InflateException e) {
             e.printStackTrace();
@@ -136,17 +127,15 @@ public class CalenderFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 */
-    /*
-    private List<Notification_infoActivity> createList_nl(int size) {
-        List<Notification_infoActivity> result = new ArrayList<Notification_infoActivity>();
+    private List<NotificationBean> createList_nl(int size) {
+        List<NotificationBean> result = new ArrayList<NotificationBean>();
         for (int i = 1; i <= size; i++) {
-            Notification_infoActivity ci = new Notification_infoActivity();
+            NotificationBean ci = new NotificationBean();
             result.add(ci);
         }
 
         return result;
     }
 
-*/
-}
 
+}

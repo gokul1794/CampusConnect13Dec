@@ -66,9 +66,20 @@ public class AppConstants {
 
     public static final String FOLLOW_NAMES="follows_names";
 
+    public static final String PHOTO_URL="photo_url";
+
+    public static final String GCM_GENERATED="gcm_generated";
+
+    public static final String GCM_TOKEN="gcm_token";
+
+    public static final String BLOB_URL="blob_url";
+
+
     public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
 
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
+
+    public static final String LOG_IN_STATUS="LoggedIn";
 
     public static int countGoogleAccounts(Context context) {
         AccountManager am = AccountManager.get(context);

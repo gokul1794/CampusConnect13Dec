@@ -47,10 +47,8 @@ public class SlidingTabLayout_Calendar extends HorizontalScrollView {
 
     }
 
-    Typeface r_reg;
-
     private static final int TITLE_OFFSET_DIPS = 24;
-    private static final int TAB_VIEW_PADDING_DIPS = 16;
+    private static final int TAB_VIEW_PADDING_DIPS = 30;
     private static final int TAB_VIEW_TEXT_SIZE_SP = 14;
 
     private int mTitleOffset;
@@ -85,8 +83,6 @@ public class SlidingTabLayout_Calendar extends HorizontalScrollView {
 
         mTabStrip = new SlidingTabStrip_Calendar(context);
         addView(mTabStrip, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-
-        r_reg = Typeface.createFromAsset(context.getAssets(), "font/Roboto_Regular.ttf");
     }
 
     /**
@@ -200,8 +196,6 @@ public class SlidingTabLayout_Calendar extends HorizontalScrollView {
                 lp.weight = 1;
             }
 
-            tabTitleView.setTypeface(r_reg);
-
             tabTitleView.setText(adapter.getPageTitle(i));
             tabView.setOnClickListener(tabClickListener);
             String desc = mContentDescriptions.get(i, null);
@@ -215,9 +209,9 @@ public class SlidingTabLayout_Calendar extends HorizontalScrollView {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                tabTitleView.setTextColor(getResources().getColorStateList(R.color.selector_text, null));//selector_text
+                tabTitleView.setTextColor(getResources().getColorStateList(R.color.yello, null));//selector_text
             } else {
-                tabTitleView.setTextColor(getResources().getColorStateList(R.color.selector_text));
+                tabTitleView.setTextColor(getResources().getColorStateList(R.color.yello));
             }
             tabTitleView.setTextSize(15);
         }

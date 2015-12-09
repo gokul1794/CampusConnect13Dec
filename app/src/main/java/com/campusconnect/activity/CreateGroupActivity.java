@@ -3,15 +3,19 @@ package com.campusconnect.activity;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -24,15 +28,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appspot.campus_connect_2015.clubs.model.ModelsClubRequestMiniForm;
-import com.appspot.campus_connect_2015.clubs.Clubs;
 import com.campusconnect.R;
 import com.campusconnect.communicator.WebRequestTask;
 import com.campusconnect.communicator.WebServiceDetails;
 import com.campusconnect.constant.AppConstants;
-import com.campusconnect.utility.GalleryUtil;
-import com.campusconnect.utility.NetworkAvailablity;
 import com.campusconnect.utility.SharedpreferenceUtility;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.common.base.Strings;
 
 import org.apache.http.NameValuePair;
@@ -41,7 +41,6 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,10 +93,12 @@ public class CreateGroupActivity extends AppCompatActivity {
         upload = (ImageView) findViewById(R.id.group_icon_group);
 
         create_group_text.setTypeface(r_med);
+        createGroup.setTypeface(r_reg);
         groupType.setTypeface(r_reg);
         groupName.setTypeface(r_reg);
         groupAbbreviation.setTypeface(r_reg);
         groupDescription.setTypeface(r_reg);
+
 
         sharedPreferences = getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
         mEmailAccount = sharedPreferences.getString(AppConstants.EMAIL_KEY, null);
@@ -123,10 +124,10 @@ public class CreateGroupActivity extends AppCompatActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Start Activity To Select Image From Gallery
-                Intent gallery_Intent = new Intent(getApplicationContext(), GalleryUtil.class);
-                startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
+              /*  Intent gallery_Intent = new Intent(getApplicationContext(), GalleryUtil.class);
+                startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);*/
                 //break;
-
+                uploadImage();
 
             }
         });
@@ -149,10 +150,6 @@ public class CreateGroupActivity extends AppCompatActivity {
             "description" -> "gcfcfcfcgcgcgv"*/
 
 
-
-
-
-
     public void webApiCreateGroup() {
         try {
             JSONObject jsonObject = new JSONObject();
@@ -163,9 +160,23 @@ public class CreateGroupActivity extends AppCompatActivity {
             jsonObject.put("club_name", ""+groupName.getText().toString());
             jsonObject.put("description", ""+groupDescription.getText().toString());
             jsonObject.put("abbreviation", ""+groupAbbreviation.getText().toString());
-            jsonObject.put("from_pid", ""+pid);
+            jsonObject.put("from_pid", "5688424874901504");
             jsonObject.put("college_id", ""+collegeId);
             Log.e("Json String", jsonObject.toString());
+
+
+/*
+
+            {
+                "abbreviation": "test",
+                    "club_name": "TEST1",
+                    "college_id": "5644309118320640",
+                    "from_pid": "5688424874901504",
+                    "description": "test description"
+            }
+
+*/
+
 
             List<NameValuePair> param = new ArrayList<NameValuePair>();
             String url = WebServiceDetails.DEFAULT_BASE_URL + "club";
@@ -178,101 +189,98 @@ public class CreateGroupActivity extends AppCompatActivity {
         }
     }
 
+    void uploadImage() {
+        final CharSequence[] items = {"Take Photo", "Choose from Library",
+                "Cancel"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(CreateGroupActivity.this);
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Take Photo")) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, 0);
+                } else if (items[item].equals("Choose from Library")) {
+                    Intent intent = new Intent(
+                            Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    intent.setType("image/*");
+                    startActivityForResult(
+                            Intent.createChooser(intent, "Select File"), 1);
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+
+    }
+
+    public byte[] getBytesFromBitmap(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+        return stream.toByteArray();
+    }
+
+    public String getPath(Uri uri, Activity activity) {
+        String[] projection = {MediaStore.MediaColumns.DATA};
+        @SuppressWarnings("deprecation")
+        Cursor cursor = activity
+                .managedQuery(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == GALLERY_ACTIVITY_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                String picturePath = data.getStringExtra("picturePath");
-                //perform Crop on the Image Selected from Gallery
-                performCrop(picturePath);
-            }
-        }
 
-        if (requestCode == RESULT_CROP) {
-            if (resultCode == Activity.RESULT_OK) {
-                Bundle extras = data.getExtras();
-                Bitmap selectedBitmap = extras.getParcelable("data");
-                // Set The Bitmap Data To ImageView
-                upload.setImageBitmap(selectedBitmap);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                selectedBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                //Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
-                byte[] b = baos.toByteArray();
-                encodedImageStr = Base64.encodeToString(b, Base64.DEFAULT);
-                upload.setScaleType(ImageView.ScaleType.CENTER);
-            }
+        Bitmap bitmap = null;
+
+        switch (requestCode) {
+            case 0:
+                try {
+                    bitmap = (Bitmap) data.getExtras().get("data");
+                    //  _addPhotoBitmap = bitmap;
+                    upload.setImageBitmap(bitmap);
+                    upload.setScaleType(ImageView.ScaleType.FIT_XY);
+
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte[] _byteArray = baos.toByteArray();
+                    encodedImageStr = Base64.encodeToString(_byteArray, Base64.DEFAULT);
+
+
+                } catch (OutOfMemoryError e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 1:
+                try {
+                    Uri selectedImageUri = data.getData();
+                    String tempPath = getPath(selectedImageUri, CreateGroupActivity.this);
+                    Bitmap bm;
+                    BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+                    bm = BitmapFactory.decodeFile(tempPath, btmapOptions);
+                    upload.setImageBitmap(bm);
+                    encodedImageStr = Base64.encodeToString(getBytesFromBitmap(bm), Base64.NO_WRAP);
+
+                } catch (OutOfMemoryError e) {
+                    e.printStackTrace();
+                    Toast.makeText(CreateGroupActivity.this, "Image size is too large.Please upload small image.", Toast.LENGTH_SHORT).show();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 
 
-    public void createGroup(final ModelsClubRequestMiniForm modelsClubRequestMiniForm) {
-        //TODO network check
 
-        if (NetworkAvailablity.hasInternetConnection(CreateGroupActivity.this)) {
-            if (!isSignedIn()) {
-                Toast.makeText(CreateGroupActivity.this, "You must sign in for this action.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            AsyncTask<Void, Void, Void> createGroup =
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... unused) {
-                            if (!isSignedIn()) {
-                                return null;
-                            }
-                            ;
-
-                            if (!AppConstants.checkGooglePlayServicesAvailable(CreateGroupActivity.this)) {
-                                return null;
-                            }
-
-                            // Create a Google credential since this is an authenticated request to the API.
-                            GoogleAccountCredential credential = GoogleAccountCredential.usingAudience(
-                                    CreateGroupActivity.this, AppConstants.AUDIENCE);
-                            credential.setSelectedAccountName(mEmailAccount);
-
-                            // Retrieve service handle using credential since this is an authenticated call.
-                            Clubs apiServiceHandle = AppConstants.getApiServiceHandle(credential);
-
-                            try {
-                                //ModelsRequestMiniForm modelsRequestMiniForm=new ModelsRequestMiniForm();
-                                //modelsClubRequestMiniForm.setAbbreviation(modelsClubRequestMiniForm.getAbbreviation());
-                                //modelsClubRequestMiniForm.setFromPid(modelsClubRequestMiniForm.getFromPid());
-                                //modelsClubRequestMiniForm.setDescription(modelsClubRequestMiniForm.getDescription());
-                                //modelsClubRequestMiniForm.setClubName(modelsClubRequestMiniForm.getClubName());
-                                //modelsClubRequestMiniForm.setCollegeId(modelsClubRequestMiniForm.getCollegeId());
-
-                                Clubs.CreateClubRequest res = apiServiceHandle.createClubRequest(modelsClubRequestMiniForm);
-
-
-                                Void createGroupRes = res.execute();
-                                Log.e(LOG_TAG, "SUCCESS");
-                                //Log.e(LOG_TAG, createGroupRes.toPrettyString());
-                                return createGroupRes;
-                            } catch (IOException e) {
-                                Log.e(LOG_TAG, "Exception during API call", e);
-                            }
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Void cList) {
-                            if (cList != null) {
-                            } else {
-                                //Log.e(LOG_TAG, "No clubs were returned by the API.");
-                            }
-                        }
-                    };
-
-            createGroup.execute((Void) null);
-        } else {
-            Toast.makeText(CreateGroupActivity.this, "Network is not available.", Toast.LENGTH_SHORT).show();
-        }
-
-    }
 
 
     private void performCrop(String picUri) {
@@ -311,29 +319,36 @@ public class CreateGroupActivity extends AppCompatActivity {
     private final Handler _handler = new Handler() {
         public void handleMessage(Message msg) {
             int response_code = msg.what;
-            if (response_code != 0) {
-                String strResponse = (String) msg.obj;
-                Log.v("Response", strResponse);
-                if (strResponse != null && strResponse.length() > 0) {
-                    switch (response_code) {
-                        case WebServiceDetails.PID_CREATE_GROUP: {
-                            try {
-                                JSONObject jsonResponse = new JSONObject(strResponse);
+            if(response_code!=0) {
+                if (response_code !=204) {
+                    String strResponse = (String) msg.obj;
+                    Log.v("Response", strResponse);
+                    if (strResponse != null && strResponse.length() > 0) {
+                        switch (response_code) {
+                            case WebServiceDetails.PID_CREATE_GROUP: {
+                                try {
+                                    JSONObject jsonResponse = new JSONObject(strResponse);
 
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                        break;
-                        default:
                             break;
+                            default:
+                                break;
+                        }
+                    } else {
+                        Toast.makeText(CreateGroupActivity.this, "SERVER_ERROR", Toast.LENGTH_LONG).show();
                     }
-                } else {
-                    Toast.makeText(CreateGroupActivity.this, "SERVER_ERROR", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(CreateGroupActivity.this, "Your group request has been sent for approval.", Toast.LENGTH_LONG).show();
+                    finish();
                 }
-            } else {
+            }else {
+
                 Toast.makeText(CreateGroupActivity.this, "SERVER_ERROR", Toast.LENGTH_LONG).show();
+
             }
         }
     };
