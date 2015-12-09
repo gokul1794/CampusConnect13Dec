@@ -25,8 +25,8 @@ public class InEventActivity extends AppCompatActivity {
     SpannableStringBuilder attendees_text;
     int going_click_count=0, no_of_attendees;
     int share_click_count=0;
-    Integer flag_news_top,pos_top,pos_cf;
-    Integer flag_news_college_feed;
+    Boolean flag_news,flag_selected_share,flag_selected_attend_like;
+    Boolean flag_attended_clicked=false, flag_share_clicked=false;
     ImageView event_photo,location_icon, going,share;
     TextView e_name, e_time, e_date, g_name, v_name, e_description, attendees_count;
     CircularImageView g_icon;
@@ -78,10 +78,9 @@ public class InEventActivity extends AppCompatActivity {
         String e_Description = bundle.getString("E_DESCRIPTION");
         Integer e_Photo = bundle.getInt("E_PHOTO");
         Integer g_Logo = bundle.getInt("G_PHOTO");
-        flag_news_top = bundle.getInt("FLAG_NEWS_TOP");
-        flag_news_college_feed = bundle.getInt("FLAG_NEWS_CF");
-        pos_top = bundle.getInt("POSITION_TOP");
-        pos_cf = bundle.getInt("POSITION_CF");
+        flag_news = bundle.getBoolean("FLAG_NEWS");
+        flag_selected_share = bundle.getBoolean("FLAG_SELECTED_SHARE");
+        flag_selected_attend_like = bundle.getBoolean("FLAG_SELECTED_ATTEND/LIKE");
 
         e_name.setText(e_Name);
         e_time.setText(e_Time);
@@ -92,8 +91,8 @@ public class InEventActivity extends AppCompatActivity {
         event_photo.setImageResource(e_Photo);
         g_icon.setImageResource(g_Logo);
 
-        if (pos_top == 1 || pos_top==3 || pos_cf==4 || pos_cf==6) {
-            location_icon.setVisibility(View.INVISIBLE);
+        if (flag_news) {
+            location_icon.setVisibility(View.GONE);
             going.setImageResource(R.drawable.selector_heart);
         }
         else{
@@ -101,31 +100,63 @@ public class InEventActivity extends AppCompatActivity {
             going.setImageResource(R.mipmap.going);
         }
 
-        going.setAlpha((float) 0.5);
+        if(flag_selected_share)
+        {
+            share.setAlpha((float) 1);
+            flag_share_clicked = true;
+        }
+        else
+        {
+            share.setAlpha((float)0.5);
+            flag_share_clicked = false;
+        }
+        if(flag_selected_attend_like){
+            if(flag_news)
+                going.setImageResource(R.mipmap.heart_selected);
+            else
+                going.setImageResource(R.mipmap.going_selected);
+            flag_attended_clicked = true;
+        }
+        else{
+            if(flag_news)
+                going.setImageResource(R.mipmap.heart);
+            else
+                going.setImageResource(R.mipmap.going);
+            flag_attended_clicked = false;
+        }
+
         going.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (going_click_count % 2 == 0) {
-                    going.setAlpha((float) 1);
+                if (flag_attended_clicked) {
+                    if(flag_news)
+                        going.setImageResource(R.mipmap.heart);
+                    else
+                        going.setImageResource(R.mipmap.going);
+                    flag_attended_clicked = false;
                 } else {
-            going.setImageResource(R.drawable.selector_heart);
-                    going.setAlpha((float) 0.5);
+                    if(flag_news)
+                        going.setImageResource(R.mipmap.heart_selected);
+                    else
+                        going.setImageResource(R.mipmap.going_selected);
+                    flag_attended_clicked = true;
                 }
-                going_click_count++;
             }
         });
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(share_click_count%2==0) {
-                    share.setAlpha((float) 1);
+                if(flag_share_clicked) {
+                    share.setAlpha((float) 0.5);
+                    flag_share_clicked = false;
                 }
                 else {
-                    share.setAlpha((float) 0.5);
+                    share.setAlpha((float) 1);
+                    flag_share_clicked = true;
                 }
-                share_click_count++;
             }
         });
+
 
 
     }

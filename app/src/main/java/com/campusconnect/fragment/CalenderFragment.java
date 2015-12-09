@@ -24,7 +24,7 @@ public class CalenderFragment extends Fragment {
     ViewPager pager_calendar;
     ViewPagerAdapter_Calendar adapter_calendar;
     SlidingTabLayout_Calendar tabs;
-    CharSequence Titles[]={"Mon 5","Tue 6","Wed 7","Thu 8","Fri 9","Sat 10","Sun 11"};
+    CharSequence Titles[]={"Mon 5","Tue 6","Wed 7","Thu 8","Fri 9","Sat 10","Sun 12"};
     int Numboftabs = 7;
 
 

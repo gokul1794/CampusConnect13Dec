@@ -88,7 +88,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 fragmentTransaction.setCustomAnimations(R.anim.righttocenter, R.anim.pushback);
                 HomeFragment homeFragment = new HomeFragment();
                 fragmentTransaction.replace(R.id.frame_container, homeFragment);
-                //fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 UpdateUi("home");
              /*   Intent intent_home = new Intent(v.getContext(), HomeFragment.class);
@@ -132,7 +132,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 fragmentTransaction.setCustomAnimations(R.anim.righttocenter, R.anim.pushback);
                 CalenderFragment calender = new CalenderFragment();
                 fragmentTransaction.replace(R.id.frame_container, calender);
-                //fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 UpdateUi("calender");
 

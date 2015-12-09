@@ -165,7 +165,6 @@ public class TopNewsAdapterActivity extends
                     v.getContext().startActivity(intent_temp);
                 }
             });
-            going.setAlpha((float) 0.5);
             going.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
