@@ -34,7 +34,9 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -46,8 +48,14 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
 
     public static Typeface r_med, r_reg;
     private List<CampusFeedBean> CollegeFeedList;
-    boolean[] flag_news;
-    boolean[] flag_attending_clicked, flag_share_clicked;
+    List<Boolean> flag_news =new ArrayList<Boolean>();
+    List<Boolean> flag_attending_clicked =new ArrayList<Boolean>();
+    List<Boolean> flag_share_clicked =new ArrayList<Boolean>();
+
+    //boolean[] flag_news = new boolean[5];
+    //boolean[] flag_attending_clicked = new boolean[5];
+    //boolean[] flag_share_clicked = new boolean[5];
+
     int posi = 0;
     int going_click_count = 0;
     int share_click_count = 0;
@@ -84,9 +92,6 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
     public CollegeCampusFeedAdapter(List<CampusFeedBean> CollegeFeedList, Context contect) {
         this.CollegeFeedList = CollegeFeedList;
         this.context = contect;
-        flag_news = new boolean[getItemCount()];
-        flag_attending_clicked = new boolean[getItemCount()];
-        flag_share_clicked = new boolean[getItemCount()];
     }
 
     @Override
@@ -98,6 +103,8 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
     public void onBindViewHolder(CollegeCampusFeedViewHolder college_feedViewHolder, int i) {
         CampusFeedBean cf = CollegeFeedList.get(i);
 
+        flag_attending_clicked.add(i,false);
+        flag_share_clicked.add(i,false);
 
         college_feedViewHolder.event_title.setText(cf.getTitle());
 
@@ -145,11 +152,12 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
             college_feedViewHolder.time.setVisibility(View.GONE);
             college_feedViewHolder.news_icon.setVisibility(View.VISIBLE);
 
-            flag_news[i]=true;
+            //flag_news[i]=true;
+            flag_news.add(i,true);
             college_feedViewHolder.going.setImageResource(R.mipmap.heart);
 
         } else {
-            flag_news[i]=false;
+            flag_news.add(i,false);
             SimpleDateFormat inFormat = new SimpleDateFormat("dd-MM-yyyy");
             Date date = null;
             try {
@@ -241,9 +249,9 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                     Bundle bundle = new Bundle();
                     CampusFeedBean bean = CollegeFeedList.get(posi);
                     bundle.putSerializable("BEAN", bean);
-                    bundle.putBoolean("FLAG_NEWS", flag_news[posi]);
-                    bundle.putBoolean("FLAG_SELECTED_SHARE", flag_share_clicked[posi]);
-                    bundle.putBoolean("FLAG_SELECTED_ATTEND/LIKE", flag_attending_clicked[posi]);
+                    bundle.putBoolean("FLAG_NEWS", flag_news.get(posi));
+                    bundle.putBoolean("FLAG_SELECTED_SHARE", flag_share_clicked.get(posi));
+                    bundle.putBoolean("FLAG_SELECTED_ATTEND/LIKE", flag_attending_clicked.get(posi));
                     intent_temp.putExtras(bundle);
                     context.startActivity(intent_temp);
                     String pid = bean.getPid();
@@ -268,18 +276,18 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                     }
 
                     int pos_for_going = getAdapterPosition();
-                    if (flag_attending_clicked[pos_for_going]) {
-                        if(flag_news[pos_for_going])
+                    if (flag_attending_clicked.get(pos_for_going)) {
+                        if(flag_news.get(pos_for_going))
                             going.setImageResource(R.mipmap.heart);
                         else
                             going.setImageResource(R.mipmap.going);
-                        flag_attending_clicked[pos_for_going] = false;
+                        flag_attending_clicked.add(pos_for_going,false);
                     } else {
-                        if(flag_news[pos_for_going])
+                        if(flag_news.get(pos_for_going))
                             going.setImageResource(R.mipmap.heart_selected);
                         else
                             going.setImageResource(R.mipmap.going_selected);
-                        flag_attending_clicked[pos_for_going] = true;
+                        flag_attending_clicked.add(pos_for_going,true);
                     }
                 }
             });
@@ -288,13 +296,13 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                 @Override
                 public void onClick(View v) {
                     int pos_for_share = getAdapterPosition();
-                    if(flag_share_clicked[pos_for_share]) {
+                    if(flag_share_clicked.get(pos_for_share)) {
                         share.setAlpha((float) 0.5);
-                        flag_share_clicked[pos_for_share] = false;
+                        flag_share_clicked.add(pos_for_share,false);
                     }
                     else {
                         share.setAlpha((float) 1);
-                        flag_share_clicked[pos_for_share] = true;
+                        flag_share_clicked.add(pos_for_share,true);
                     }
                 }
             });

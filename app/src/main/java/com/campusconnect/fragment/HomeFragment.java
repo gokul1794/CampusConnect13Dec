@@ -3,7 +3,9 @@ package com.campusconnect.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,22 +14,31 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,10 +52,12 @@ import com.appspot.campus_connect_2015.clubs.model.ModelsFeed;
 import com.appspot.campus_connect_2015.clubs.model.ModelsFollowClubMiniForm;
 import com.appspot.campus_connect_2015.clubs.model.ModelsGetInformation;
 import com.campusconnect.R;
+import com.campusconnect.activity.AboutGroupActivity;
 import com.campusconnect.activity.AdminPageActivity;
 import com.campusconnect.activity.CreateGroupActivity;
 import com.campusconnect.activity.CreatePostActivity;
 import com.campusconnect.activity.GroupPageActivity;
+import com.campusconnect.activity.SettingsActivity;
 import com.campusconnect.adapter.CollegeCampusFeedAdapter;
 import com.campusconnect.adapter.CollegeMyFeedAdapter;
 import com.campusconnect.bean.CampusFeedBean;
@@ -86,8 +99,11 @@ import java.util.List;
 /**
  * Created by RK on 17-09-2015.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment{
 
+    View setting;
+    Context context;
+    private PopupWindow popupWindow;
     View mRootView;
     CollegeMyFeedAdapter tn;//change to myfeed
     GroupListAdapterActivity gl;
@@ -465,6 +481,7 @@ public class HomeFragment extends Fragment {
         }
         try {
             mRootView = inflater.inflate(R.layout.activity_home, container, false);
+            context = mRootView.getContext();
             db = new DatabaseHandler(getActivity());
             Log.d("HomeFragment", "Entered");
             admin = (LinearLayout) mRootView.findViewById(R.id.admin);
@@ -474,6 +491,7 @@ public class HomeFragment extends Fragment {
             i_admin = (ImageButton) mRootView.findViewById(R.id.ib_admin);
             i_add_post = (ImageButton) mRootView.findViewById(R.id.ib_create_post);
             i_settings = (ImageButton) mRootView.findViewById(R.id.ib_settings);
+
 
             pager = (ViewPager) mRootView.findViewById(R.id.pager);
             tabs = (SlidingTabLayout_home) mRootView.findViewById(R.id.tabs);
@@ -526,27 +544,111 @@ public class HomeFragment extends Fragment {
                 }
             });
 
+            settings.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    PopupWindow popUp = popupWindowsort();
+                    popUp.showAsDropDown(v, 0, 0);
+
+                }
+            });
+            i_settings.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PopupWindow popUp = popupWindowsort();
+                    popUp.showAsDropDown(settings, 0, 0);
+
+                }
+            });
+
+
+
 
         } catch (InflateException e) {
             e.printStackTrace();
         }
+
         return mRootView;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private PopupWindow popupWindowsort() {
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        // initialize a pop up window type
+        popupWindow = new PopupWindow(context);
 
-        return super.onOptionsItemSelected(item);
+        ArrayList<String> sortList = new ArrayList<String>();
+        sortList.add("Settings");
+        sortList.add("Report an issue");
+        sortList.add("Rate Us!");
+        sortList.add("Invite a friend");
+        sortList.add("About us");
+        sortList.add("Log out");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.drop_down_text,
+                sortList);
+        // the drop down list is a list view
+        ListView listViewSort = new ListView(context);
+
+        listViewSort.setBackgroundColor(Color.WHITE);
+
+        ColorDrawable divider_color = new ColorDrawable(ContextCompat.getColor(context, R.color.dividerColor));
+        listViewSort.setDivider(divider_color);
+        listViewSort.setDividerHeight(1);
+
+        // set our adapter and pass our pop up window contents
+        listViewSort.setAdapter(adapter);
+
+        // set on item selected
+        listViewSort.setOnItemClickListener(onItemClickListener());
+
+        // some other visual settings for popup window
+        float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 160, getResources().getDisplayMetrics());
+        popupWindow.setFocusable(true);
+        popupWindow.setWidth((int)wt_px);
+        popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        this.popupWindow.setBackgroundDrawable(new ColorDrawable(0));
+
+        // set the list view as pop up window content
+        popupWindow.setContentView(listViewSort);
+
+        return popupWindow;
     }
+
+    private AdapterView.OnItemClickListener onItemClickListener() {
+        return new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView parent, View view, int position, long id) {
+                if (position == 0) {
+                    Intent intent_temp = new Intent(getContext(), SettingsActivity.class);
+                    getContext().startActivity(intent_temp);
+                }
+                else if (position == 1) {
+                }
+                else if(position==2){
+                }
+                else if(position==3){
+                }
+                else if(position==4){
+                }
+                else if(position==5){
+                }
+                dismissPopup();
+            }
+
+        };
+    }
+
+    private void dismissPopup() {
+        if (popupWindow != null) {
+            popupWindow.dismiss();
+        }
+    }
+
+
 
 
     public void WebApiGetPersonalFeed(int index) {

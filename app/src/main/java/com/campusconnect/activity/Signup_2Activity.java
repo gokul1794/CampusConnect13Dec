@@ -206,11 +206,7 @@ public class Signup_2Activity extends Activity implements
         mGoogleApiClient.connect();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+
 
     private void signInWithGplus() {
         if (!mGoogleApiClient.isConnecting()) {

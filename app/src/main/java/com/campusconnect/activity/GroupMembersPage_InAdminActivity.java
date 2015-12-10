@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import com.campusconnect.R;
 import com.campusconnect.adapter.GroupMembersAdapterActivity;
 import com.campusconnect.adapter.GroupMembersinfoActivity;
+import com.campusconnect.utility.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class GroupMembersPage_InAdminActivity extends AppCompatActivity {
         group_members.setLayoutManager(llm);
         group_members.setHasFixedSize(true);
         group_members.setItemAnimator(new DefaultItemAnimator());
+        group_members.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
         GroupMembersAdapterActivity gm = new GroupMembersAdapterActivity(
                 createList_group_members(3));

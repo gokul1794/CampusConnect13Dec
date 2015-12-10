@@ -1,7 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <LinearLayout
         android:id="@+id/custom_toolbar"
         android:layout_width="match_parent"
@@ -31,11 +32,11 @@
             android:layout_weight="70">
 
             <TextView
-                android:id="@+id/tv_requests_text"
+                android:id="@+id/tv_about"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="Requests"
+                android:text="Settings"
                 android:textColor="#ffffff"
                 android:textSize="18sp"></TextView>
         </LinearLayout>
@@ -48,11 +49,9 @@
 
         </LinearLayout>
     </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_group_members"
+    <TextView
+        android:id="@+id/tv_about_group_info"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/custom_toolbar"
-        android:clipToPadding="false" />
+        android:layout_below="@+id/custom_toolbar"/>
 </RelativeLayout>

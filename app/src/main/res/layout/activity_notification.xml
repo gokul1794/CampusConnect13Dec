@@ -28,7 +28,7 @@
         android:background="#ffffff"
         android:clipToPadding="false"
         android:paddingBottom="?attr/actionBarSize"
-        android:paddingTop="?attr/actionBarSize" />
+        android:layout_below="@+id/custom_toolbar" />
 
 <!--
     <include layout="@layout/bottom_tab"

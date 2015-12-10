@@ -68,7 +68,7 @@
         android:background="#f6f5f1"
         android:clipToPadding="false"
         android:paddingBottom="?attr/actionBarSize"
-        android:paddingTop="?attr/actionBarSize" />
+        android:layout_below="@+id/custom_toolbar" />
 
    <!-- <include layout="@layout/bottom_tab"
         android:layout_above="@+id/indicator"
