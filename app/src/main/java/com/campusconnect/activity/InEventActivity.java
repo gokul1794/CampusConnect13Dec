@@ -27,8 +27,12 @@ import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by RK on 22-09-2015.
@@ -38,14 +42,16 @@ public class InEventActivity extends AppCompatActivity {
     Typeface r_lig, r_reg, r_med;
     TypefaceSpan robotoRegularSpan_for_attendees;
 
-    String attending=" attending";
+
     SpannableStringBuilder attendees_text;
     int no_of_attendees;
-    Boolean flag_news,flag_selected_share,flag_selected_attend_like;
-    Boolean flag_attended_clicked=false, flag_share_clicked=false;
-    ImageView event_photo,location_icon, going,share;
+    Boolean flag_news, flag_selected_share, flag_selected_attend_like;
+    Boolean flag_attended_clicked = false, flag_share_clicked = false;
+    ImageView event_photo, location_icon, going, share;
     TextView e_name, e_time, e_date, g_name, v_name, e_description, attendees_count;
     CircularImageView g_icon;
+    static int attending = 1;
+    static int liking = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +77,7 @@ public class InEventActivity extends AppCompatActivity {
         attendees_count = (TextView) findViewById(R.id.tv_attendees_count);
 
         no_of_attendees = 255; //Value has to be taken from the server
-        attendees_text = new SpannableStringBuilder("+"+no_of_attendees + attending);
+        attendees_text = new SpannableStringBuilder("+" + no_of_attendees + attending);
         attendees_text.setSpan(robotoRegularSpan_for_attendees, 0, Integer.toString(no_of_attendees).length() + 1, 0);
         attendees_count.setText(attendees_text);
 
@@ -86,31 +92,72 @@ public class InEventActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         flag_news = bundle.getBoolean("FLAG_NEWS");
         flag_selected_share = bundle.getBoolean("FLAG_SELECTED_SHARE");
+
         flag_selected_attend_like = bundle.getBoolean("FLAG_SELECTED_ATTEND/LIKE");
 
         if (flag_news) {
             location_icon.setVisibility(View.GONE);
             going.setImageResource(R.drawable.selector_heart);
-        }
-        else{
+        } else {
             location_icon.setVisibility(View.VISIBLE);
             going.setImageResource(R.mipmap.going);
         }
 
         final CampusFeedBean bean = (CampusFeedBean) getIntent().getSerializableExtra("BEAN");
-
         if (bean != null) {
-
             bean.getClubid();
             bean.getCollegeId();
             bean.getViews();
+
             g_name.setText("" + bean.getClubid());
-            e_time.setText("" + bean.getStart_time());
             e_name.setText("" + bean.getTitle());
             e_description.setText("" + bean.getDescription());
             v_name.setText("" + bean.getVenue());
-            String url = "http://admin.bookieboost.com/admin/images/2015-02-0116-17-50.jpg";
-            Picasso.with(InEventActivity.this).load(url).into(g_icon);
+
+            if (bean.getAttendees() == null || bean.getAttendees().size() == 0) {
+                attendees_count.setVisibility(View.INVISIBLE);
+                e_time.setVisibility(View.INVISIBLE);
+
+            } else {
+                int attendies = bean.getAttendees().size();
+                attendees_count.setText("+" + attendies + " attending");
+                e_time.setText("" + bean.getEnd_time());
+            }
+            try {
+                if (bean.getClubphoto().equalsIgnoreCase("none")) {
+                    Picasso.with(InEventActivity.this).load(R.mipmap.spark_session).into(event_photo);
+                } else {
+                    Picasso.with(InEventActivity.this).load(bean.getClubphoto()).into(event_photo);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                String url = "http://admin.bookieboost.com/admin/images/2015-02-0116-17-50.jpg";
+                Picasso.with(InEventActivity.this).load(R.mipmap.spark_session).into(event_photo);
+            }
+            SimpleDateFormat inFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = null;
+            try {
+                date = inFormat.parse(bean.getTimeStamp());
+                Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+                calendar.setTime(date);
+
+
+                SimpleDateFormat outFormat = new SimpleDateFormat("EEEE");
+                String goal = outFormat.format(date);
+                Log.e("day", goal);
+                //  Log.e("entry", cf.getStartDate());
+                SimpleDateFormat monthFormat = new SimpleDateFormat("MMMMMMMM");
+                String month = monthFormat.format(date);
+                Log.e("month", month);
+
+                SimpleDateFormat dateformate = new SimpleDateFormat("dd");
+                String dayFormate = monthFormat.format(date);
+                Log.e("day", "" + calendar.get(Calendar.DAY_OF_MONTH));
+                String day = "" + calendar.get(Calendar.DAY_OF_MONTH);
+                e_date.setText("" + goal + " " + day + " " + month);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
 
 
@@ -145,58 +192,69 @@ public class InEventActivity extends AppCompatActivity {
 //Extract the data…
 
 
-
-        if(flag_selected_share)
-        {
+        if (flag_selected_share) {
             share.setAlpha((float) 1);
             flag_share_clicked = true;
-        }
-        else
-        {
-            share.setAlpha((float)0.5);
+        } else {
+            share.setAlpha((float) 0.5);
             flag_share_clicked = false;
         }
-        if(flag_selected_attend_like){
-            if(flag_news)
+        if (flag_selected_attend_like) {
+            if (flag_news)
                 going.setImageResource(R.mipmap.heart_selected);
             else
                 going.setImageResource(R.mipmap.going_selected);
             flag_attended_clicked = true;
-        }
-        else{
-            if(flag_news)
+        } else {
+            if (flag_news)
                 going.setImageResource(R.mipmap.heart);
             else
                 going.setImageResource(R.mipmap.going);
             flag_attended_clicked = false;
         }
-
         going.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    String persoPid = SharedpreferenceUtility.getInstance(InEventActivity.this).getString(AppConstants.PERSON_PID);
-                    String pid = bean.getPid();
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("eventId", "4713227854282752");
-                    jsonObject.put("from_pid", persoPid);
-                    WebApiAttending(jsonObject);
-                } catch (Exception e) {
-
-                    e.printStackTrace();
-                }
 
                 if (flag_attended_clicked) {
-                    if(flag_news)
+                    if (flag_news) {
                         going.setImageResource(R.mipmap.heart);
-                    else
+                        Toast.makeText(InEventActivity.this,"coming soon",Toast.LENGTH_SHORT).show();
+                    } else {
                         going.setImageResource(R.mipmap.going);
+
+
+                        try {
+                            String persoPid = SharedpreferenceUtility.getInstance(InEventActivity.this).getString(AppConstants.PERSON_PID);
+                            String pid = bean.getPid();
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("eventId", pid);
+                            jsonObject.put("from_pid", persoPid);
+                            WebApiAttending(jsonObject);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     flag_attended_clicked = false;
                 } else {
-                    if(flag_news)
+                    if (flag_news) {
                         going.setImageResource(R.mipmap.heart_selected);
-                    else
+                        Toast.makeText(InEventActivity.this,"coming soon",Toast.LENGTH_SHORT).show();
+                    } else {
                         going.setImageResource(R.mipmap.going_selected);
+                        try {
+                            String persoPid = SharedpreferenceUtility.getInstance(InEventActivity.this).getString(AppConstants.PERSON_PID);
+                            String pid = bean.getPid();
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("eventId", pid);
+                            jsonObject.put("from_pid", persoPid);
+                            WebApiAttending(jsonObject);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     flag_attended_clicked = true;
                 }
             }
@@ -205,11 +263,10 @@ public class InEventActivity extends AppCompatActivity {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(flag_share_clicked) {
+                if (flag_share_clicked) {
                     share.setAlpha((float) 0.5);
                     flag_share_clicked = false;
-                }
-                else {
+                } else {
                     share.setAlpha((float) 1);
                     flag_share_clicked = true;
                 }
@@ -257,7 +314,27 @@ public class InEventActivity extends AppCompatActivity {
                 }
             }
             if (response_code == 204) {
-                Toast.makeText(InEventActivity.this, "Attending", Toast.LENGTH_LONG).show();
+             /*  if (!flag_news) {*/
+                    if (attending == 1) {
+                        attending = 2;
+                        Toast.makeText(InEventActivity.this, "Attending", Toast.LENGTH_LONG).show();
+                    } else if (attending == 2) {
+                        attending = 1;
+                        Toast.makeText(InEventActivity.this, "Not Attending", Toast.LENGTH_LONG).show();
+                    }
+/*
+
+                } else {
+                    if (liking == 1) {
+                        liking = 2;
+                        Toast.makeText(InEventActivity.this, "Attending", Toast.LENGTH_LONG).show();
+                    } else if (liking == 2) {
+                        liking = 1;
+                        Toast.makeText(InEventActivity.this, "Not Attending", Toast.LENGTH_LONG).show();
+                    }
+                }
+*/
+
 
             } else {
                 Toast.makeText(InEventActivity.this, "SERVER_ERROR", Toast.LENGTH_LONG).show();

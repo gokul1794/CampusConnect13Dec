@@ -107,6 +107,9 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
             college_feedViewHolder.going.setImageResource(R.mipmap.heart);
 
         } else {
+            college_feedViewHolder.day.setVisibility(View.VISIBLE);
+            college_feedViewHolder.date_month.setVisibility(View.VISIBLE);
+            college_feedViewHolder.time.setVisibility(View.VISIBLE);
             flag_news.add(i, false);
             SimpleDateFormat inFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = null;

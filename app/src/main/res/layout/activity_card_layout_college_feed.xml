@@ -72,7 +72,6 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="#eaebec" />
-
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -185,7 +184,6 @@
                 android:text="Rotaract Club"
                 android:textColor="#383838"
                 android:textSize="15sp" />
-
             <TextView
                 android:id="@+id/tv_timestamp"
                 android:layout_width="wrap_content"
@@ -198,6 +196,20 @@
                 android:text="10 mins ago"
                 android:textColor="#383838"
                 android:textSize="12sp" />
+
+
+<!--
+            <com.github.curioustechizen.ago.RelativeTimeTextView
+                android:id="@+id/timestamp"
+                android:text="10min"
+                android:layout_below="@+id/tv_group"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:relative_time_prefix="Completed "
+                android:layout_marginTop="10dp" />-->
+
+
         </RelativeLayout>
     </RelativeLayout>
 

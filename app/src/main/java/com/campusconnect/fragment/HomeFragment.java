@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,20 +19,16 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -43,16 +38,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appspot.campus_connect_2015.clubs.Clubs;
 import com.appspot.campus_connect_2015.clubs.model.ModelsClubListResponse;
 import com.appspot.campus_connect_2015.clubs.model.ModelsClubMiniForm;
-import com.appspot.campus_connect_2015.clubs.model.ModelsClubRetrievalMiniForm;
 import com.appspot.campus_connect_2015.clubs.model.ModelsCollegeFeed;
 import com.appspot.campus_connect_2015.clubs.model.ModelsFeed;
-import com.appspot.campus_connect_2015.clubs.model.ModelsFollowClubMiniForm;
-import com.appspot.campus_connect_2015.clubs.model.ModelsGetInformation;
 import com.campusconnect.R;
-import com.campusconnect.activity.AboutGroupActivity;
 import com.campusconnect.activity.AdminPageActivity;
 import com.campusconnect.activity.CreateGroupActivity;
 import com.campusconnect.activity.CreatePostActivity;
@@ -71,7 +61,6 @@ import com.campusconnect.slidingtab.SlidingTabLayout_home;
 import com.campusconnect.utility.DividerItemDecoration;
 import com.campusconnect.utility.NetworkAvailablity;
 import com.campusconnect.utility.SharedpreferenceUtility;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.common.base.Strings;
 
 import org.apache.http.NameValuePair;
@@ -99,7 +88,7 @@ import java.util.List;
 /**
  * Created by RK on 17-09-2015.
  */
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment {
 
     View setting;
     Context context;
@@ -111,12 +100,15 @@ public class HomeFragment extends Fragment{
     CollegeCampusFeedAdapter cf;
     RecyclerView group_list;
     RecyclerView college_feed;
+    RecyclerView personal_feed;
+
     FrameLayout frame_layout;
     LinearLayout admin, add_post, settings;
-    ImageButton i_admin,i_add_post,i_settings;
+    ImageButton i_admin, i_add_post, i_settings;
     ImageButton noti, profile, home, calendar, search;
     static TextView title, title_two;
     ViewPager pager;
+
     ViewPagerAdapter_home adapter;
     SlidingTabLayout_home tabs;
     CharSequence Titles[] = {"MyFeed", "CampusFeed", "Groups"};
@@ -130,8 +122,8 @@ public class HomeFragment extends Fragment{
     private static final String LOG_TAG = "HomeFragment";
     static SharedPreferences sharedPreferences;
     static public ArrayList<GroupBean> groupList = new ArrayList<GroupBean>();
-    public ArrayList<CampusFeedBean> campusFeedList = new ArrayList<CampusFeedBean>();
-    public ArrayList<CampusFeedBean> myFeedList = new ArrayList<>();
+    public static ArrayList<CampusFeedBean> campusFeedList = new ArrayList<CampusFeedBean>();
+    public static ArrayList<CampusFeedBean> myFeedList = new ArrayList<CampusFeedBean>();
     public String personalCompleted = "";
     public String campusCompleted = "";
     private PubSubHelper mPubSubHelper;
@@ -152,6 +144,8 @@ public class HomeFragment extends Fragment{
 
                     switch (response_code) {
                         case WebServiceDetails.PID_GET_PERSONAL_FEED: {
+
+                            //  myFeedList.clear();
                             try {
                                 JSONObject jsonObject = new JSONObject(strResponse);
                                 personalCompleted = jsonObject.optString("completed");
@@ -203,7 +197,7 @@ public class HomeFragment extends Fragment{
                                             String startTime = innerObj.optString("start_time");
                                             String endTime = innerObj.optString("end_time");
                                             String venue = innerObj.optString("venue");
-                                            String clubphoto = innerObj.optString("");
+                                            String clubphoto = innerObj.optString("photoUrl");
                                             String liker = innerObj.optString("");
                                             String complete = innerObj.optString("completed");
 
@@ -242,8 +236,9 @@ public class HomeFragment extends Fragment{
                                         }
 
                                       /*  tn = new CollegeMyFeedAdapter(myFeedList
-                                                , getActivity());
-                                        college_feed.setAdapter(tn);*/
+                                                , getActivity());*/
+
+                                       adapter.notifyDataSetChanged();
                                         tn.notifyDataSetChanged();
                                     }
 
@@ -258,7 +253,7 @@ public class HomeFragment extends Fragment{
                                 tn = new CollegeMyFeedAdapter(myFeedList,getActivity());
                                 tn.notifyDataSetChanged();
                                 college_feed.setAdapter(tn);*/
-                                tn.notifyDataSetChanged();
+                                //  tn.notifyDataSetChanged();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -268,6 +263,7 @@ public class HomeFragment extends Fragment{
                         case WebServiceDetails.PID_GET_CAMPUS_FEED: {
                             try {
                                 JSONObject campusFeedObj = new JSONObject(strResponse);
+                                Log.v("campus feed", "" + strResponse);
                                 campusCompleted = campusFeedObj.optString("completed");
 
                                 if (campusFeedObj.has("items")) {
@@ -318,7 +314,7 @@ public class HomeFragment extends Fragment{
                                             String startTime = innerObj.optString("start_time");
                                             String endTime = innerObj.optString("end_time");
                                             String venue = innerObj.optString("venue");
-                                            String clubphoto = innerObj.optString("");
+                                            String clubphoto = innerObj.optString("photoUrl");
                                             String liker = innerObj.optString("");
                                             String complete = innerObj.optString("completed");
 
@@ -357,6 +353,7 @@ public class HomeFragment extends Fragment{
                                        /* cf = new CollegeCampusFeedAdapter(campusFeedList
                                                 , getActivity());
                                         college_feed.setAdapter(cf);*/
+                                        adapter.notifyDataSetChanged();
                                         cf.notifyDataSetChanged();
                                     }
                                 } else {
@@ -406,9 +403,9 @@ public class HomeFragment extends Fragment{
                                         }
                                         groupList = db.getAllClubData();
 
+                                        adapter.notifyDataSetChanged();
                                         gl = new GroupListAdapterActivity(groupList);
                                         group_list.setAdapter(gl);
-
                                     }
                                 } else {
                                     Toast.makeText(getActivity(), "No Group Available", Toast.LENGTH_SHORT).show();
@@ -432,8 +429,6 @@ public class HomeFragment extends Fragment{
                         case WebServiceDetails.PID_UNFOLLOW_UP: {
                             try {
                                 JSONObject jsonResponse = new JSONObject(strResponse);
-
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -463,13 +458,19 @@ public class HomeFragment extends Fragment{
         }
     };
 
-
     @Override
     public void onAttach(Context context) {
-
         super.onAttach(context);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        setRetainInstance(true);
+
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -495,11 +496,27 @@ public class HomeFragment extends Fragment{
 
             pager = (ViewPager) mRootView.findViewById(R.id.pager);
             tabs = (SlidingTabLayout_home) mRootView.findViewById(R.id.tabs);
-            adapter = new ViewPagerAdapter_home(getActivity().getSupportFragmentManager(), Titles, Numboftabs, getActivity());
+            adapter = new ViewPagerAdapter_home(getChildFragmentManager(), Titles, Numboftabs, getActivity());
             pager.setAdapter(adapter);
             pager.setCurrentItem(1);
             tabs.setDistributeEvenly(true);
             tabs.setViewPager(pager);
+        /*    pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    pager.getAdapter().notifyDataSetChanged();
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });*/
 
 
             sharedPreferences = getActivity().getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
@@ -564,9 +581,6 @@ public class HomeFragment extends Fragment{
                 }
             });
 
-
-
-
         } catch (InflateException e) {
             e.printStackTrace();
         }
@@ -607,13 +621,11 @@ public class HomeFragment extends Fragment{
         // some other visual settings for popup window
         float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 160, getResources().getDisplayMetrics());
         popupWindow.setFocusable(true);
-        popupWindow.setWidth((int)wt_px);
+        popupWindow.setWidth((int) wt_px);
         popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         this.popupWindow.setBackgroundDrawable(new ColorDrawable(0));
-
         // set the list view as pop up window content
         popupWindow.setContentView(listViewSort);
-
         return popupWindow;
     }
 
@@ -625,16 +637,11 @@ public class HomeFragment extends Fragment{
                 if (position == 0) {
                     Intent intent_temp = new Intent(getContext(), SettingsActivity.class);
                     getContext().startActivity(intent_temp);
-                }
-                else if (position == 1) {
-                }
-                else if(position==2){
-                }
-                else if(position==3){
-                }
-                else if(position==4){
-                }
-                else if(position==5){
+                } else if (position == 1) {
+                } else if (position == 2) {
+                } else if (position == 3) {
+                } else if (position == 4) {
+                } else if (position == 5) {
                 }
                 dismissPopup();
             }
@@ -647,8 +654,6 @@ public class HomeFragment extends Fragment{
             popupWindow.dismiss();
         }
     }
-
-
 
 
     public void WebApiGetPersonalFeed(int index) {
@@ -681,7 +686,6 @@ public class HomeFragment extends Fragment{
     public void webApiCampusFeed(int index) {
         if (NetworkAvailablity.hasInternetConnection(getActivity())) {
             try {
-
 
                 String collegeId = SharedpreferenceUtility.getInstance(getActivity()).getString(AppConstants.COLLEGE_ID);
                 String pid = SharedpreferenceUtility.getInstance(getActivity()).getString(AppConstants.PERSON_PID);
@@ -758,13 +762,10 @@ public class HomeFragment extends Fragment{
             checkWebApi = 4;
             new WebRequestTask(getActivity(), param, _handler, WebRequestTask.POST, jsonObject, WebServiceDetails.PID_FOLLOW_UP,
                     true, url).execute();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
     public void webApiUnFollow(GroupBean bean) {
         try {
             String personPid = SharedpreferenceUtility.getInstance(getActivity()).getString(AppConstants.PERSON_PID);
@@ -835,7 +836,7 @@ public class HomeFragment extends Fragment{
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
             //getActivity().getGroups();
-            View v = inflater.inflate(R.layout.fragment_groups, container, false);
+            View v = inflater.inflate(R.layout.fragment_groups, null, false);
 
 
             group_list = (RecyclerView) v.findViewById(R.id.rv_group_list);
@@ -860,6 +861,7 @@ public class HomeFragment extends Fragment{
             }
             group_list.setAdapter(gl);
 
+           // WebApiGetGroups();
             //TODO comment to remove crash .Remove comment
             // gl.notifyDataSetChanged();
 
@@ -885,6 +887,7 @@ public class HomeFragment extends Fragment{
             return result;
         }
     }
+
     public class FragmentCampusFeed extends Fragment {
         private static final String LOG_TAG = "FragmentCampusFeed";
         //  FloatingActionButton fab;
@@ -896,7 +899,7 @@ public class HomeFragment extends Fragment{
 
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View v = inflater.inflate(R.layout.fragment_events, container, false);
+            View v = inflater.inflate(R.layout.fragment_events, null, false);
 
           /*  fab = (FloatingActionButton) v.findViewById(R.id.fab_add);*/
             college_feed = (RecyclerView) v.findViewById(R.id.rv_college_feed);
@@ -932,6 +935,7 @@ public class HomeFragment extends Fragment{
                     startActivity(intent_temp);
                 }
             });*/
+      //      webApiCampusFeed(indexCollegeFeed);
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -959,7 +963,7 @@ public class HomeFragment extends Fragment{
 
                         } else if (campusCompleted.equalsIgnoreCase("1")) {
                             Log.e(Tag, "No more data avaialble");
-                            Toast.makeText(getActivity(),"No more data available",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "No more data available", Toast.LENGTH_SHORT).show();
                         } else {
                         }
                     }
@@ -969,23 +973,17 @@ public class HomeFragment extends Fragment{
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
                     //   Toast.makeText(getActivity(),"scrolled ",Toast.LENGTH_SHORT).show();
-
                 }
             });
-
-
             return v;
         }
-
 
         private List<CampusFeedBean> createList_cca(int size) {
             List<CampusFeedBean> result = new ArrayList<>();
             for (int i = 1; i <= size; i++) {
                 CampusFeedBean ci = new CampusFeedBean();
                 result.add(ci);
-
             }
-
             return result;
         }
     }
@@ -1000,7 +998,6 @@ public class HomeFragment extends Fragment{
     }
 
     public class FragmentMyFeed extends Fragment {
-
         // FloatingActionButton fab;
         SwipeRefreshLayout swipeRefreshLayout;
         public int pos = 0;
@@ -1008,29 +1005,35 @@ public class HomeFragment extends Fragment{
 
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View v = inflater.inflate(R.layout.fragment_top_news, container, false);
+            View v = inflater.inflate(R.layout.fragment_top_news, null, false);
 
             //  fab = (FloatingActionButton) v.findViewById(R.id.fab_add);
-            college_feed = (RecyclerView) v.findViewById(R.id.rv_top_news);
+            personal_feed = (RecyclerView) v.findViewById(R.id.rv_top_news);
             swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
-            college_feed.setHasFixedSize(false);
+            swipeRefreshLayout.setColorScheme(new int[]{
+                    android.R.color.holo_blue_bright,
+                    android.R.color.holo_green_light,
+                    android.R.color.holo_orange_light,
+                    android.R.color.holo_red_light});
+            personal_feed.setHasFixedSize(false);
             final LinearLayoutManager llm = new LinearLayoutManager(v.getContext());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
-            college_feed.setLayoutManager(llm);
-            college_feed.setItemAnimator(new DefaultItemAnimator());
+            personal_feed.setLayoutManager(llm);
+            personal_feed.setItemAnimator(new DefaultItemAnimator());
             if (tn == null) {
-                for (int i = 0; i <= 1; i++) {
+                /*for (int i = 0; i <= 1; i++) {
                     CampusFeedBean ci = new CampusFeedBean();
                     myFeedList.add(ci);
-                }
+                }*/
                 tn = new CollegeMyFeedAdapter(
                         myFeedList, getActivity());
-                college_feed.setAdapter(tn);
-                myFeedList.clear();
+                personal_feed.setAdapter(tn);
+
             }
-
-
-            college_feed.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            tn.notifyDataSetChanged();
+            myFeedList.clear();
+          //  WebApiGetPersonalFeed(indexMyfeed);
+            personal_feed.setOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                     super.onScrollStateChanged(recyclerView, newState);
@@ -1046,13 +1049,8 @@ public class HomeFragment extends Fragment{
 
                         } else if (personalCompleted.equalsIgnoreCase("1")) {
                             Log.e(tag, "no more data");
-
                         } else {
-
-
                         }
-
-
                     }
                 }
 
@@ -1067,13 +1065,14 @@ public class HomeFragment extends Fragment{
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    Toast.makeText(getActivity(), "refresh", Toast.LENGTH_LONG).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                    Toast.makeText(getActivity(), "Refreshing", Toast.LENGTH_LONG).show();
                     indexMyfeed = 1;
                     myFeedList.clear();
                     WebApiGetPersonalFeed(indexMyfeed);
                          /*   tn = new CollegeMyFeedAdapter(
                                 createList_cf(10), getActivity());*/
-                    swipeRefreshLayout.setRefreshing(false);
+
                 }
             });
             return v;
@@ -1093,6 +1092,7 @@ public class HomeFragment extends Fragment{
 
     public class ViewPagerAdapter_home extends FragmentPagerAdapter {
 
+
         CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter_home is created
         int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter_home is created
 
@@ -1111,27 +1111,34 @@ public class HomeFragment extends Fragment{
         @Override
         public Fragment getItem(int position) {
 
-               /* if (position == 0) {
-                    HomeFragment.FragmentLive fraglive = new HomeFragment.FragmentLive();
-                    return fraglive;
-                } else*/
+            Fragment fragment = null;
+
             if (position == 0) {
-                FragmentMyFeed fragtopnews = new FragmentMyFeed();
-                //   getPersonalFeed();
                 WebApiGetPersonalFeed(indexMyfeed);
-                return fragtopnews;
+                fragment = new FragmentMyFeed();
             } else if (position == 1) {
-                FragmentCampusFeed fragevents = new FragmentCampusFeed();
-                //    getCampusFeed();
                 webApiCampusFeed(indexCollegeFeed);
-                return fragevents;
-            } else {
-                FragmentGroups fraggroups = new FragmentGroups();
-                //   getGroups();
+                fragment = new FragmentCampusFeed();
+            } else if (position == 2) {
                 WebApiGetGroups();
-                return fraggroups;
+                fragment = new FragmentGroups();
             }
+            return fragment;
         }
+
+        /* switch (position) {
+                case 0:
+                    return new FragmentMyFeed();
+
+                case 1:
+
+                    return new FragmentCampusFeed();
+                case 2:
+
+                    return new FragmentGroups();
+            }
+            return null;
+        }*/
 
         private int[] ICONS = new int[]{
                 R.drawable.selector_news,
@@ -1155,6 +1162,27 @@ public class HomeFragment extends Fragment{
         public int getDrawableId(int position) {
             return ICONS[position];
         }
+
+       /* @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            super.destroyItem(container, position, object);
+        }*/
+/*
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            return super.instantiateItem(container, position);
+        }
+
+        @Override
+        public void destroyItem(ViewGroup viewPager, int position, Object object) {
+            if(viewPager!=null)viewPager.removeViewAt(position);
+
+        }*/
+    /* @Override
+     public void destroyItem(ViewGroup viewPager, int position, Object object) {
+       if(viewPager)
+         viewPager.removeViewAt(position);
+     }*/
     }
 
 

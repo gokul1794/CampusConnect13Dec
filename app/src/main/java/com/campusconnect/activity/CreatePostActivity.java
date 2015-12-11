@@ -82,6 +82,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by RK on 07-10-2015.
@@ -145,17 +146,13 @@ public class CreatePostActivity extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 finish();
-
             }
         });
     }
-
     //TODO DONE getGroup in createpostActivity
     public void webApiGetGroups() {
         try {
@@ -549,11 +546,8 @@ public class CreatePostActivity extends AppCompatActivity {
         int position;
         String encodedImageStr = "";
         String Clubid = "";
-
         public FragmentPostNews() {
-
         }
-
         private static final String LOG_TAG = "CreatePostActivity";
 
 
@@ -692,7 +686,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreatePostActivity.this);
             alertDialog.setTitle("Select image");
-            alertDialog.setMessage("Do you want to select this image?");
+            alertDialog.setMessage("Do you want to Upload this image?");
             // Setting Positive "Yes" Button
             alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
@@ -702,6 +696,7 @@ public class CreatePostActivity extends AppCompatActivity {
             // Setting Negative "NO" Button
             alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    iv_upload.setImageResource(R.mipmap.upload);
                     dialog.cancel();
                 }
             });
@@ -810,6 +805,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
                         bm = BitmapFactory.decodeFile(tempPath, btmapOptions);
                         iv_upload.setImageBitmap(bm);
+                        iv_upload.setScaleType(ImageView.ScaleType.FIT_XY);
                         encodedImageStr = Base64.encodeToString(getBytesFromBitmap(bm), Base64.NO_WRAP);
 
                     } catch (OutOfMemoryError e) {
@@ -1022,6 +1018,8 @@ public class CreatePostActivity extends AppCompatActivity {
                             String isAlumni = SharedpreferenceUtility.getInstance(getActivity()).getString(AppConstants.ALUMNI);
                             if (isAlumni.equalsIgnoreCase("") || isAlumni.isEmpty()) {
                                 isAlumni = "N";
+                            } else {
+                                isAlumni = "Y";
                             }
                             JSONObject jsonObject = new JSONObject();
                       /*      jsonObject.put("title", et_title.getText().toString());
@@ -1079,6 +1077,7 @@ public class CreatePostActivity extends AppCompatActivity {
                                     || startDate.isEmpty() || endDate.isEmpty() || clubid.isEmpty() || imageUrlForUpload.isEmpty()
                                     ) {
                                 Toast.makeText(getActivity(), "Please fill all data", Toast.LENGTH_SHORT).show();
+                                return;
                             }
                             jsonObject.put("club_id", "" + clubid);
                             jsonObject.put("date", "" + date);
@@ -1093,7 +1092,7 @@ public class CreatePostActivity extends AppCompatActivity {
                             jsonObject.put("time", "" + time);
                             jsonObject.put("start_time", "" + s_timestr);
                             jsonObject.put("event_creator", "" + pid);
-                            jsonObject.put("photo", "" + imageUrlForUpload);
+                            jsonObject.put("photoUrl", "" + imageUrlForUpload);
                             /* calling webserivice here*/
                             webApiCreateEvent(jsonObject);
                         } catch (Exception e) {
@@ -1157,7 +1156,7 @@ public class CreatePostActivity extends AppCompatActivity {
                     DatePickerDialog end_date_picker = new DatePickerDialog(context, end_date, myCalendar_e_date
                             .get(Calendar.YEAR), myCalendar_e_date.get(Calendar.MONTH),
                             myCalendar_e_date.get(Calendar.DAY_OF_MONTH));
-                    end_date_picker.getDatePicker().setMinDate(System.currentTimeMillis() + 1000);
+                    end_date_picker.getDatePicker().setMinDate(System.currentTimeMillis() - 2000);
                     end_date_picker.show();
                 }
             });
@@ -1170,17 +1169,27 @@ public class CreatePostActivity extends AppCompatActivity {
                     Calendar mcurrentTime = Calendar.getInstance();
                     final int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
                     final int minute = mcurrentTime.get(Calendar.MINUTE);
+                    final int second = mcurrentTime.get(Calendar.SECOND);
                     TimePickerDialog mTimePicker;
                     mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                             start_hour = selectedHour;
                             start_min = selectedMinute;
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(Calendar.HOUR, selectedHour);
+                            calendar.set(Calendar.MINUTE, selectedMinute);
+                            calendar.set(Calendar.SECOND, 0);
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
+
                             if (selectedHour > hour)
-                                s_time.setText("" + selectedHour + ":" + selectedMinute);
+                               s_time.setText("" + selectedHour + ":" + selectedMinute + ":00");
+                              //  s_time.setText(dateFormat.format(calendar.getTime()));
                             else if (selectedHour == hour) {
                                 if (selectedMinute > minute)
-                                    s_time.setText("" + selectedHour + ":" + selectedMinute);
+                                   // s_time.setText(dateFormat.format(calendar.getTime()));
+                                    s_time.setText("" + selectedHour + ":" + selectedMinute + ":00");
                                 else
                                     Toast.makeText(getActivity().getApplicationContext(), "The start time you entered occurred before the current time.",
                                             Toast.LENGTH_SHORT).show();
@@ -1203,15 +1212,24 @@ public class CreatePostActivity extends AppCompatActivity {
                     Calendar mcurrentTime = Calendar.getInstance();
                     final int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
                     final int minute = mcurrentTime.get(Calendar.MINUTE);
+                    final int second = mcurrentTime.get(Calendar.SECOND);
                     TimePickerDialog mTimePicker;
                     mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(Calendar.HOUR, selectedHour);
+                            calendar.set(Calendar.MINUTE, selectedMinute);
+                            calendar.set(Calendar.SECOND, 0);
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
                             if (selectedHour > start_hour)
-                                e_time.setText("" + selectedHour + ":" + selectedMinute);
+                               e_time.setText("" + selectedHour + ":" + selectedMinute + ":00");
+                             //  e_time.setText(dateFormat.format(calendar.getTime()));
                             else if (selectedHour == start_hour) {
                                 if (selectedMinute > start_min)
-                                    e_time.setText("" + selectedHour + ":" + selectedMinute);
+                                     e_time.setText("" + selectedHour + ":" + selectedMinute + ":00");
+                                   // e_time.setText(dateFormat.format(calendar.getTime()));
                                 else
                                     Toast.makeText(getActivity().getApplicationContext(), "The end time you entered occurred before the start time.",
                                             Toast.LENGTH_SHORT).show();
@@ -1278,6 +1296,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
                         bm = BitmapFactory.decodeFile(tempPath, btmapOptions);
                         iv_upload.setImageBitmap(bm);
+                        iv_upload.setScaleType(ImageView.ScaleType.FIT_XY);
                         encodedImageStr = Base64.encodeToString(getBytesFromBitmap(bm), Base64.NO_WRAP);
 
                     } catch (OutOfMemoryError e) {
@@ -1344,25 +1363,25 @@ public class CreatePostActivity extends AppCompatActivity {
         }
 
         private void updateLabel_start() {
-            /*String myFormat = "MM/dd/yy"*/
-            String myFormat = "YY/MM/DD"; //In which you need put here
-            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
+        /* String myFormat = "MM/dd/yy";
+            String myFormat = "yy/mm/dd"; //In which you need put here*/
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
             if (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) > myCalendar_s_date.get(Calendar.DAY_OF_MONTH)) {
                 s_date.setText("");
                 Toast.makeText(getActivity().getApplicationContext(), "The start date you entered occurred before the current date.",
                         Toast.LENGTH_SHORT).show();
-            } else
+
+            } else {
                 s_date.setText(sdf.format(myCalendar_s_date.getTime()));
-
+            }
         }
-
 
         void showAlertDialog(final File imageFile) {
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreatePostActivity.this);
             alertDialog.setTitle("Select image");
-            alertDialog.setMessage("Do you want to select this image?");
+            alertDialog.setMessage("Do you want to upload this image?");
             // Setting Positive "Yes" Button
             alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
@@ -1372,6 +1391,7 @@ public class CreatePostActivity extends AppCompatActivity {
             // Setting Negative "NO" Button
             alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    iv_upload.setImageResource(R.mipmap.upload);
                     dialog.cancel();
                 }
             });
@@ -1381,8 +1401,11 @@ public class CreatePostActivity extends AppCompatActivity {
 
         private void updateLabel_end() {
 
-            String myFormat = "YY/MM/DD"; //In which you need put here
+            String myFormat = "yyyy-MM-dd"; //In which you need put here
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+
             if (myCalendar_s_date.get(Calendar.DAY_OF_MONTH) > myCalendar_e_date.get(Calendar.DAY_OF_MONTH)) {
                 e_date.setText("");
                 Toast.makeText(getActivity().getApplicationContext(), "The end date you entered occurred before the start date.",
@@ -1445,9 +1468,10 @@ public class CreatePostActivity extends AppCompatActivity {
                                     CreatePostActivity.this.finish();
                                 } else if (status.equals("2")) {
                                     Toast.makeText(CreatePostActivity.this, "Your News has been sent to admin for approval" + text, Toast.LENGTH_SHORT).show();
+                                    CreatePostActivity.this.finish();
                                 } else if (status.equals("3")) {
                                     Toast.makeText(CreatePostActivity.this, "Invalid Entries, please check" + text, Toast.LENGTH_SHORT).show();
-
+                                    CreatePostActivity.this.finish();
                                 }
 
                             } catch (Exception e) {
@@ -1472,16 +1496,16 @@ public class CreatePostActivity extends AppCompatActivity {
                                     CreatePostActivity.this.finish();
                                 } else if (status.equals("2")) {
                                     Toast.makeText(CreatePostActivity.this, "Your Event has been sent to admin for approval" + text, Toast.LENGTH_SHORT).show();
+                                    CreatePostActivity.this.finish();
                                 } else if (status.equals("3")) {
                                     Toast.makeText(CreatePostActivity.this, "Invalid Entries, please check" + text, Toast.LENGTH_SHORT).show();
+                                    CreatePostActivity.this.finish();
                                 }
 
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-
-                        }
-
+                       }
                         break;
                         default:
                             break;
@@ -1542,7 +1566,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
                 imageUrlForUpload = result;
 
-                Toast.makeText(context, "" + result, Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(context, "" + result, Toast.LENGTH_SHORT).show();
 
             } catch (Exception ex) {
                 ex.printStackTrace();

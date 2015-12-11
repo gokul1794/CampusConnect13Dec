@@ -66,8 +66,9 @@ public class CollegeMyFeedAdapter extends
 
     @Override
     public void onBindViewHolder(CollegeFeedViewHolder college_feedViewHolder, int i) {
-        CampusFeedBean cf = myFeedList.get(i);
 
+
+        CampusFeedBean cf = myFeedList.get(i);
         college_feedViewHolder.event_title.setText(cf.getTitle());
         college_feedViewHolder.timestamp.setText("" + timeAgo(cf.getTimeStamp()));
         college_feedViewHolder.group_name.setText(cf.getClubid());
@@ -75,7 +76,7 @@ public class CollegeMyFeedAdapter extends
         try {
 
             String urll = cf.getClubphoto();
-            Log.e("url campusfeed",""+urll);
+            Log.e("url campusfeed", "" + urll);
             if (cf.getClubphoto().equalsIgnoreCase("none")) {
                 Picasso.with(context).load(R.mipmap.spark_session).into(college_feedViewHolder.event_photo);
             } else {
@@ -88,18 +89,6 @@ public class CollegeMyFeedAdapter extends
         }
         Picasso.with(context).load(url).into(college_feedViewHolder.group_icon);
 
-       /* if (encodedImage != null && !encodedImage.isEmpty()) {
-            if (encodedImage.equals("None")) {
-                college_feedViewHolder.event_photo.setImageResource(R.mipmap.spark_session);
-            } else {
-                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                //college_feedViewHolder.event_photo.setImageResource(event_photos[i]);
-                college_feedViewHolder.event_photo.setImageBitmap(decodedByte);
-            }
-        }*/ /*else {*/
-        //    college_feedViewHolder.event_photo.setImageResource(R.mipmap.spark_session);
-
 
         //news
         if (cf.getAttendees() == null || cf.getAttendees().size() == 0) {
@@ -108,10 +97,14 @@ public class CollegeMyFeedAdapter extends
             college_feedViewHolder.time.setVisibility(View.GONE);
             college_feedViewHolder.news_icon.setVisibility(View.VISIBLE);
 
-            flag_news[i] = true;
+          //  flag_news[i] = true;
             college_feedViewHolder.going.setImageResource(R.mipmap.heart);
         } else {
-            flag_news[i] = false;
+           // flag_news[i] = false;
+
+            college_feedViewHolder.day.setVisibility(View.VISIBLE);
+            college_feedViewHolder.date_month.setVisibility(View.VISIBLE);
+            college_feedViewHolder.time.setVisibility(View.VISIBLE);
 
             SimpleDateFormat inFormat = new SimpleDateFormat("dd-MM-yyyy");
             Date date = null;
@@ -131,14 +124,19 @@ public class CollegeMyFeedAdapter extends
             String month = monthFormat.format(date);
             Log.e("month", month);
 
-            if (goal.length() > 3)
+            if (goal.length() > 3) {
                 goal = goal.substring(0, 3);
+            } else {
+                goal = goal.substring(0, 3);
+            }
             college_feedViewHolder.day.setText(goal.toUpperCase());
 
             String day = "" + calendar.get(Calendar.DAY_OF_MONTH);
             Log.e("day of moth", day);
 
             if (month.length() > 0) {
+                month = month.substring(0, 3);
+            } else {
                 month = month.substring(0, 3);
             }
             // college_feedViewHolder.date_month.setText(Date_Month[i]);
@@ -202,20 +200,6 @@ public class CollegeMyFeedAdapter extends
                         intent_temp.putExtras(bundle);
                         context.startActivity(intent_temp);
                         //Create the bundle
-               /*     Bundle bundle = new Bundle();
-                    Log.e("Selected", myFeedList.get(posi).toString());
-                    bundle.putString("E_NAME", myFeedList.get(posi).getTitle());
-                    bundle.putString("E_TIME", myFeedList.get(posi).getStartTime());
-                    bundle.putString("E_DATE", myFeedList.get(posi).getStartDate());
-                    bundle.putString("G_NAME", myFeedList.get(posi).getClubId());
-                    bundle.putString("V_NAME", myFeedList.get(posi).getVenue());
-                    bundle.putString("E_DESCRIPTION", myFeedList.get(posi).getDescription());*/
-                        //       bundle.putInt("E_PHOTO", event_photos[posi]);
-                        //     bundle.putInt("G_PHOTO",GroupLogo[posi]);
-                   /* bundle.putInt("FLAG_NEWS_TOP", flag_news);
-                    bundle.putInt("POSITION_CF", posi);
-                    intent_temp.putExtras(bundle);*/
-                        //    v.getContext().startActivity(intent_temp);
 
 
                     } catch (Exception e) {
@@ -319,11 +303,8 @@ public class CollegeMyFeedAdapter extends
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return createTimeStr;
-
     }
-
 
     private final Handler _handler = new Handler() {
         public void handleMessage(Message msg) {

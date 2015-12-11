@@ -1,6 +1,7 @@
 package com.campusconnect.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,12 +37,22 @@ import com.campusconnect.constant.AppConstants;
 import com.campusconnect.utility.SharedpreferenceUtility;
 import com.google.common.base.Strings;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +61,8 @@ import java.util.List;
  */
 public class CreateGroupActivity extends AppCompatActivity {
 
-    TextView create_group_text;
+    static String imageUrlForUpload = "";
+
     ImageView upload;
     Button createGroup;
     EditText groupAbbreviation, groupName, groupDescription, groupType;
@@ -59,7 +72,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     static SharedPreferences sharedPreferences;
     private String mEmailAccount = "";
     private static final String LOG_TAG = "CreateGroupActivity";
-
+    TextView create_group_text;
 
     private final int GALLERY_ACTIVITY_CODE = 200;
     private final int RESULT_CROP = 400;
@@ -84,7 +97,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 
         close = (LinearLayout) findViewById(R.id.cross_button);
 
-        create_group_text = (TextView)findViewById(R.id.tv_create_group);
+        create_group_text = (TextView) findViewById(R.id.tv_create_group);
         createGroup = (Button) findViewById(R.id.et_createGroup);
         groupType = (EditText) findViewById(R.id.et_group_type);
         groupName = (EditText) findViewById(R.id.et_group_name);
@@ -156,12 +169,23 @@ public class CreateGroupActivity extends AppCompatActivity {
             String collegeId = SharedpreferenceUtility.getInstance(CreateGroupActivity.this).getString(AppConstants.COLLEGE_ID);
             String pid = SharedpreferenceUtility.getInstance(CreateGroupActivity.this).getString(AppConstants.PERSON_PID);
             //   club_name,club_description,abbreviation,from_pid(profile ID),college_id
+            String groupType = groupName.getText().toString();
+            String groupname = groupName.getText().toString();
+            String grpDes = groupDescription.getText().toString();
+            String abbre = groupAbbreviation.getText().toString();
 
-            jsonObject.put("club_name", ""+groupName.getText().toString());
-            jsonObject.put("description", ""+groupDescription.getText().toString());
-            jsonObject.put("abbreviation", ""+groupAbbreviation.getText().toString());
-            jsonObject.put("from_pid", "5688424874901504");
-            jsonObject.put("college_id", ""+collegeId);
+            if (groupType.isEmpty()||groupname.isEmpty() || grpDes.isEmpty() || abbre.isEmpty() || imageUrlForUpload.isEmpty()) {
+
+                Toast.makeText(CreateGroupActivity.this, "Please fill all details", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            jsonObject.put("club_name", "" + groupName.getText().toString());
+            jsonObject.put("description", "" + groupDescription.getText().toString());
+            jsonObject.put("abbreviation", "" + groupAbbreviation.getText().toString());
+            jsonObject.put("from_pid", pid);
+            jsonObject.put("college_id", "" + collegeId);
+            jsonObject.put("photoUrl", "" + imageUrlForUpload);
             Log.e("Json String", jsonObject.toString());
 
 
@@ -187,6 +211,27 @@ public class CreateGroupActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    void showAlertDialog(final File imageFile) {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreateGroupActivity.this);
+        alertDialog.setTitle("Select image");
+        alertDialog.setMessage("Do you want to upload this image?");
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                new Blob(CreateGroupActivity.this, imageFile).execute();
+            }
+        });
+        // Setting Negative "NO" Button
+        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialog.show();
     }
 
     void uploadImage() {
@@ -252,6 +297,11 @@ public class CreateGroupActivity extends AppCompatActivity {
                     encodedImageStr = Base64.encodeToString(_byteArray, Base64.DEFAULT);
 
 
+                    Uri selectedImageUri = getImageUri(CreateGroupActivity.this, bitmap);
+                    File finalFile = new File(getPath(selectedImageUri, CreateGroupActivity.this));
+                    if (finalFile.exists()) {
+                        showAlertDialog(finalFile);
+                    }
                 } catch (OutOfMemoryError e) {
                     e.printStackTrace();
                 } catch (Exception e) {
@@ -262,6 +312,10 @@ public class CreateGroupActivity extends AppCompatActivity {
                 try {
                     Uri selectedImageUri = data.getData();
                     String tempPath = getPath(selectedImageUri, CreateGroupActivity.this);
+                    File finalFile = new File(getPath(selectedImageUri, CreateGroupActivity.this));
+                    if (finalFile.exists()) {
+                        showAlertDialog(finalFile);
+                    }
                     Bitmap bm;
                     BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
                     bm = BitmapFactory.decodeFile(tempPath, btmapOptions);
@@ -279,8 +333,12 @@ public class CreateGroupActivity extends AppCompatActivity {
         }
     }
 
-
-
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "image", null);
+        return Uri.parse(path);
+    }
 
 
     private void performCrop(String picUri) {
@@ -319,8 +377,8 @@ public class CreateGroupActivity extends AppCompatActivity {
     private final Handler _handler = new Handler() {
         public void handleMessage(Message msg) {
             int response_code = msg.what;
-            if(response_code!=0) {
-                if (response_code !=204) {
+            if (response_code != 0) {
+                if (response_code != 204) {
                     String strResponse = (String) msg.obj;
                     Log.v("Response", strResponse);
                     if (strResponse != null && strResponse.length() > 0) {
@@ -341,11 +399,11 @@ public class CreateGroupActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(CreateGroupActivity.this, "SERVER_ERROR", Toast.LENGTH_LONG).show();
                     }
-                }else{
+                } else {
                     Toast.makeText(CreateGroupActivity.this, "Your group request has been sent for approval.", Toast.LENGTH_LONG).show();
                     finish();
                 }
-            }else {
+            } else {
 
                 Toast.makeText(CreateGroupActivity.this, "SERVER_ERROR", Toast.LENGTH_LONG).show();
 
@@ -353,5 +411,97 @@ public class CreateGroupActivity extends AppCompatActivity {
         }
     };
 
+    public class Blob extends AsyncTask<Void, Integer, String> {
+        String url;
+        File imageFIle;
 
+        public Blob(String Url) {
+            this.url = Url;
+        }
+
+        private ProgressDialog dialog;
+        private Context context;
+        private Handler handler;
+        public static final int POST = 1;
+        private boolean showDialog;
+        String responseStringfianl;
+
+        private int type;
+
+
+        public Blob(Context context, File imageFIle) {
+            this.context = context;
+            this.url = url;
+            this.imageFIle = imageFIle;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            try {
+                dialog = new ProgressDialog(context);
+                dialog.setCancelable(false);
+                dialog.setMessage("Please wait...");
+                dialog.show();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                if (dialog != null)
+                    dialog.dismiss();
+                super.onPostExecute(result);
+
+                imageUrlForUpload = result;
+
+                //   Toast.makeText(context, "" + result, Toast.LENGTH_SHORT).show();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpGet httpget = new HttpGet("http://campus-connect-2015.appspot.com/get_upload_url");
+                httpget.setHeader("Content-Type", "application/json");
+                httpget.setHeader("Accept-Encoding", "gzip");
+                //  httpget.setHeader("");
+                //  entity.setContentType("application/x-www-form-urlencoded;charset=UTF-8");//text/plain;charset=UTF-8
+                HttpResponse response = httpClient.execute(httpget);
+                int responsecode = response.getStatusLine().getStatusCode();
+                String responseString = EntityUtils.toString(response.getEntity());
+                Log.v("", "responsessdf : " + responseString);
+                if (responseString != null) {
+                    SharedpreferenceUtility.getInstance(context).putString(AppConstants.BLOB_URL, responseString);
+                }
+
+
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost httppost = new HttpPost(responseString);
+                String BOUNDARY = "Boundary-8B33EF29-2436-47F6-A415-62EF61F62D14";
+
+                FileBody fileBody = new FileBody(imageFIle);
+                MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, BOUNDARY, Charset.defaultCharset());
+                entity.addPart("file", fileBody);
+                httppost.setEntity(entity);
+                HttpResponse response1 = httpclient.execute(httppost);
+                responseStringfianl = EntityUtils.toString(response1.getEntity());
+                Log.e("response String", responseStringfianl.toString());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return responseStringfianl;
+        }
+
+
+    }
 }
