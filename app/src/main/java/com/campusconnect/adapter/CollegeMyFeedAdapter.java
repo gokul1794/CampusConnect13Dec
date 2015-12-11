@@ -33,6 +33,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -49,33 +50,6 @@ public class CollegeMyFeedAdapter extends
     boolean[] flag_news;
     boolean[] flag_attending_clicked, flag_share_clicked;
     Context context;
-   /* CharSequence EventTitles[] = {"Roto Annual Play Auditions", "Spark Session 4", "E-Cell Startup Selection Drive", "NITK Beach Clean-Up Drive", "New Recruits List", "Football Team Tryouts", "Football Team Reaches Quarters of Independence Cup"};
-    CharSequence GroupNames[] = {"Rotaract Club", "IE NITK", "E-Cell", "Rotaract Club", "E-Cell", "Football Team", "Football Team"};
-    CharSequence Timestamp[] = {"1 day ago", "2 days ago", "Posted 10 days ago", "11 days ago", "Posted 15 days ago", "Posted 20 days ago", "Posted 30 days ago"};
-    private static int[] event_photos = new int[]{
-            R.mipmap.play_audition,
-            R.mipmap.spark_session,
-            R.mipmap.cell_event,
-            R.mipmap.beach_clean_up,
-            R.mipmap.cell_news,
-            R.mipmap.football_event,
-            R.mipmap.football_news
-    };
-    CharSequence Day[] = {"MON", "WED", "MON", "SAT", "", "MON", ""};
-    CharSequence Date_Month[] = {"26 Oct", "4 Oct", "21 Sep", "19 Sept", "", "14 Sep", ""};
-    CharSequence Time_[] = {"5:30 PM", "5:30 PM", "5:30 PM", "7:30 AM", "", "5:30 PM", ""};
-    private static int[] GroupLogo = new int[]{
-            R.mipmap.roto_logo,
-            R.mipmap.ie_logo,
-            R.mipmap.cell_logo,
-            R.mipmap.roto_logo,
-            R.mipmap.cell_logo,
-            R.mipmap.football_logo,
-            R.mipmap.football_logo
-    };
-    CharSequence Venue[] = {"Main Building", "ATB Seminar Hall", "MSH", "NITK Beach Entrance", "", "Football Ground", ""};
-    CharSequence Description[] = {"Be part of the greatest dramatics show of the college. If you love the stage, you will love to be a part of our show. Open to all.", "SPARK is inspired by TEDx Talks where you will have a chance to interact, ask questions and learn from amazing people from your own campus!", "Have an Idea? or want to Startup? Present your idea to us and you can win access to STEP resources and great mentorship.", "All students are cordially invited for the NITK Beach Clean-Up Drive on September 19th (Saturday) as a part of the 'International Coastal Clean-Up Day' Celebration. This event is being held in association with NSS NITK & the Rotaract Club of our college.\n", "The new recruits are the following:\n14EE201 Abhijay Kumar Pandit\n14ME139 Parikshit\n14EC202 Aditya Nishtala\n14CO132 Prajwal Kailas\n14CH02 Aishwarya Sanjeev Kumar\n14CV136 Pralay S", "Be a part of the football team! Come and show us what you got. Talented and enthusiastic first years are welcome.",
-            "The NITK Football team won 2 games to reach the quarter finals of the independence cup. They lost their third game by a small 2-1 margin which put them out of the tournament."};*/
 
     public CollegeMyFeedAdapter(List<CampusFeedBean> myFeedList, Context contect) {
         this.myFeedList = myFeedList;
@@ -98,7 +72,20 @@ public class CollegeMyFeedAdapter extends
         college_feedViewHolder.timestamp.setText("" + timeAgo(cf.getTimeStamp()));
         college_feedViewHolder.group_name.setText(cf.getClubid());
         String url = "http://admin.bookieboost.com/admin/images/2015-02-0116-17-50.jpg";
-        Picasso.with(context).load(url).into(college_feedViewHolder.event_photo);
+        try {
+
+            String urll = cf.getClubphoto();
+            Log.e("url campusfeed",""+urll);
+            if (cf.getClubphoto().equalsIgnoreCase("none")) {
+                Picasso.with(context).load(R.mipmap.spark_session).into(college_feedViewHolder.event_photo);
+            } else {
+                Picasso.with(context).load(cf.getClubphoto()).into(college_feedViewHolder.event_photo);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Picasso.with(context).load(R.mipmap.spark_session).into(college_feedViewHolder.event_photo);
+        }
         Picasso.with(context).load(url).into(college_feedViewHolder.group_icon);
 
        /* if (encodedImage != null && !encodedImage.isEmpty()) {
@@ -121,10 +108,11 @@ public class CollegeMyFeedAdapter extends
             college_feedViewHolder.time.setVisibility(View.GONE);
             college_feedViewHolder.news_icon.setVisibility(View.VISIBLE);
 
-            flag_news[i]=true;
+            flag_news[i] = true;
             college_feedViewHolder.going.setImageResource(R.mipmap.heart);
         } else {
-            flag_news[i]=false;
+            flag_news[i] = false;
+
             SimpleDateFormat inFormat = new SimpleDateFormat("dd-MM-yyyy");
             Date date = null;
             try {
@@ -132,6 +120,9 @@ public class CollegeMyFeedAdapter extends
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+            calendar.setTime(date);
+
             SimpleDateFormat outFormat = new SimpleDateFormat("EEEE");
             String goal = outFormat.format(date);
             Log.e("day", goal);
@@ -139,7 +130,17 @@ public class CollegeMyFeedAdapter extends
             SimpleDateFormat monthFormat = new SimpleDateFormat("MMM");
             String month = monthFormat.format(date);
             Log.e("month", month);
-            college_feedViewHolder.day.setText(goal);
+
+            if (goal.length() > 3)
+                goal = goal.substring(0, 3);
+            college_feedViewHolder.day.setText(goal.toUpperCase());
+
+            String day = "" + calendar.get(Calendar.DAY_OF_MONTH);
+            Log.e("day of moth", day);
+
+            if (month.length() > 0) {
+                month = month.substring(0, 3);
+            }
             // college_feedViewHolder.date_month.setText(Date_Month[i]);
             //college_feedViewHolder.time.setText(Time_[i]);
             college_feedViewHolder.news_icon.setVisibility(View.GONE);
@@ -229,8 +230,8 @@ public class CollegeMyFeedAdapter extends
                     try {
                         String persoPid = SharedpreferenceUtility.getInstance(context).getString(AppConstants.PERSON_PID);
                         String pid = myFeedList.get(posi).getPid();
-                        JSONObject jsonObject= new JSONObject();
-                        jsonObject.put("eventId", "4713227854282752");
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("eventId", pid);
                         jsonObject.put("from_pid", persoPid);
                         WebApiAttending(jsonObject);
                     } catch (Exception e) {
@@ -238,13 +239,13 @@ public class CollegeMyFeedAdapter extends
                     }
                     int pos_for_going = getAdapterPosition();
                     if (flag_attending_clicked[pos_for_going]) {
-                        if(flag_news[pos_for_going])
+                        if (flag_news[pos_for_going])
                             going.setImageResource(R.mipmap.heart);
                         else
                             going.setImageResource(R.mipmap.going);
                         flag_attending_clicked[pos_for_going] = false;
                     } else {
-                        if(flag_news[pos_for_going])
+                        if (flag_news[pos_for_going])
                             going.setImageResource(R.mipmap.heart_selected);
                         else
                             going.setImageResource(R.mipmap.going_selected);
@@ -256,11 +257,10 @@ public class CollegeMyFeedAdapter extends
                 @Override
                 public void onClick(View v) {
                     int pos_for_share = getAdapterPosition();
-                    if(flag_share_clicked[pos_for_share]) {
+                    if (flag_share_clicked[pos_for_share]) {
                         share.setAlpha((float) 0.5);
                         flag_share_clicked[pos_for_share] = false;
-                    }
-                    else {
+                    } else {
                         share.setAlpha((float) 1);
                         flag_share_clicked[pos_for_share] = true;
                     }
@@ -288,7 +288,7 @@ public class CollegeMyFeedAdapter extends
         try {
             SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            simpleDateFormat.setTimeZone(TimeZone.getDefault());
             Date d = simpleDateFormat.parse(createTimeStr);
 
 //        java.util.Date d = f.parse(createTimeStr);
@@ -328,7 +328,7 @@ public class CollegeMyFeedAdapter extends
     private final Handler _handler = new Handler() {
         public void handleMessage(Message msg) {
             int response_code = msg.what;
-            if (response_code != 0&& response_code!=204) {
+            if (response_code != 0 && response_code != 204) {
                 String strResponse = (String) msg.obj;
                 Log.v("Response", strResponse);
                 if (strResponse != null && strResponse.length() > 0) {
@@ -351,12 +351,10 @@ public class CollegeMyFeedAdapter extends
                 } else {
                     Toast.makeText(context, "SERVER_ERROR", Toast.LENGTH_LONG).show();
                 }
-            } else if(response_code==204){
+            } else if (response_code == 204) {
 
                 Toast.makeText(context, "Attending", Toast.LENGTH_LONG).show();
-            }
-
-            else {
+            } else {
                 Toast.makeText(context, "SERVER_ERROR", Toast.LENGTH_LONG).show();
             }
         }

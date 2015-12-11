@@ -34,9 +34,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -48,10 +46,11 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
 
     public static Typeface r_med, r_reg;
     private List<CampusFeedBean> CollegeFeedList;
-    List<Boolean> flag_news =new ArrayList<Boolean>();
-    List<Boolean> flag_attending_clicked =new ArrayList<Boolean>();
-    List<Boolean> flag_share_clicked =new ArrayList<Boolean>();
-
+    List<Boolean> flag_news = new ArrayList<Boolean>();
+    List<Boolean> flag_attending_clicked = new ArrayList<Boolean>();
+    List<Boolean> flag_share_clicked = new ArrayList<Boolean>();
+    public static int attending = 1;
+    public static int liking=1;
     //boolean[] flag_news = new boolean[5];
     //boolean[] flag_attending_clicked = new boolean[5];
     //boolean[] flag_share_clicked = new boolean[5];
@@ -60,34 +59,6 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
     int going_click_count = 0;
     int share_click_count = 0;
     Context context;
-
-      /*  CharSequence EventTitles[] = {"Roto Annual Play Auditions", "Spark Session 4", "E-Cell Startup Selection Drive", "NITK Beach Clean-Up Drive", "New Recruits List", "Football Team Tryouts", "Football Team Reaches Quarters of Independence Cup"};
-        CharSequence GroupNames[] = {"Rotaract Club", "IE NITK", "E-Cell", "Rotaract Club", "E-Cell", "Football Team", "Football Team"};
-        CharSequence Timestamp[] = {"1 day ago", "2 days ago", "Posted 10 days ago", "11 days ago", "Posted 15 days ago", "Posted 20 days ago", "Posted 30 days ago"};
-        private static int[] event_photos = new int[]{
-                R.mipmap.play_audition,
-                R.mipmap.spark_session,
-                R.mipmap.cell_event,
-                R.mipmap.beach_clean_up,
-                R.mipmap.cell_news,
-                R.mipmap.football_event,
-                R.mipmap.football_news
-        };
-        CharSequence Day[] = {"MON", "WED", "MON", "SAT", "", "MON", ""};
-        CharSequence Date_Month[] = {"26 Oct", "4 Oct", "21 Sep", "19 Sept", "", "14 Sep", ""};
-        CharSequence Time_[] = {"5:30 PM", "5:30 PM", "5:30 PM", "7:30 AM", "", "5:30 PM", ""};
-        private static int[] GroupLogo = new int[]{
-                R.mipmap.roto_logo,
-                R.mipmap.ie_logo,
-                R.mipmap.cell_logo,
-                R.mipmap.roto_logo,
-                R.mipmap.cell_logo,
-                R.mipmap.football_logo,
-                R.mipmap.football_logo
-        };
-        CharSequence Venue[] = {"Main Building", "ATB Seminar Hall", "MSH", "NITK Beach Entrance", "", "Football Ground", ""};
-        CharSequence Description[] = {"Be part of the greatest dramatics show of the college. If you love the stage, you will love to be a part of our show. Open to all.", "SPARK is inspired by TEDx Talks where you will have a chance to interact, ask questions and learn from amazing people from your own campus!", "Have an Idea? or want to Startup? Present your idea to us and you can win access to STEP resources and great mentorship.", "All students are cordially invited for the NITK Beach Clean-Up Drive on September 19th (Saturday) as a part of the 'International Coastal Clean-Up Day' Celebration. This event is being held in association with NSS NITK & the Rotaract Club of our college.\n", "The new recruits are the following:\n14EE201 Abhijay Kumar Pandit\n14ME139 Parikshit\n14EC202 Aditya Nishtala\n14CO132 Prajwal Kailas\n14CH02 Aishwarya Sanjeev Kumar\n14CV136 Pralay S", "Be a part of the football team! Come and show us what you got. Talented and enthusiastic first years are welcome.",
-                "The NITK Football team won 2 games to reach the quarter finals of the independence cup. They lost their third game by a small 2-1 margin which put them out of the tournament."};*/
 
     public CollegeCampusFeedAdapter(List<CampusFeedBean> CollegeFeedList, Context contect) {
         this.CollegeFeedList = CollegeFeedList;
@@ -102,49 +73,28 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
     @Override
     public void onBindViewHolder(CollegeCampusFeedViewHolder college_feedViewHolder, int i) {
         CampusFeedBean cf = CollegeFeedList.get(i);
-
-        flag_attending_clicked.add(i,false);
-        flag_share_clicked.add(i,false);
-
+        flag_attending_clicked.add(i, false);
+        flag_share_clicked.add(i, false);
         college_feedViewHolder.event_title.setText(cf.getTitle());
-
         college_feedViewHolder.timestamp.setText("" + timeAgo(cf.getTimeStamp()));
         college_feedViewHolder.group_name.setText(cf.getClubid());
+
         String url = "http://admin.bookieboost.com/admin/images/2015-02-0116-17-50.jpg";
-        Picasso.with(context).load(url).into(college_feedViewHolder.group_icon);
-        Picasso.with(context).load(url).into(college_feedViewHolder.event_photo);
-
-
-      /*  Picasso.with(context).load(url).into(college_feedViewHolder.news_icon);*/
-
-
-           /* "event_creator":"Anirudh",
-                    "description":"SAMPLE PHOTO",
-                    "views":"0",
-                    "photo":"/9j/45c8k3aLbSnKKvzKT2glvt0bVz/9k=",
-                    "club_id":"Institute of Engineers",
-                    "pid":"5073076857339904",
-                    "timestamp":"2017-12-12 11:11:11",
-                    "title":"PHOTO OP",
-                    "collegeId":"National Institute of Technology Karnataka",
-                    "kind":"clubs#resourcesItem"*/
-
-
-
-
-       /* if (encodedImage != null && !encodedImage.isEmpty()) {
-            if (encodedImage.equals("None")) {
-                college_feedViewHolder.event_photo.setImageResource(R.mipmap.spark_session);
+        try {
+            String urll = cf.getClubphoto();
+            Log.e("url campusfeed", "" + urll);
+            if (cf.getClubphoto().equalsIgnoreCase("None")) {
+                Picasso.with(context).load(R.mipmap.spark_session).into(college_feedViewHolder.event_photo);
             } else {
-                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                //college_feedViewHolder.event_photo.setImageResource(event_photos[i]);
-                college_feedViewHolder.event_photo.setImageBitmap(decodedByte);
+                Picasso.with(context).load(cf.getClubphoto()).into(college_feedViewHolder.event_photo);
             }
-        }*/ /*else {*/
-        //    college_feedViewHolder.event_photo.setImageResource(R.mipmap.spark_session);
+        } catch (Exception e) {
 
+            Picasso.with(context).load(R.mipmap.spark_session).into(college_feedViewHolder.event_photo);
+        }
+        Picasso.with(context).load(url).into(college_feedViewHolder.group_icon);
 
+        String title = cf.getTitle();
         //news
         if (cf.getAttendees() == null || cf.getAttendees().size() == 0) {
             college_feedViewHolder.day.setVisibility(View.GONE);
@@ -153,18 +103,17 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
             college_feedViewHolder.news_icon.setVisibility(View.VISIBLE);
 
             //flag_news[i]=true;
-            flag_news.add(i,true);
+            flag_news.add(i, true);
             college_feedViewHolder.going.setImageResource(R.mipmap.heart);
 
         } else {
-            flag_news.add(i,false);
-            SimpleDateFormat inFormat = new SimpleDateFormat("dd-MM-yyyy");
+            flag_news.add(i, false);
+            SimpleDateFormat inFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = null;
             try {
-                date = inFormat.parse(cf.getStart_date());
+                date = inFormat.parse(cf.getTimeStamp());
                 Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
                 calendar.setTime(date);
-
 
                 SimpleDateFormat outFormat = new SimpleDateFormat("EEEE");
                 String goal = outFormat.format(date);
@@ -177,26 +126,24 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                 SimpleDateFormat dateformate = new SimpleDateFormat("dd");
                 String dayFormate = monthFormat.format(date);
                 Log.e("day", "" + calendar.get(Calendar.DAY_OF_MONTH));
-                if(goal.length()>3)
-                goal = goal.substring(0, 3);
+                if (goal.length() > 3) {
+                    goal = goal.substring(0, 3);
+                } else {
 
-                college_feedViewHolder.day.setText(goal.toUpperCase());
-
-                String day = "" + calendar.get(Calendar.DAY_OF_MONTH);
-                Log.e("day of moth",day);
-
-                if(month.length()>0){
-                    month=month.substring(0,3);
                 }
 
-                college_feedViewHolder.date_month.setText(day + "" + month);
-                college_feedViewHolder.time.setText(cf.getStart_time());
-
-
+                college_feedViewHolder.day.setText("" + goal.toUpperCase());
+                String day = "" + calendar.get(Calendar.DAY_OF_MONTH);
+                if (month.length() > 0) {
+                    month = month.substring(0, 3);
+                } else {
+                }
+                Log.e(cf.getTitle(), day + "" + month);
+                college_feedViewHolder.date_month.setText("" + day + "" + month);
+                college_feedViewHolder.time.setText("" + cf.getEnd_time());
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
             // college_feedViewHolder.date_month.setText(Date_Month[i]);
             //college_feedViewHolder.time.setText(Time_[i]);
             college_feedViewHolder.news_icon.setVisibility(View.GONE);
@@ -218,6 +165,7 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
         ImageView event_photo, news_icon, going, share;
         CircularImageView group_icon;
 
+
         public CollegeCampusFeedViewHolder(View v) {
             super(v);
 
@@ -237,6 +185,7 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
             time = (TextView) v.findViewById(R.id.tv_time);
             group_icon = (CircularImageView) v.findViewById(R.id.group_image);
 
+
             event_title.setTypeface(r_med);
             group_name.setTypeface(r_reg);
             timestamp.setTypeface(r_reg);
@@ -255,8 +204,6 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                     intent_temp.putExtras(bundle);
                     context.startActivity(intent_temp);
                     String pid = bean.getPid();
-
-
                 }
             });
 
@@ -264,30 +211,50 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                 @Override
                 public void onClick(View v) {
 
-                    try {
-                        String persoPid = SharedpreferenceUtility.getInstance(context).getString(AppConstants.PERSON_PID);
-                        String pid = CollegeFeedList.get(posi).getPid();
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("eventId", "4713227854282752");
-                        jsonObject.put("from_pid", persoPid);
-                        WebApiAttending(jsonObject);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
 
                     int pos_for_going = getAdapterPosition();
                     if (flag_attending_clicked.get(pos_for_going)) {
-                        if(flag_news.get(pos_for_going))
+                        if (flag_news.get(pos_for_going)){
                             going.setImageResource(R.mipmap.heart);
-                        else
+                            Toast.makeText(context,"coming soon",Toast.LENGTH_SHORT).show();
+                        }
+                        else {
                             going.setImageResource(R.mipmap.going);
-                        flag_attending_clicked.add(pos_for_going,false);
+
+                            try {
+                                String persoPid = SharedpreferenceUtility.getInstance(context).getString(AppConstants.PERSON_PID);
+                                String pid = CollegeFeedList.get(posi).getPid();
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("eventId", pid);
+                                jsonObject.put("from_pid", persoPid);
+                                WebApiAttending(jsonObject);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        flag_attending_clicked.add(pos_for_going, false);
                     } else {
-                        if(flag_news.get(pos_for_going))
+                        if (flag_news.get(pos_for_going)){
                             going.setImageResource(R.mipmap.heart_selected);
-                        else
+                            Toast.makeText(context,"coming soon",Toast.LENGTH_SHORT).show();
+                        }
+                        else {
                             going.setImageResource(R.mipmap.going_selected);
-                        flag_attending_clicked.add(pos_for_going,true);
+
+                            try {
+                                String persoPid = SharedpreferenceUtility.getInstance(context).getString(AppConstants.PERSON_PID);
+                                String pid = CollegeFeedList.get(posi).getPid();
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("eventId", pid);
+                                jsonObject.put("from_pid", persoPid);
+                                WebApiAttending(jsonObject);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                        flag_attending_clicked.add(pos_for_going, true);
                     }
                 }
             });
@@ -296,13 +263,12 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                 @Override
                 public void onClick(View v) {
                     int pos_for_share = getAdapterPosition();
-                    if(flag_share_clicked.get(pos_for_share)) {
+                    if (flag_share_clicked.get(pos_for_share)) {
                         share.setAlpha((float) 0.5);
-                        flag_share_clicked.add(pos_for_share,false);
-                    }
-                    else {
+                        flag_share_clicked.add(pos_for_share, false);
+                    } else {
                         share.setAlpha((float) 1);
-                        flag_share_clicked.add(pos_for_share,true);
+                        flag_share_clicked.add(pos_for_share, true);
                     }
                 }
             });
@@ -316,21 +282,19 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
             Log.e("", url);
             new WebRequestTask(context, param, _handler, WebRequestTask.POST, jsonObject, WebServiceDetails.PID_ATTENDING,
                     true, url).execute();
-
         }
     }
-
 
     public String timeAgo(String createTimeStr) {
         try {
             SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            simpleDateFormat.setTimeZone(TimeZone.getDefault());
             Date d = simpleDateFormat.parse(createTimeStr);
 
 //        java.util.Date d = f.parse(createTimeStr);
             String currentDateandTime = f.format(new Date());
-            Date d1 = f.parse(currentDateandTime);
+            java.util.Date d1 = f.parse(currentDateandTime);
             long milliseconds = d.getTime();
             long millisecondsCurrent = d1.getTime();
             long diff_Milli = millisecondsCurrent - milliseconds;
@@ -352,13 +316,10 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                 createTimeStr = String.valueOf(minutes);
                 createTimeStr = createTimeStr + " Minutes Ago ";
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return createTimeStr;
-
     }
 
     private final Handler _handler = new Handler() {
@@ -377,7 +338,6 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                             }
                         }
                         break;
-
                         default:
                             break;
                     }
@@ -386,7 +346,26 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                 }
             }
             if (response_code == 204) {
-                Toast.makeText(context, "Attending", Toast.LENGTH_LONG).show();
+              //  if (!flag_news.get(posi)) {
+
+
+                    if (attending == 1) {
+                        attending = 2;
+                        Toast.makeText(context, "Attending", Toast.LENGTH_LONG).show();
+                    } else if (attending == 2) {
+                        attending = 1;
+                        Toast.makeText(context, "Not Attending", Toast.LENGTH_LONG).show();
+                    }
+              //  } else {
+                  /*  if (liking == 1) {
+                        liking = 2;
+                        Toast.makeText(context, "Like", Toast.LENGTH_LONG).show();
+                    } else if (liking == 2) {
+                        liking = 1;
+                        Toast.makeText(context, "Unlike", Toast.LENGTH_LONG).show();
+                    }
+
+                }*/
 
             } else {
                 Toast.makeText(context, "SERVER_ERROR", Toast.LENGTH_LONG).show();
