@@ -16,6 +16,7 @@ public class AboutGroupActivity extends ActionBarActivity {
     LinearLayout close;
     TextView about_text, group_info;
     Typeface r_reg, r_med;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
