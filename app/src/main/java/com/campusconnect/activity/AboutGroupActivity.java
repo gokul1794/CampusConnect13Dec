@@ -22,6 +22,9 @@ public class AboutGroupActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_group);
 
+       String aboutStr= getIntent().getStringExtra("About");
+
+
         r_reg = Typeface.createFromAsset(getAssets(), "font/Roboto_Regular.ttf");
         r_med = Typeface.createFromAsset(getAssets(), "font/Roboto_Medium.ttf");
 
@@ -31,6 +34,7 @@ public class AboutGroupActivity extends ActionBarActivity {
 
         about_text.setTypeface(r_med);
         group_info.setTypeface(r_reg);
+        group_info.setText(aboutStr);
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,4 +45,11 @@ public class AboutGroupActivity extends ActionBarActivity {
             }
         });
     }
+
+
+
+
+
+
+
 }

@@ -1,5 +1,6 @@
 package com.campusconnect.adapter;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
@@ -13,8 +14,12 @@ import com.campusconnect.R;
 import com.campusconnect.bean.NotificationBean;
 import com.campusconnect.utility.CircularImageView;
 import com.campusconnect.utility.CustomTypefaceSpan;
+import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by RK on 22-09-2015.
@@ -23,14 +28,16 @@ public class NotificationAdapterActivity extends
         RecyclerView.Adapter<NotificationAdapterActivity.NotificationViewHolder> {
 
     private List<NotificationBean> NotificationList;
+    private Context context;
 
     public static SpannableStringBuilder g_name;
     public static Typeface r_lig, r_reg;
     public static TypefaceSpan robotoRegularSpan_for_group_name, robotoRegularSpan_for_subject;
     public static String group_name = " ", subject = " ", end = "";
 
-    public NotificationAdapterActivity(List<NotificationBean> NotificationList) {
+    public NotificationAdapterActivity(List<NotificationBean> NotificationList , Context context) {
         this.NotificationList = NotificationList;
+        this.context=context;
     }
 
     @Override
@@ -44,55 +51,86 @@ public class NotificationAdapterActivity extends
 
         String intro = "";
         String middle = "";
+        notification_listViewHolder.notification_ts.setText(timeAgo(ci.getTimestamp()));
+try{
+        if (ci.getPhotoUrl().equalsIgnoreCase("None")) {
+            Picasso.with(context).load(R.mipmap.spark_session).into(notification_listViewHolder.group_icon_notification);
+        } else {
+            Picasso.with(context).load(ci.getPhotoUrl()).into(notification_listViewHolder.group_icon_notification);
+        }
+    } catch (Exception e) {
 
-        if(ci.getType()!=null) {
+        Picasso.with(context).load(R.mipmap.spark_session).into(notification_listViewHolder.group_icon_notification);
+    }
 
-            if (ci.getType().equalsIgnoreCase("Approved Join Request")) {
+
+        if (ci.getType() != null) {
+/*
+
+            1) This just in! groupname has posted a news postname  - type: Post
+
+            2) Check it out! groupname has posted an event post postname  - type: Event
+
+            3) Get ready! postname posted by groupname .... - type: Reminder
+
+            4)Congratulations! Your request to join groupname ... - type: Approved Club Creation Request
+*/
+
+
+
+            if (ci.getType().equalsIgnoreCase("post")) {
 
                 intro = "This just in! ";
                 middle = " has posted a news post ";
                 group_name = "" + ci.getGroup_name();            //To be gotten from server
-                subject = "Club Recruitment List";      ////To be gotten from server
+                subject = ci.getEventName();      ////To be gotten from server
 
                 g_name = new SpannableStringBuilder(intro + group_name + middle + subject + ".");
                 g_name.setSpan(robotoRegularSpan_for_group_name, intro.length(), intro.length() + group_name.length(), 0);
                 g_name.setSpan(robotoRegularSpan_for_subject, middle.length() + intro.length() + group_name.length(), middle.length() + intro.length() + group_name.length() + subject.length() + 1, 0);
-            } else if (ci.getType().equalsIgnoreCase("post")) {
+
+                notification_listViewHolder.notification.setText(g_name);
+
+            } else if (ci.getType().equalsIgnoreCase("Event")) {
 
                 intro = "Check it out! ";
                 middle = " has posted an event post ";
                 group_name = "" + ci.getGroup_name();            //To be gotten from server
-                subject = "Play Auditions";      ////To be gotten from server
+                subject = ci.getEventName();       ////To be gotten from server
 
                 g_name = new SpannableStringBuilder(intro + group_name + middle + subject + ".");
                 g_name.setSpan(robotoRegularSpan_for_group_name, intro.length(), intro.length() + group_name.length(), 0);
                 g_name.setSpan(robotoRegularSpan_for_subject, middle.length() + intro.length() + group_name.length(), middle.length() + intro.length() + group_name.length() + subject.length() + 1, 0);
-            } else if (ci.getType().equalsIgnoreCase("Event")) {
+
+                notification_listViewHolder.notification.setText(g_name);
+            } else if (ci.getType().equalsIgnoreCase("Reminder")) {
                 intro = "Get Ready! ";
                 middle = " posted by ";
                 end = " will begin in half hour ";
                 group_name = "" + ci.getGroup_name();           //To be gotten from server
-                subject = "Play Auditions";      ////To be gotten from server
+                subject = ci.getEventName();       ////To be gotten from server
 
                 g_name = new SpannableStringBuilder(intro + subject + middle + group_name + end + ".");
                 g_name.setSpan(robotoRegularSpan_for_group_name, intro.length(), intro.length() + subject.length(), 0);
                 g_name.setSpan(robotoRegularSpan_for_subject, middle.length() + intro.length() + subject.length(), middle.length() + intro.length() + group_name.length() + subject.length() + 1, 0);
 
-            } else if (ci.getType().equalsIgnoreCase("Reminder")) {
+                notification_listViewHolder.notification.setText(g_name);
+            } else if (ci.getType().trim().equalsIgnoreCase("Join Request")) {
 
                 intro = "Congratulations! Your request to join ";
                 end = " has been accepted";
                 group_name = "" + ci.getGroup_name();          //To be gotten from server
-
                 g_name = new SpannableStringBuilder(intro + group_name + end + ".");
                 g_name.setSpan(robotoRegularSpan_for_group_name, intro.length(), intro.length() + group_name.length(), 0);
 
-            } else{
+                notification_listViewHolder.notification.setText(g_name);
+
+            } else {
 
             }
 
 
-                //i value has been used just for testing....if condition to be based on notification type
+            //i value has been used just for testing....if condition to be based on notification type
            /* if (i == 0) {    //Notification for posting a news post
 
             } else if (i == 1) {    //Notification for posting an event post
@@ -107,7 +145,7 @@ public class NotificationAdapterActivity extends
                 g_name = new SpannableStringBuilder(intro + group_name + end + ".");
                 g_name.setSpan(robotoRegularSpan_for_group_name, intro.length(), intro.length() + group_name.length(), 0);
             }*/
-                notification_listViewHolder.notification.setText(g_name);
+
         }
     }
 
@@ -140,6 +178,46 @@ public class NotificationAdapterActivity extends
         }
 
     }
+
+
+    public String timeAgo(String createTimeStr) {
+        try {
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            simpleDateFormat.setTimeZone(TimeZone.getDefault());
+            Date d = simpleDateFormat.parse(createTimeStr);
+
+//        java.util.Date d = f.parse(createTimeStr);
+            String currentDateandTime = f.format(new Date());
+            java.util.Date d1 = f.parse(currentDateandTime);
+            long milliseconds = d.getTime();
+            long millisecondsCurrent = d1.getTime();
+            long diff_Milli = millisecondsCurrent - milliseconds;
+            long minutes = Math.abs((millisecondsCurrent - milliseconds) / 60000);
+            long seconds = Math.abs((diff_Milli) / 1000);
+            long hours = Math.abs((minutes) / 60);
+            long days = Math.abs((hours) / 24);
+            long weeks = Math.abs((days) / 7);
+            if (days > 7) {
+                createTimeStr = String.valueOf(weeks);
+                createTimeStr = createTimeStr + " Weeks Ago ";
+            } else if (hours > 24) {
+                createTimeStr = String.valueOf(days);
+                createTimeStr = createTimeStr + " Days Ago ";
+            } else if (minutes > 60) {
+                createTimeStr = String.valueOf(hours);
+                createTimeStr = createTimeStr + " Hours Ago ";
+            } else {
+                createTimeStr = String.valueOf(minutes);
+                createTimeStr = createTimeStr + " Minutes Ago ";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return createTimeStr;
+    }
+
+
 }
 
 

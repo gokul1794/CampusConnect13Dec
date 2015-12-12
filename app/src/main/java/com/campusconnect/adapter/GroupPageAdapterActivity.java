@@ -2,8 +2,8 @@ package com.campusconnect.adapter;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -12,15 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
+import com.campusconnect.R;
 import com.campusconnect.activity.AboutGroupActivity;
 import com.campusconnect.activity.GroupMembersByGroupActivity;
 import com.campusconnect.activity.NewsPostsByGroupActivity;
-import com.campusconnect.activity.PreviousEventsActivity;
 import com.campusconnect.activity.UpcomingEventsActivity;
-import com.campusconnect.utility.CircularImageView;
-import com.campusconnect.R;
+import com.campusconnect.bean.GroupBean;
 
 import java.util.List;
 
@@ -31,18 +29,31 @@ public class GroupPageAdapterActivity extends
         RecyclerView.Adapter<GroupPageAdapterActivity.GroupPageHolder> {
 
     private List<GroupPage_infoActivity> GroupPageList;
-    String g_name;
-    Integer g_icon,m_count,f_count;
-    int follow_click_count=0,member_click_count=0;
-    int yes_dialog_box_click_count=0;
+    String g_name, g_icon;
+    Integer m_count, f_count;
+    int follow_click_count = 0, member_click_count = 0;
+    Context context;
+    GroupBean groupBean;
+
+    int yes_dialog_box_click_count = 0;
     public TextView dialog_info;
 
-    GroupInfoViewHolder holder1;
-    ExtraGroupInfoListHolder holder2;
-    CharSequence GroupInfoAttributes[]={"About","Members","Upcoming Events","News Posts","Previous Events"};
 
-    public GroupPageAdapterActivity(List<GroupPage_infoActivity> GroupsJoinedList) {
+    ExtraGroupInfoListHolder holder2;
+    CharSequence GroupInfoAttributes[] = {"About", "Members", "Events", "News Posts",};
+
+    public GroupPageAdapterActivity(List<GroupPage_infoActivity> GroupsJoinedList,GroupBean bean) {
         this.GroupPageList = GroupsJoinedList;
+        this.groupBean=bean;
+    }
+
+    public GroupPageAdapterActivity(GroupBean groupBean, Context context) {
+       /* g_name = groupBean.getName();
+        g_icon = groupBean.getPhotourl();
+        m_count = 10;
+        f_count = 10;*/
+        this.context = context;
+
     }
 
     @Override
@@ -52,27 +63,22 @@ public class GroupPageAdapterActivity extends
 
     @Override
     public void onBindViewHolder(GroupPageHolder groupViewHolder, int i) {
-        if(getItemViewType(i)==0) {
+       /* if(getItemViewType(i)==0) {
             holder1 = (GroupInfoViewHolder) groupViewHolder;
             holder1.group_name.setText(g_name);
-            holder1.group_icon.setImageResource(g_icon);
+            //holder1.group_icon.setImageResource(g_icon);
+            Picasso.with(context).load(g_icon).into(holder1.group_icon);
+
             holder1.members_count.setText(m_count.toString());
             holder1.followers_count.setText(f_count.toString());
         }
-        else {
-            holder2 = (ExtraGroupInfoListHolder) groupViewHolder;
-            holder2.g_name_joined.setText(GroupInfoAttributes[i-1]);
-        }
-
+        else {*/
+        holder2 = (ExtraGroupInfoListHolder) groupViewHolder;
+        holder2.g_name_joined.setText(GroupInfoAttributes[i]);
     }
-
     @Override
     public int getItemViewType(int position) {
-        int viewType;
-        if(position==0)
-            viewType = 0;
-        else
-            viewType=1;
+        int viewType = 1;
 
         return viewType;
     }
@@ -80,18 +86,16 @@ public class GroupPageAdapterActivity extends
     @Override
     public GroupPageHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         GroupPageHolder holder;
-        if(i==0)
+       /* if(i==0)
         {
             View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
                     R.layout.activity_card_layout_group_info, viewGroup, false);
             holder = new GroupInfoViewHolder(itemView);
         }
-        else
-        {
-            View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
-                    R.layout.activity_card_layout_extra_group_info, viewGroup, false);
-            holder = new ExtraGroupInfoListHolder(itemView);
-        }
+        else*/
+        View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
+                R.layout.activity_card_layout_extra_group_info, viewGroup, false);
+        holder = new ExtraGroupInfoListHolder(itemView);
 
         return holder;
     }
@@ -103,39 +107,24 @@ public class GroupPageAdapterActivity extends
         }
 
     }
-    public class GroupInfoViewHolder extends GroupPageAdapterActivity.GroupPageHolder{
+/*
+    public class GroupInfoViewHolder extends GroupPageAdapterActivity.GroupPageHolder {
 
-        TextView group_name,members_count,followers_count, followers_text, members_text;
+        TextView group_name, members_count, followers_count;
         CircularImageView group_icon;
-        ToggleButton tbtn_follow,tbtn_member;
+        ToggleButton tbtn_follow, tbtn_member;
+
         public GroupInfoViewHolder(View itemView) {
             super(itemView);
-
-            Typeface r_reg = Typeface.createFromAsset(itemView.getContext().getAssets(), "font/Roboto_Regular.ttf");
-            Typeface r_lig = Typeface.createFromAsset(itemView.getContext().getAssets(), "font/Roboto_Light.ttf");
-
-            group_name = (TextView)itemView.findViewById(R.id.group_name);
+         *//*   group_name = (TextView)itemView.findViewById(R.id.group_name);
             members_count = (TextView)itemView.findViewById(R.id.tv_members_count);
             followers_count = (TextView)itemView.findViewById(R.id.tv_followers_count);
-            followers_text = (TextView)itemView.findViewById(R.id.tv_followers);
-            members_text = (TextView)itemView.findViewById(R.id.tv_members);
             group_icon = (CircularImageView)itemView.findViewById(R.id.group_image);
             tbtn_follow = (ToggleButton)itemView.findViewById(R.id.tb_followers);
             tbtn_member = (ToggleButton)itemView.findViewById(R.id.tb_members);
+*//*
 
-            group_name.setTypeface(r_reg);
-            members_count.setTypeface(r_reg);
-            followers_count.setTypeface(r_reg);
-            followers_text.setTypeface(r_lig);
-            members_text.setTypeface(r_lig);
-
-            Bundle bundle =((Activity)itemView.getContext()).getIntent().getExtras();
-            g_name = bundle.getString("G_NAME");
-            g_icon = bundle.getInt("G_ICON");
-            m_count = bundle.getInt("M_COUNT");
-            f_count = bundle.getInt("F_COUNT");
-
-
+*//*
             tbtn_follow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -153,56 +142,54 @@ public class GroupPageAdapterActivity extends
             tbtn_member.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MemberConfirmationDialog confirmDialog = new MemberConfirmationDialog((Activity) v.getContext());
-                    Window window = confirmDialog.getWindow();
-                    window.setLayout(450, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    confirmDialog.show();
+                    if (follow_click_count % 2 == 0) {
+                        m_count++;
+                        notifyDataSetChanged();
+                    } else {
+                        m_count--;
+                        notifyDataSetChanged();
+                    }
+                    member_click_count++;
                 }
-            });
-
-
+            });*//*
 
         }
-    }
+    }*/
 
-    public class ExtraGroupInfoListHolder extends GroupPageAdapterActivity.GroupPageHolder{
-
+    public class ExtraGroupInfoListHolder extends GroupPageAdapterActivity.GroupPageHolder {
         TextView g_name_joined;
         CardView cv_group_attributes;
+
         public ExtraGroupInfoListHolder(View itemView) {
             super(itemView);
-            g_name_joined = (TextView)itemView.findViewById(R.id.tv_group_attribute);
-            cv_group_attributes = (CardView)itemView.findViewById(R.id.group_attributes_card);
+            g_name_joined = (TextView) itemView.findViewById(R.id.tv_group_attribute);
+            cv_group_attributes = (CardView) itemView.findViewById(R.id.group_attributes_card);
 
             cv_group_attributes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(getAdapterPosition()==1) {
+                    if (getAdapterPosition() == 0) {
                         Intent intent_temp = new Intent(v.getContext(), AboutGroupActivity.class);
+                        intent_temp.putExtra("About", groupBean.getDescription());
                         v.getContext().startActivity(intent_temp);
-                    }
-                    else if(getAdapterPosition()==2) {
+                    } else if (getAdapterPosition() == 1) {
                         Intent intent_temp = new Intent(v.getContext(), GroupMembersByGroupActivity.class);
+                        intent_temp.putExtra("clubId", groupBean.getClubId());
                         v.getContext().startActivity(intent_temp);
-                    }
-                    else if(getAdapterPosition()==3) {
+                    } else if (getAdapterPosition() == 2) {
                         Intent intent_temp = new Intent(v.getContext(), UpcomingEventsActivity.class);
+                        intent_temp.putExtra("clubId",groupBean.getClubId());
                         v.getContext().startActivity(intent_temp);
-                    }
-                    else if(getAdapterPosition()==4) {
+                    } else if (getAdapterPosition() == 3) {
                         Intent intent_temp = new Intent(v.getContext(), NewsPostsByGroupActivity.class);
+                        intent_temp.putExtra("clubId",groupBean.getClubId());
                         v.getContext().startActivity(intent_temp);
-                    }
-                    else if(getAdapterPosition()==5) {
-                        Intent intent_temp = new Intent(v.getContext(), PreviousEventsActivity.class);
-                        v.getContext().startActivity(intent_temp);
-                    }
-                    else{
+
+                    }  else {
 
                     }
                 }
             });
-
         }
     }
 
@@ -212,7 +199,6 @@ public class GroupPageAdapterActivity extends
         public Activity c;
         public Dialog d;
         public TextView yes, no;
-
 
 
         public MemberConfirmationDialog(Activity a) {
@@ -229,16 +215,14 @@ public class GroupPageAdapterActivity extends
             yes = (TextView) findViewById(R.id.btn_yes);
             no = (TextView) findViewById(R.id.btn_no);
             dialog_info = (TextView) findViewById(R.id.tv_dialog_info);
-            if(yes_dialog_box_click_count%2!=0) {
+            dialog_info.setText(GroupPageAdapterActivity.this.g_name);
+            if (yes_dialog_box_click_count % 2 != 0) {
                 dialog_info.setText("Are you sure you want to leave the group?");
+            } else {
+                dialog_info.setText("Become a member of " + GroupPageAdapterActivity.this.g_name);
             }
-            else{
-                dialog_info.setText("Become a member of "+g_name);
-            }
-
             yes.setOnClickListener(this);
             no.setOnClickListener(this);
-
         }
 
         @Override
@@ -255,17 +239,7 @@ public class GroupPageAdapterActivity extends
                 default:
                     break;
             }
-           /* if(yes_dialog_box_click_count%2!=0) {
-                iv_member.setImageResource(R.drawable.members_selected);
-            }
-            else{
-                iv_member.setImageResource(R.drawable.members);
-            }  */
-
         }
-
     }
-
-
 }
 

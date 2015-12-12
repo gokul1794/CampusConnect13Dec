@@ -25,12 +25,7 @@ public class ProfilePageFragment extends Fragment   {
     RecyclerView groups_joined;
     int top=0;
     ImageButton noti,profile,home,calendar,search;
-
-
-
-
     View  mRootView;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,9 +45,10 @@ public class ProfilePageFragment extends Fragment   {
             groups_joined.setHasFixedSize(true);
             groups_joined.setItemAnimator(new DefaultItemAnimator());
 
+
+
             ProfilePageAdapterActivity gj = new ProfilePageAdapterActivity(
                     createList_groups_joined(3));
-
             groups_joined.setAdapter(gj);
 
             groups_joined.setOnScrollListener(new MyScrollListenerProfilePage(getActivity()) {

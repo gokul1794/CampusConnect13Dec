@@ -1,5 +1,6 @@
 package com.campusconnect.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -10,13 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.campusconnect.R;
 import com.campusconnect.activity.InEventActivity;
-import com.campusconnect.supportClasses.NewsPostsByGroup_infoActivity;
+import com.campusconnect.bean.CampusFeedBean;
 import com.campusconnect.utility.CircularImageView;
+import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by RK on 06/11/2015.
@@ -24,16 +30,18 @@ import java.util.List;
 public class NewsPostsByGroupAdapterActivity extends
         RecyclerView.Adapter<NewsPostsByGroupAdapterActivity.NewsPostsByGroupViewHolder> {
 
-    private List<NewsPostsByGroup_infoActivity> NewsPostsByGroupList;
+    private List<CampusFeedBean> NewsPostsByGroupList;
     boolean[] flag_attending_clicked, flag_share_clicked;
-    int posi=0;
-    int going_click_count=0;
-    int share_click_count=0;
+    int posi = 0;
+    int going_click_count = 0;
+    int share_click_count = 0;
+    Context context;
 
-    public NewsPostsByGroupAdapterActivity(List<NewsPostsByGroup_infoActivity> NewsPostsByGroupList) {
+    public NewsPostsByGroupAdapterActivity(List<CampusFeedBean> NewsPostsByGroupList, Context context) {
         this.NewsPostsByGroupList = NewsPostsByGroupList;
         flag_attending_clicked = new boolean[getItemCount()];
         flag_share_clicked = new boolean[getItemCount()];
+        this.context = context;
     }
 
     @Override
@@ -44,9 +52,57 @@ public class NewsPostsByGroupAdapterActivity extends
 
     @Override
     public void onBindViewHolder(NewsPostsByGroupViewHolder news_posts_by_groupViewHolder, int i) {
-        NewsPostsByGroup_infoActivity ci = NewsPostsByGroupList.get(i);
+        CampusFeedBean ci = NewsPostsByGroupList.get(i);
 
+        news_posts_by_groupViewHolder.timestamp.setText(timeAgo(ci.getTimeStamp()));
+        news_posts_by_groupViewHolder.event_title.setText(ci.getTitle());
+        news_posts_by_groupViewHolder.group_name.setText(ci.getClubid());
+        try {
+            if (ci.getClubphoto().equalsIgnoreCase("None") || ci.getClubphoto() == null) {
+                Picasso.with(context).load(R.mipmap.spark_session).into(news_posts_by_groupViewHolder.event_photo);
+            } else {
+                Picasso.with(context).load(ci.getPhoto()).into(news_posts_by_groupViewHolder.event_photo);
+            }
+        } catch (Exception e) {
+            Picasso.with(context).load(R.mipmap.spark_session).into(news_posts_by_groupViewHolder.event_photo);
+        }
+    }
 
+    public String timeAgo(String createTimeStr) {
+        try {
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            simpleDateFormat.setTimeZone(TimeZone.getDefault());
+            Date d = simpleDateFormat.parse(createTimeStr);
+
+//        java.util.Date d = f.parse(createTimeStr);
+            String currentDateandTime = f.format(new Date());
+            java.util.Date d1 = f.parse(currentDateandTime);
+            long milliseconds = d.getTime();
+            long millisecondsCurrent = d1.getTime();
+            long diff_Milli = millisecondsCurrent - milliseconds;
+            long minutes = Math.abs((millisecondsCurrent - milliseconds) / 60000);
+            long seconds = Math.abs((diff_Milli) / 1000);
+            long hours = Math.abs((minutes) / 60);
+            long days = Math.abs((hours) / 24);
+            long weeks = Math.abs((days) / 7);
+            if (days > 7) {
+                createTimeStr = String.valueOf(weeks);
+                createTimeStr = createTimeStr + " Weeks Ago ";
+            } else if (hours > 24) {
+                createTimeStr = String.valueOf(days);
+                createTimeStr = createTimeStr + " Days Ago ";
+            } else if (minutes > 60) {
+                createTimeStr = String.valueOf(hours);
+                createTimeStr = createTimeStr + " Hours Ago ";
+            } else {
+                createTimeStr = String.valueOf(minutes);
+                createTimeStr = createTimeStr + " Minutes Ago ";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return createTimeStr;
     }
 
     @Override
@@ -58,12 +114,11 @@ public class NewsPostsByGroupAdapterActivity extends
     }
 
 
-
-    public class NewsPostsByGroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class NewsPostsByGroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         CardView news_feed;
         TextView event_title, group_name, timestamp;
-        ImageView event_photo,news_icon,like,share;
+        ImageView event_photo, news_icon, like, share;
         CircularImageView group_icon;
 
         public NewsPostsByGroupViewHolder(View v) {
@@ -91,19 +146,10 @@ public class NewsPostsByGroupAdapterActivity extends
                 public void onClick(View v) {
 
                     Intent intent_temp = new Intent(v.getContext(), InEventActivity.class);
-                    posi=getAdapterPosition();
-                    //Create the bundle
+                    posi = getAdapterPosition();
                     Bundle bundle = new Bundle();
-                  /*  bundle.putString("E_NAME", (String) EventTitles[posi]);
-                    bundle.putString("E_TIME",(String) Time_[posi]);
-                    bundle.putString("E_DATE",(String) Date_Month[posi]);
-                    bundle.putString("G_NAME",(String) GroupNames[posi]);
-                    bundle.putString("V_NAME",(String) Venue[posi]);
-                    bundle.putString("E_DESCRIPTION",(String) Description[posi]);
-                    bundle.putInt("E_PHOTO", event_photos[posi]);
-                    bundle.putInt("G_PHOTO",GroupLogo[posi]);
-                    bundle.putInt("FLAG_NEWS_TOP",posi);
-                    bundle.putInt("POSITION_TOP",posi); */
+                    CampusFeedBean bean = NewsPostsByGroupList.get(posi);
+                    bundle.putSerializable("BEAN", bean);
                     bundle.putBoolean("FLAG_SELECTED_SHARE", flag_share_clicked[posi]);
                     bundle.putBoolean("FLAG_SELECTED_ATTEND/LIKE", flag_attending_clicked[posi]);
                     intent_temp.putExtras(bundle);
@@ -118,9 +164,11 @@ public class NewsPostsByGroupAdapterActivity extends
                     if (flag_attending_clicked[pos_for_going]) {
                         like.setImageResource(R.mipmap.heart);
                         flag_attending_clicked[pos_for_going] = false;
+                        Toast.makeText(context, "coming soon", Toast.LENGTH_SHORT).show();
                     } else {
                         like.setImageResource(R.mipmap.heart_selected);
                         flag_attending_clicked[pos_for_going] = true;
+                        Toast.makeText(context, "coming soon", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -129,20 +177,16 @@ public class NewsPostsByGroupAdapterActivity extends
                 @Override
                 public void onClick(View v) {
                     int pos_for_share = getAdapterPosition();
-                    if(flag_share_clicked[pos_for_share]) {
+                    if (flag_share_clicked[pos_for_share]) {
                         share.setAlpha((float) 0.5);
                         flag_share_clicked[pos_for_share] = false;
-                    }
-                    else {
+                    } else {
                         share.setAlpha((float) 1);
                         flag_share_clicked[pos_for_share] = true;
                     }
                 }
             });
-
-
         }
-
         @Override
         public void onClick(View view) {
 

@@ -13,6 +13,42 @@ public class GroupBean implements Serializable {
     private String Abb;
     private String name;
     private String follow;
+    private String collegeName;
+    private String memberCount;
+    private String followCount;
+    private String photourl;
+
+    public String getMemberCount() {
+        return memberCount;
+    }
+
+    public void setMemberCount(String memberCount) {
+        this.memberCount = memberCount;
+    }
+
+    public String getFollowCount() {
+        return followCount;
+    }
+
+    public void setFollowCount(String followCount) {
+        this.followCount = followCount;
+    }
+
+    public String getCollegeName() {
+        return collegeName;
+    }
+
+    public void setCollegeName(String collegeName) {
+        this.collegeName = collegeName;
+    }
+
+    public String getPhotourl() {
+        return photourl;
+    }
+
+    public void setPhotourl(String photourl) {
+        this.photourl = photourl;
+    }
 
     public String getFollow() {
         return follow;
@@ -61,7 +97,6 @@ public class GroupBean implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
 
 
 }

@@ -369,7 +369,7 @@ public class HomeFragment extends Fragment {
                         case WebServiceDetails.PID_GET_GROUPS: {
                             try {
                                 groupList.clear();
-
+                                Log.d("group response",strResponse);
                                 JSONObject grpJson = new JSONObject(strResponse);
                                 String kind = grpJson.optString("kind");
                                 String etag = grpJson.optString("etag");
@@ -377,7 +377,6 @@ public class HomeFragment extends Fragment {
                                     JSONArray grpArray = grpJson.getJSONArray("list");
                                     if (grpArray.length() > 0) {
                                         for (int i = 0; i < grpArray.length(); i++) {
-
                                             JSONObject innerGrpObj = grpArray.getJSONObject(i);
                                             String description = innerGrpObj.optString("description");
                                             String admin = innerGrpObj.optString("admin");
@@ -1366,7 +1365,6 @@ public class HomeFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
 
         public class GroupListViewHolder extends RecyclerView.ViewHolder {
@@ -1388,8 +1386,6 @@ public class HomeFragment extends Fragment {
                     public void onClick(View v) {
                         Intent intent_temp = new Intent(v.getContext(), GroupPageActivity.class);
                         posi = getPosition();
-
-
                         GroupBean bean = GroupList.get(posi);
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("BEAN", bean);

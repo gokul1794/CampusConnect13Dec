@@ -37,4 +37,10 @@ public class WebServiceDetails {
 	public static final int PID_GET_GCM_PROFILE=13;
 	public static final int PID_ATTENDING=14;
 	public static final int PID_NOTIFICATION=15;
+	public static final int PID_CLUB_MEMEBER_JOIN =16;
+	public static final int PID_GET_CLUB_DETAIL=17;
+	public static final int PID_GET_CLUB_MEMBER=18;
+	public static final int PID_GET_Events=19;
+
+
 }

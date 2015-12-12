@@ -50,7 +50,7 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
     List<Boolean> flag_attending_clicked = new ArrayList<Boolean>();
     List<Boolean> flag_share_clicked = new ArrayList<Boolean>();
     public static int attending = 1;
-    public static int liking=1;
+    public static int liking = 1;
     //boolean[] flag_news = new boolean[5];
     //boolean[] flag_attending_clicked = new boolean[5];
     //boolean[] flag_share_clicked = new boolean[5];
@@ -132,9 +132,7 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                 if (goal.length() > 3) {
                     goal = goal.substring(0, 3);
                 } else {
-
                 }
-
                 college_feedViewHolder.day.setText("" + goal.toUpperCase());
                 String day = "" + calendar.get(Calendar.DAY_OF_MONTH);
                 if (month.length() > 0) {
@@ -217,11 +215,10 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
 
                     int pos_for_going = getAdapterPosition();
                     if (flag_attending_clicked.get(pos_for_going)) {
-                        if (flag_news.get(pos_for_going)){
+                        if (flag_news.get(pos_for_going)) {
                             going.setImageResource(R.mipmap.heart);
-                            Toast.makeText(context,"coming soon",Toast.LENGTH_SHORT).show();
-                        }
-                        else {
+                            Toast.makeText(context, "coming soon", Toast.LENGTH_SHORT).show();
+                        } else {
                             going.setImageResource(R.mipmap.going);
 
                             try {
@@ -238,11 +235,10 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
 
                         flag_attending_clicked.add(pos_for_going, false);
                     } else {
-                        if (flag_news.get(pos_for_going)){
+                        if (flag_news.get(pos_for_going)) {
                             going.setImageResource(R.mipmap.heart_selected);
-                            Toast.makeText(context,"coming soon",Toast.LENGTH_SHORT).show();
-                        }
-                        else {
+                            Toast.makeText(context, "coming soon", Toast.LENGTH_SHORT).show();
+                        } else {
                             going.setImageResource(R.mipmap.going_selected);
 
                             try {
@@ -261,7 +257,6 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                     }
                 }
             });
-
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -325,6 +320,7 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
         return createTimeStr;
     }
 
+
     private final Handler _handler = new Handler() {
         public void handleMessage(Message msg) {
             int response_code = msg.what;
@@ -349,17 +345,17 @@ public class CollegeCampusFeedAdapter extends RecyclerView.Adapter<CollegeCampus
                 }
             }
             if (response_code == 204) {
-              //  if (!flag_news.get(posi)) {
+                //  if (!flag_news.get(posi)) {
 
 
-                    if (attending == 1) {
-                        attending = 2;
-                        Toast.makeText(context, "Attending", Toast.LENGTH_LONG).show();
-                    } else if (attending == 2) {
-                        attending = 1;
-                        Toast.makeText(context, "Not Attending", Toast.LENGTH_LONG).show();
-                    }
-              //  } else {
+                if (attending == 1) {
+                    attending = 2;
+                    Toast.makeText(context, "Attending", Toast.LENGTH_LONG).show();
+                } else if (attending == 2) {
+                    attending = 1;
+                    Toast.makeText(context, "Not Attending", Toast.LENGTH_LONG).show();
+                }
+                //  } else {
                   /*  if (liking == 1) {
                         liking = 2;
                         Toast.makeText(context, "Like", Toast.LENGTH_LONG).show();

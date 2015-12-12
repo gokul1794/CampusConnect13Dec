@@ -1,22 +1,42 @@
 package com.campusconnect.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.campusconnect.R;
 import com.campusconnect.activity.InEventActivity;
-import com.campusconnect.supportClasses.UpcomingEvents_infoActivity;
+import com.campusconnect.bean.CampusFeedBean;
+import com.campusconnect.communicator.WebRequestTask;
+import com.campusconnect.communicator.WebServiceDetails;
+import com.campusconnect.constant.AppConstants;
 import com.campusconnect.utility.CircularImageView;
+import com.campusconnect.utility.SharedpreferenceUtility;
+import com.squareup.picasso.Picasso;
 
+import org.apache.http.NameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by RK on 05/11/2015.
@@ -24,16 +44,21 @@ import java.util.List;
 public class UpcomingEventsAdapterActivity extends
         RecyclerView.Adapter<UpcomingEventsAdapterActivity.UpcomingEventsViewHolder> {
 
-    private List<UpcomingEvents_infoActivity> UpcomingEventsList;
-    boolean[] flag_attending_clicked, flag_share_clicked;
-    int posi=0;
-    int going_click_count=0;
-    int share_click_count=0;
+    private List<CampusFeedBean> UpcomingEventsList;
+    boolean[] flag_attending_clicked;
+    boolean[] flag_share_clicked;
+    int posi = 0;
+    int going_click_count = 0;
+    int share_click_count = 0;
+    Context context;
+    public static int attending = 1;
 
-    public UpcomingEventsAdapterActivity(List<UpcomingEvents_infoActivity> UpcomingEventsList) {
+    public UpcomingEventsAdapterActivity(List<CampusFeedBean> UpcomingEventsList, Context context) {
         this.UpcomingEventsList = UpcomingEventsList;
+        this.context = context;
         flag_attending_clicked = new boolean[getItemCount()];
         flag_share_clicked = new boolean[getItemCount()];
+
     }
 
     @Override
@@ -41,29 +66,114 @@ public class UpcomingEventsAdapterActivity extends
         return UpcomingEventsList.size();
     }
 
-
     @Override
     public void onBindViewHolder(UpcomingEventsViewHolder upcoming_eventsViewHolder, int i) {
-        UpcomingEvents_infoActivity ci = UpcomingEventsList.get(i);
+        CampusFeedBean ci = UpcomingEventsList.get(i);
+        upcoming_eventsViewHolder.event_title.setText(ci.getTitle());
+        upcoming_eventsViewHolder.group_name.setText(ci.getClubname());
+        upcoming_eventsViewHolder.timestamp.setText(timeAgo(ci.getTimeStamp()));
 
 
+        upcoming_eventsViewHolder.group_icon.setImageResource(R.mipmap.spark_session);
+        String url = "http://admin.bookieboost.com/admin/images/2015-02-0116-17-50.jpg";
+        try {
+            if (ci.getPhoto().equalsIgnoreCase("None") || ci.getPhoto() == null) {
+                Picasso.with(context).load(R.mipmap.spark_session).into(upcoming_eventsViewHolder.event_photo);
+            } else {
+                Picasso.with(context).load(ci.getPhoto()).into(upcoming_eventsViewHolder.event_photo);
+            }
+        } catch (Exception e) {
+            Picasso.with(context).load(R.mipmap.spark_session).into(upcoming_eventsViewHolder.event_photo);
+        }
+        Picasso.with(context).load(url).into(upcoming_eventsViewHolder.group_icon);
+
+        SimpleDateFormat inFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = inFormat.parse(ci.getTimeStamp());
+            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+            calendar.setTime(date);
+
+            SimpleDateFormat outFormat = new SimpleDateFormat("EEEE");
+            String goal = outFormat.format(date);
+            Log.e("day", goal);
+            //  Log.e("entry", cf.getStartDate());
+            SimpleDateFormat monthFormat = new SimpleDateFormat("MMM");
+            String month = monthFormat.format(date);
+            Log.e("month", month);
+
+            SimpleDateFormat dateformate = new SimpleDateFormat("dd");
+            String dayFormate = monthFormat.format(date);
+            Log.e("day", "" + calendar.get(Calendar.DAY_OF_MONTH));
+            if (goal.length() > 3) {
+                goal = goal.substring(0, 3);
+            } else {
+            }
+            upcoming_eventsViewHolder.day.setText("" + goal.toUpperCase());
+            String day = "" + calendar.get(Calendar.DAY_OF_MONTH);
+            if (month.length() > 0) {
+                month = month.substring(0, 3);
+            } else {
+            }
+            Log.e(ci.getTitle(), day + "" + month);
+            upcoming_eventsViewHolder.date_month.setText("" + day + "" + month);
+            upcoming_eventsViewHolder.time.setText("" + ci.getEnd_time());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
+    public String timeAgo(String createTimeStr) {
+        try {
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            simpleDateFormat.setTimeZone(TimeZone.getDefault());
+            Date d = simpleDateFormat.parse(createTimeStr);
 
+//        java.util.Date d = f.parse(createTimeStr);
+            String currentDateandTime = f.format(new Date());
+            java.util.Date d1 = f.parse(currentDateandTime);
+            long milliseconds = d.getTime();
+            long millisecondsCurrent = d1.getTime();
+            long diff_Milli = millisecondsCurrent - milliseconds;
+            long minutes = Math.abs((millisecondsCurrent - milliseconds) / 60000);
+            long seconds = Math.abs((diff_Milli) / 1000);
+            long hours = Math.abs((minutes) / 60);
+            long days = Math.abs((hours) / 24);
+            long weeks = Math.abs((days) / 7);
+            if (days > 7) {
+                createTimeStr = String.valueOf(weeks);
+                createTimeStr = createTimeStr + " Weeks Ago ";
+            } else if (hours > 24) {
+                createTimeStr = String.valueOf(days);
+                createTimeStr = createTimeStr + " Days Ago ";
+            } else if (minutes > 60) {
+                createTimeStr = String.valueOf(hours);
+                createTimeStr = createTimeStr + " Hours Ago ";
+            } else {
+                createTimeStr = String.valueOf(minutes);
+                createTimeStr = createTimeStr + " Minutes Ago ";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return createTimeStr;
+    }
     @Override
     public UpcomingEventsViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
                 R.layout.activity_card_layout_my_feed, viewGroup, false);
-
         return new UpcomingEventsViewHolder(itemView);
     }
-
-
-
-    public class UpcomingEventsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class UpcomingEventsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         CardView my_feed;
-        TextView event_title, group_name, timestamp, day,date_month,time;
-        ImageView event_photo,news_icon,going,share;
+        TextView event_title;
+        TextView group_name;
+        TextView timestamp;
+        TextView day;
+        TextView date_month;
+        TextView time;
+        ImageView event_photo, news_icon, going, share;
         CircularImageView group_icon;
 
         public UpcomingEventsViewHolder(View v) {
@@ -92,38 +202,46 @@ public class UpcomingEventsAdapterActivity extends
             my_feed.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     Intent intent_temp = new Intent(v.getContext(), InEventActivity.class);
-                    posi=getAdapterPosition();
-                    //Create the bundle
                     Bundle bundle = new Bundle();
-                   /* bundle.putString("E_NAME", (String) EventTitles[posi]);
-                    bundle.putString("E_TIME",(String) Time_[posi]);
-                    bundle.putString("E_DATE",(String) Date_Month[posi]);
-                    bundle.putString("G_NAME",(String) GroupNames[posi]);
-                    bundle.putString("V_NAME",(String) Venue[posi]);
-                    bundle.putString("E_DESCRIPTION",(String) Description[posi]);
-                    bundle.putInt("E_PHOTO", event_photos[posi]);
-                    bundle.putInt("G_PHOTO",GroupLogo[posi]);
-                    bundle.putInt("FLAG_NEWS_TOP",posi);
-                    bundle.putInt("POSITION_TOP",posi); */
+                    CampusFeedBean bean = UpcomingEventsList.get(posi);
+                    bundle.putSerializable("BEAN", bean);
                     bundle.putBoolean("FLAG_SELECTED_SHARE", flag_share_clicked[posi]);
                     bundle.putBoolean("FLAG_SELECTED_ATTEND/LIKE", flag_attending_clicked[posi]);
                     intent_temp.putExtras(bundle);
-                    v.getContext().startActivity(intent_temp);
+                    context.startActivity(intent_temp);
                 }
             });
-
             going.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int pos_for_going = getAdapterPosition();
                     if (flag_attending_clicked[pos_for_going]) {
-                            going.setImageResource(R.mipmap.going);
+                        going.setImageResource(R.mipmap.going);
+                        try {
+                            String persoPid = SharedpreferenceUtility.getInstance(v.getContext()).getString(AppConstants.PERSON_PID);
+                            String pid = UpcomingEventsList.get(posi).getPid();
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("eventId", pid);
+                            jsonObject.put("from_pid", persoPid);
+                            WebApiAttending(jsonObject, v.getContext());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         flag_attending_clicked[pos_for_going] = false;
                     } else {
-                            going.setImageResource(R.mipmap.going_selected);
+                        going.setImageResource(R.mipmap.going_selected);
                         flag_attending_clicked[pos_for_going] = true;
+                        try {
+                            String persoPid = SharedpreferenceUtility.getInstance(v.getContext()).getString(AppConstants.PERSON_PID);
+                            String pid = UpcomingEventsList.get(posi).getPid();
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("eventId", pid);
+                            jsonObject.put("from_pid", persoPid);
+                            WebApiAttending(jsonObject, v.getContext());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });
@@ -132,11 +250,10 @@ public class UpcomingEventsAdapterActivity extends
                 @Override
                 public void onClick(View v) {
                     int pos_for_share = getAdapterPosition();
-                    if(flag_share_clicked[pos_for_share]) {
+                    if (flag_share_clicked[pos_for_share]) {
                         share.setAlpha((float) 0.5);
                         flag_share_clicked[pos_for_share] = false;
-                    }
-                    else {
+                    } else {
                         share.setAlpha((float) 1);
                         flag_share_clicked[pos_for_share] = true;
                     }
@@ -146,10 +263,73 @@ public class UpcomingEventsAdapterActivity extends
 
         }
 
+
         @Override
         public void onClick(View view) {
 
         }
+
+        public void WebApiAttending(JSONObject jsonObject, Context context) {
+
+            List<NameValuePair> param = new ArrayList<NameValuePair>();
+            String url = WebServiceDetails.DEFAULT_BASE_URL + "attendEvent";
+            Log.e("", jsonObject.toString());
+            Log.e("", url);
+            new WebRequestTask(context, param, _handler, WebRequestTask.POST, jsonObject, WebServiceDetails.PID_ATTENDING,
+                    true, url).execute();
+        }
     }
+
+    private final Handler _handler = new Handler() {
+        public void handleMessage(Message msg) {
+            int response_code = msg.what;
+            if (response_code != 0 && response_code != 204) {
+                String strResponse = (String) msg.obj;
+                Log.v("Response", strResponse);
+                if (strResponse != null && strResponse.length() > 0) {
+                    switch (response_code) {
+                        case WebServiceDetails.PID_ATTENDING: {
+                            try {
+                                JSONObject jsonObject = new JSONObject(strResponse);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+                        default:
+                            break;
+                    }
+                } else {
+                    Toast.makeText(context, "SERVER_ERROR", Toast.LENGTH_LONG).show();
+                }
+            }
+            if (response_code == 204) {
+                //  if (!flag_news.get(posi)) {
+
+
+                if (attending == 1) {
+                    attending = 2;
+                    Toast.makeText(context, "Attending", Toast.LENGTH_LONG).show();
+                } else if (attending == 2) {
+                    attending = 1;
+                    Toast.makeText(context, "Not Attending", Toast.LENGTH_LONG).show();
+                }
+                //  } else {
+                  /*  if (liking == 1) {
+                        liking = 2;
+                        Toast.makeText(context, "Like", Toast.LENGTH_LONG).show();
+                    } else if (liking == 2) {
+                        liking = 1;
+                        Toast.makeText(context, "Unlike", Toast.LENGTH_LONG).show();
+                    }
+                }*/
+
+            } else {
+                Toast.makeText(context, "SERVER_ERROR", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
+
 }
 

@@ -117,7 +117,6 @@ public class InEventActivity extends AppCompatActivity {
             if (bean.getAttendees() == null || bean.getAttendees().size() == 0) {
                 attendees_count.setVisibility(View.INVISIBLE);
                 e_time.setVisibility(View.INVISIBLE);
-
             } else {
                 int attendies = bean.getAttendees().size();
                 attendees_count.setText("+" + attendies + " attending");
@@ -187,11 +186,7 @@ public class InEventActivity extends AppCompatActivity {
 */
 
         }
-
-
 //Extract the data…
-
-
         if (flag_selected_share) {
             share.setAlpha((float) 1);
             flag_share_clicked = true;

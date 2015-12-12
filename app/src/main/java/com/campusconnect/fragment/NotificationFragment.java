@@ -61,7 +61,7 @@ public class NotificationFragment extends Fragment {
             WebApiNotification();
            /* nl = new NotificationAdapterActivity(
                     createList_nl(4));*/
-         //   notification_list.setAdapter(nl);
+            //   notification_list.setAdapter(nl);
 
 
         } catch (InflateException e) {
@@ -163,7 +163,6 @@ public class NotificationFragment extends Fragment {
             NotificationBean ci = new NotificationBean();
             result.add(ci);
         }
-
         return result;
     }
 
@@ -184,21 +183,28 @@ public class NotificationFragment extends Fragment {
                                     JSONArray array = jsonObject.getJSONArray("list");
                                     if (array.length() > 0) {
 
-
                                         for (int i = 0; i < array.length(); i++) {
                                             JSONObject obj = array.getJSONObject(i);
                                             String gropname = obj.optString("groupName");
                                             String type = obj.optString("type");
                                             String groupId = obj.optString("groupId");
+                                            String timestamp = obj.optString("timestamp");
+                                            String eventName = obj.optString("eventName");
+                                            String eventid = obj.optString("eventId");
+                                            String photoUrl = obj.optString("photoUrl");
 
 
                                             NotificationBean bean = new NotificationBean();
                                             bean.setGroup_name(gropname);
                                             bean.setGroupId(groupId);
                                             bean.setType(type);
+                                            bean.setEventName(eventName);
+                                            bean.setTimestamp(timestamp);
+                                            bean.setPhotoUrl(photoUrl);
+
                                             mNotifiList.add(bean);
                                         }
-                                        nl = new NotificationAdapterActivity(mNotifiList);
+                                        nl = new NotificationAdapterActivity(mNotifiList, getActivity());
                                         notification_list.setAdapter(nl);
                                     }
                                 }

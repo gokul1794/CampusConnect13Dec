@@ -49,6 +49,8 @@
 
         </LinearLayout>
     </LinearLayout>
+
+
     <TextView
         android:id="@+id/tv_about_group_info"
         android:layout_width="match_parent"

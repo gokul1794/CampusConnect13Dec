@@ -54,6 +54,52 @@ public class CampusFeedBean implements Serializable {
     String clubphoto;
 
 
+    String clubname;
+    String alumni;
+    String time;
+    String date;
+    String likes;
+
+    public String getLikes() {
+        return likes;
+    }
+
+    public void setLikes(String likes) {
+        this.likes = likes;
+    }
+
+    public String getClubname() {
+        return clubname;
+    }
+
+    public void setClubname(String clubname) {
+        this.clubname = clubname;
+    }
+
+    public String getAlumni() {
+        return alumni;
+    }
+
+    public void setAlumni(String alumni) {
+        this.alumni = alumni;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     public String getCompleted() {
         return completed;
     }
