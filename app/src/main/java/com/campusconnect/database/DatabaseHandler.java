@@ -188,10 +188,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 Log.d("DB", cursor.getString(1) + " " + cursor.getString(2) + cursor.getString(3) + cursor.getString(4) + cursor.getString(5) + cursor.getString(6));
                 GroupBean bean = new GroupBean();
                 bean.setClubId(cursor.getString(1));
-                bean.setName(cursor.getString(2));
+                bean.setAdmin(cursor.getString(2));
                 bean.setDescription(cursor.getString(3));
-                bean.setAdmin(cursor.getString(4));
                 bean.setAbb(cursor.getString(5));
+                //bean.setAbb(cursor.getString(5));
                 bean.setFollow(cursor.getString(6));
                 list.add(bean);
             } while (cursor.moveToNext());

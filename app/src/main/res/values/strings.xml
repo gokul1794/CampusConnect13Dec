@@ -44,7 +44,7 @@
 
     <string name="btn_logout_from_google">Logout from Google</string>
     <string name="btn_revoke_access">Revoke Access</string>
-    <string name="gcm_defaultSenderId">gcm</string>
+    <string name="gcm_defaultSenderId">245400873255</string>
     <string name="sign_out_button_name">Sign Out</string>
     <string name="signed_in_as">Signed in as</string>
 </resources>

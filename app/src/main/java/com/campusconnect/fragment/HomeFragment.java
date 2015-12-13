@@ -1217,35 +1217,9 @@ public class HomeFragment extends Fragment {
         public String dbFollow = "1";
         public String dbUnFollow = "0";
 
-        private HashMap<String, String> followingMap = new HashMap<>();
-        private List<Boolean> followingFlag = null;
 
         public GroupListAdapterActivity(List<GroupBean> GroupList) throws IOException {
             this.GroupList = GroupList;
-            try {
-                File f = new File(getActivity().getFilesDir(), "Follows.txt");
-                BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-                String temp;
-                while ((temp = bfr.readLine()) != null) {
-                    String key = temp.substring(0, temp.indexOf('|'));
-                    String value = temp.substring(temp.indexOf('|') + 1, temp.length());
-                    followingMap.put(key, value);
-                }
-                bfr.close();
-
-                followingFlag = new ArrayList<Boolean>();
-                for (GroupBean groupBean : GroupList) {
-
-                    if (followingMap.containsKey(groupBean.getClubId())) {
-                        followingFlag.add(Boolean.TRUE);
-                    } else {
-                        followingFlag.add(Boolean.FALSE);
-                    }
-                }
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
         }
 
 
@@ -1297,89 +1271,6 @@ public class HomeFragment extends Fragment {
             return new GroupListViewHolder(itemView);
         }
 
-        public void removeLineFromFile(File inFile, String lineToRemove) {
-
-            try {
-
-//                File inFile = new File(file);
-
-                if (!inFile.isFile()) {
-                    System.out.println("Parameter is not an existing file");
-                    return;
-                }
-
-                //Construct the new file that will later be renamed to the original filename.
-                File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
-                BufferedReader br = new BufferedReader(new FileReader(inFile));
-                PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
-
-                String line = null;
-
-                //Read from the original file and write to the new
-                //unless content matches data to be removed.
-                while ((line = br.readLine()) != null) {
-
-                    if (!line.trim().equals(lineToRemove)) {
-
-                        pw.println(line);
-                        pw.flush();
-                    }
-                }
-                pw.close();
-                br.close();
-
-                //Delete the original file
-                if (!inFile.delete()) {
-                    System.out.println("Could not delete file");
-                    return;
-                }
-
-                //Rename the new file to the filename the original file had.
-                if (!tempFile.renameTo(inFile))
-                    System.out.println("Could not rename file");
-
-            } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        public void writeLineToFile(File f, String line) {
-            Log.e(LOG_TAG + "345", "here");
-            if (f == null) {
-                Log.e("NULL", "adf");
-            }
-            try {
-                FileOutputStream fos = getActivity().openFileOutput(f.getName(), getActivity().MODE_APPEND);
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
-                outputStreamWriter.write(line);
-                outputStreamWriter.flush();
-                outputStreamWriter.close();
-                Log.e(LOG_TAG + "345", "made it here");
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.e(LOG_TAG + "345", "didnt come here");
-                Log.e("EXcpe", e.getMessage());
-            }
-            Log.e(LOG_TAG + "345", "here now");
-
-        }
-
-        public void printFileContents(File f) {
-            try {
-                String line;
-                BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-                while ((line = bfr.readLine()) != null) {
-                    Log.e(LOG_TAG + "123", line);
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         public class GroupListViewHolder extends RecyclerView.ViewHolder {
 
             CardView group_list;
@@ -1416,7 +1307,6 @@ public class HomeFragment extends Fragment {
                             posi = getPosition();
                             follow.setVisibility(View.GONE);
                             following.setVisibility(View.VISIBLE);
-                            followingMap.put(GroupList.get(posi).getClubId(), GroupList.get(posi).getName());
                             webApiFollow(GroupList.get(posi));
 
                             String clubId = GroupList.get(posi).getClubId();
@@ -1426,15 +1316,6 @@ public class HomeFragment extends Fragment {
                             GroupList.clear();
                             GroupList = db.getAllClubData();
                             gl.notifyDataSetChanged();
-
-
-                            followingFlag.set(posi, Boolean.TRUE);
-                            File f = new File(getActivity().getFilesDir(), "Follows.txt");
-                            writeLineToFile(f, GroupList.get(posi).getClubId() + "|" + GroupList.get(posi).getName() + "\n");
-                            printFileContents(f);
-                            Log.e("check", GroupList.get(posi).getName() + posi);
-                            mPubSubHelper.subscribeTopic("245400873255", gcm_token, GroupList.get(posi).getClubId(), null);
-                            //followGroup(GroupList.get(posi));
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -1458,13 +1339,6 @@ public class HomeFragment extends Fragment {
 
 
                             //  Toast.makeText(getActivity(), "" + i, Toast.LENGTH_SHORT).show();
-                            followingFlag.set(posi, Boolean.FALSE);
-                            followingMap.remove(GroupList.get(posi).getClubId());
-
-
-                            File f = new File(getActivity().getFilesDir(), "Follows.txt");
-                            removeLineFromFile(f, GroupList.get(posi).getClubId() + "|" + GroupList.get(posi).getName());
-                            printFileContents(f);
                             Log.e("check", GroupList.get(posi).getName() + posi);
                             //  unFollowGroup(GroupList.get(posi));
 

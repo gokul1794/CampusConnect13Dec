@@ -146,6 +146,19 @@
             android:text="Groups Joined"
             android:textColor="#383838"
             android:textSize="16sp" />
+        <TextView
+            android:id="@+id/tv_groups_not_joined_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_groups_joined_text"
+            android:visibility="gone"
+            android:background="#ffffff"
+            android:paddingBottom="7dp"
+            android:paddingTop="7dp"
+            android:gravity="center"
+            android:text="Join Some Groups"
+            android:textColor="#383838"
+            android:textSize="16sp" />
     </RelativeLayout>
 
 

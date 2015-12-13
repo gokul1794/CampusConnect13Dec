@@ -1,5 +1,6 @@
 package com.campusconnect.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,13 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.campusconnect.R;
+import com.campusconnect.activity.GetProfileDetailsActivity;
 import com.campusconnect.adapter.ProfilePageAdapterActivity;
 import com.campusconnect.bean.GroupBean;
 import com.campusconnect.database.DatabaseHandler;
 import com.campusconnect.supportClasses.MyScrollListenerProfilePage;
 import com.campusconnect.supportClasses.ProfilePage_infoActivity;
+import com.campusconnect.utility.NetworkAvailablity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +34,7 @@ public class ProfilePageFragment extends Fragment   {
     int top=0;
     ImageButton noti,profile,home,calendar,search;
     DatabaseHandler db;
-
+    ImageView editImage;
     View  mRootView;
 
     @Override
@@ -44,7 +49,7 @@ public class ProfilePageFragment extends Fragment   {
             mRootView = inflater.inflate(R.layout.activity_profile_page, container, false);
 
             groups_joined = (RecyclerView)mRootView.findViewById(R.id.recycler_groups);
-
+            editImage = (ImageView)mRootView.findViewById(R.id.ib_create_post);
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
             groups_joined.setLayoutManager(llm);
@@ -55,18 +60,32 @@ public class ProfilePageFragment extends Fragment   {
             db = new DatabaseHandler(getActivity());
 
             GroupList = db.getFollowingClubData();
-            Log.e("LOG A","A"+GroupList.toString());
+            for(GroupBean gb: GroupList){
+                Log.e("LOG A","A "+gb.getAbb());
+
+            }
             if(GroupList == null || GroupList.size() == 0){
                 GroupList = new ArrayList<GroupBean>();
             }
-            if(GroupList.size()==0)
-                GroupList.add(0,new GroupBean());
-            else  if(GroupList.size()==1)
-                GroupList.add(1, GroupList.get(0));
-
+            if(GroupList.size()==0) {
+                GroupBean gb = new GroupBean();
+                GroupList.add(0,gb);
+            }
+            else {
+                //Adding to 1st entry to GroupList again,as the first entry doesnt seem to come up
+                GroupList.add(GroupList.size(), GroupList.get(0));
+            }
             ProfilePageAdapterActivity gj = new ProfilePageAdapterActivity(
                     GroupList,getContext());
             groups_joined.setAdapter(gj);
+
+            editImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent editPage=new Intent(getActivity(), GetProfileDetailsActivity.class);
+                    startActivity(editPage);
+                }
+            });
 
            /* ProfilePageAdapterActivity gj = new ProfilePageAdapterActivity(
                     createList_groups_joined(3));

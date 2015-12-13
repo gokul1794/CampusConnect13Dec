@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,7 @@ public class ProfilePageAdapterActivity extends
     int posi = 0;
     ProfileInfoViewHolder holder1;
     ImageView profile_image;
-    TextView profile_name, profile_tags, tv_branch, tv_batch_of;
+    TextView profile_name, profile_tags, tv_branch, tv_batch_of,grps_heading,no_grps_heading;
     GroupsJoinedListHolder holder2;
     Context context;
 
@@ -56,10 +57,17 @@ public class ProfilePageAdapterActivity extends
             profile_name.setText(SharedpreferenceUtility.getInstance(context).getString(AppConstants.PERSON_NAME));
             tv_branch.setText(SharedpreferenceUtility.getInstance(context).getString(AppConstants.BRANCH));
             tv_batch_of.setText(SharedpreferenceUtility.getInstance(context).getString(AppConstants.BATCH));
+
+
+            if (GroupsJoinedList.size() ==1){
+                grps_heading.setVisibility(View.GONE);
+                no_grps_heading.setVisibility(View.VISIBLE);
+            }
         } else {
-            if (GroupsJoinedList.size() > 0) {
+            if (GroupsJoinedList.size() > 0 && GroupsJoinedList.size()!=1) {
                 holder2 = (GroupsJoinedListHolder) groupViewHolder;
-                holder2.group_joined.setText(this.GroupsJoinedList.get(i - 1).getName());
+                Log.d("ProfilePageAdapter",String.valueOf(i));
+                holder2.group_joined.setText(this.GroupsJoinedList.get(i).getAbb());
             }
         }
     }
@@ -154,6 +162,8 @@ public class ProfilePageAdapterActivity extends
             tv_branch = (TextView) itemView.findViewById(R.id.tv_branch);
             tv_batch_of = (TextView) itemView.findViewById(R.id.tv_batch_of);
             profile_image = (ImageView) itemView.findViewById(R.id.profile_image);
+            grps_heading = (TextView) itemView.findViewById(R.id.tv_groups_joined_text);
+            no_grps_heading= (TextView) itemView.findViewById(R.id.tv_groups_not_joined_text);
         }
     }
 
