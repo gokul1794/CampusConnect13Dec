@@ -11,6 +11,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.campusconnect.R;
+import com.campusconnect.activity.FlashActivity;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.campusconnect.activity.GoogleSignin;
 
@@ -27,7 +28,7 @@ public class MyGcmListenerService extends GcmListenerService {
      */
 
     private void sendNotification(String message,String title) {
-        Intent intent = new Intent(this, GoogleSignin.class);
+        Intent intent = new Intent(this, FlashActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
