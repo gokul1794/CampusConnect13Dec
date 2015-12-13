@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.ImageButton;
 
 import com.campusconnect.R;
 import com.campusconnect.adapter.ProfilePageAdapterActivity;
+import com.campusconnect.bean.GroupBean;
+import com.campusconnect.database.DatabaseHandler;
 import com.campusconnect.supportClasses.MyScrollListenerProfilePage;
 import com.campusconnect.supportClasses.ProfilePage_infoActivity;
 
@@ -25,7 +28,10 @@ public class ProfilePageFragment extends Fragment   {
     RecyclerView groups_joined;
     int top=0;
     ImageButton noti,profile,home,calendar,search;
+    DatabaseHandler db;
+
     View  mRootView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,11 +51,26 @@ public class ProfilePageFragment extends Fragment   {
             groups_joined.setHasFixedSize(true);
             groups_joined.setItemAnimator(new DefaultItemAnimator());
 
+            List<GroupBean> GroupList;
+            db = new DatabaseHandler(getActivity());
 
+            GroupList = db.getFollowingClubData();
+            Log.e("LOG A","A"+GroupList.toString());
+            if(GroupList == null || GroupList.size() == 0){
+                GroupList = new ArrayList<GroupBean>();
+            }
+            if(GroupList.size()==0)
+                GroupList.add(0,new GroupBean());
+            else  if(GroupList.size()==1)
+                GroupList.add(1, GroupList.get(0));
 
             ProfilePageAdapterActivity gj = new ProfilePageAdapterActivity(
-                    createList_groups_joined(3));
+                    GroupList,getContext());
             groups_joined.setAdapter(gj);
+
+           /* ProfilePageAdapterActivity gj = new ProfilePageAdapterActivity(
+                    createList_groups_joined(3));
+            groups_joined.setAdapter(gj);*/
 
             groups_joined.setOnScrollListener(new MyScrollListenerProfilePage(getActivity()) {
 
@@ -130,20 +151,20 @@ public class ProfilePageFragment extends Fragment   {
 */
 
 
-   /* @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    /* @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+         // Handle action bar item clicks here. The action bar will
+         // automatically handle clicks on the Home/Up button, so long
+         // as you specify a parent activity in AndroidManifest.xml.
+         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-*/
+         //noinspection SimplifiableIfStatement
+         if (id == R.id.action_settings) {
+             return true;
+         }
+         return super.onOptionsItemSelected(item);
+     }
+ */
     private List<ProfilePage_infoActivity> createList_groups_joined(int size) {
 
         List<ProfilePage_infoActivity> result = new ArrayList<ProfilePage_infoActivity>();

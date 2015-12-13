@@ -53,7 +53,7 @@ public class NewsPostsByGroupActivity extends ActionBarActivity {
         close = (LinearLayout) findViewById(R.id.cross_button);
         news_posts_text = (TextView) findViewById(R.id.tv_news_posts_text);
         news_posts_text.setTypeface(r_med);
-
+        news_posts_text.setText("News Posts");
         news_posts_by_group = (RecyclerView) findViewById(R.id.rv_news_posts_by_group);
         news_posts_by_group.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);

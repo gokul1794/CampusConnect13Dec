@@ -161,7 +161,6 @@ public class campusFeedAdapter extends BaseAdapter {
                 } else {
 
                 }
-
                 holder.day.setText("" + goal.toUpperCase());
                 String day = "" + calendar.get(Calendar.DAY_OF_MONTH);
                 if (month.length() > 0) {

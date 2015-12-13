@@ -471,6 +471,7 @@ public class HomeFragment extends Fragment {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -586,6 +587,8 @@ public class HomeFragment extends Fragment {
 
         return mRootView;
     }
+
+
 
     private PopupWindow popupWindowsort() {
 
@@ -831,6 +834,15 @@ public class HomeFragment extends Fragment {
         private String mEmailAccount = "";
         SharedPreferences sharedPreferences;
 
+
+        /*@Override
+        public void onResume() {
+            super.onResume();
+            groupList.clear();
+            groupList = db.getAllClubData();
+            gl.notifyDataSetChanged();
+        }
+*/
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
@@ -886,6 +898,7 @@ public class HomeFragment extends Fragment {
             return result;
         }
     }
+
 
     public class FragmentCampusFeed extends Fragment {
         private static final String LOG_TAG = "FragmentCampusFeed";

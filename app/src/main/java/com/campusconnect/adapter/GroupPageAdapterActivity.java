@@ -5,13 +5,18 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.campusconnect.R;
 import com.campusconnect.activity.AboutGroupActivity;
@@ -19,7 +24,18 @@ import com.campusconnect.activity.GroupMembersByGroupActivity;
 import com.campusconnect.activity.NewsPostsByGroupActivity;
 import com.campusconnect.activity.UpcomingEventsActivity;
 import com.campusconnect.bean.GroupBean;
+import com.campusconnect.communicator.WebRequestTask;
+import com.campusconnect.communicator.WebServiceDetails;
+import com.campusconnect.constant.AppConstants;
+import com.campusconnect.database.DatabaseHandler;
+import com.campusconnect.utility.CircularImageView;
+import com.campusconnect.utility.SharedpreferenceUtility;
+import com.squareup.picasso.Picasso;
 
+import org.apache.http.NameValuePair;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,26 +49,37 @@ public class GroupPageAdapterActivity extends
     Integer m_count, f_count;
     int follow_click_count = 0, member_click_count = 0;
     Context context;
+    String Imageurl;
     GroupBean groupBean;
+    int call_web_api;
 
     int yes_dialog_box_click_count = 0;
     public TextView dialog_info;
 
-
+    GroupInfoViewHolder holder1;
+    DatabaseHandler db;
     ExtraGroupInfoListHolder holder2;
     CharSequence GroupInfoAttributes[] = {"About", "Members", "Events", "News Posts",};
 
-    public GroupPageAdapterActivity(List<GroupPage_infoActivity> GroupsJoinedList,GroupBean bean) {
+    public GroupPageAdapterActivity(List<GroupPage_infoActivity> GroupsJoinedList) {
         this.GroupPageList = GroupsJoinedList;
-        this.groupBean=bean;
     }
 
-    public GroupPageAdapterActivity(GroupBean groupBean, Context context) {
-       /* g_name = groupBean.getName();
+    public GroupPageAdapterActivity(List<GroupPage_infoActivity> GroupsJoinedList, GroupBean groupBean, Context context) {
+
+
+        g_name = groupBean.getName();
         g_icon = groupBean.getPhotourl();
-        m_count = 10;
-        f_count = 10;*/
+        m_count = Integer.parseInt(groupBean.getMemberCount());
+        f_count = Integer.parseInt(groupBean.getFollowCount());
+        Imageurl = groupBean.getPhotourl();
+        this.groupBean = groupBean;
         this.context = context;
+        this.GroupPageList = GroupsJoinedList;
+        if (db == null) {
+            db = new DatabaseHandler(context);
+
+        }
 
     }
 
@@ -63,22 +90,35 @@ public class GroupPageAdapterActivity extends
 
     @Override
     public void onBindViewHolder(GroupPageHolder groupViewHolder, int i) {
-       /* if(getItemViewType(i)==0) {
+        if (getItemViewType(i) == 0) {
             holder1 = (GroupInfoViewHolder) groupViewHolder;
             holder1.group_name.setText(g_name);
             //holder1.group_icon.setImageResource(g_icon);
-            Picasso.with(context).load(g_icon).into(holder1.group_icon);
-
+            try {
+                if (Imageurl.equalsIgnoreCase("None") || Imageurl == null) {
+                    Picasso.with(context).load(R.mipmap.spark_session).into(holder1.group_icon);
+                } else {
+                    Picasso.with(context).load(Imageurl).into(holder1.group_icon);
+                }
+            } catch (Exception e) {
+                Picasso.with(context).load(R.mipmap.spark_session).into(holder1.group_icon);
+            }
+            Picasso.with(context).load(R.mipmap.spark_session).into(holder1.group_icon);
             holder1.members_count.setText(m_count.toString());
             holder1.followers_count.setText(f_count.toString());
+        } else {
+            holder2 = (ExtraGroupInfoListHolder) groupViewHolder;
+            holder2.g_name_joined.setText(GroupInfoAttributes[i - 1]);
         }
-        else {*/
-        holder2 = (ExtraGroupInfoListHolder) groupViewHolder;
-        holder2.g_name_joined.setText(GroupInfoAttributes[i]);
     }
+
     @Override
     public int getItemViewType(int position) {
-        int viewType = 1;
+        int viewType;
+        if (position == 0)
+            viewType = 0;
+        else
+            viewType = 1;
 
         return viewType;
     }
@@ -86,17 +126,15 @@ public class GroupPageAdapterActivity extends
     @Override
     public GroupPageHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         GroupPageHolder holder;
-       /* if(i==0)
-        {
+        if (i == 0) {
             View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
                     R.layout.activity_card_layout_group_info, viewGroup, false);
             holder = new GroupInfoViewHolder(itemView);
+        } else {
+            View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
+                    R.layout.activity_card_layout_extra_group_info, viewGroup, false);
+            holder = new ExtraGroupInfoListHolder(itemView);
         }
-        else*/
-        View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
-                R.layout.activity_card_layout_extra_group_info, viewGroup, false);
-        holder = new ExtraGroupInfoListHolder(itemView);
-
         return holder;
     }
 
@@ -105,9 +143,8 @@ public class GroupPageAdapterActivity extends
         public GroupPageHolder(View v) {
             super(v);
         }
-
     }
-/*
+
     public class GroupInfoViewHolder extends GroupPageAdapterActivity.GroupPageHolder {
 
         TextView group_name, members_count, followers_count;
@@ -116,23 +153,28 @@ public class GroupPageAdapterActivity extends
 
         public GroupInfoViewHolder(View itemView) {
             super(itemView);
-         *//*   group_name = (TextView)itemView.findViewById(R.id.group_name);
-            members_count = (TextView)itemView.findViewById(R.id.tv_members_count);
-            followers_count = (TextView)itemView.findViewById(R.id.tv_followers_count);
-            group_icon = (CircularImageView)itemView.findViewById(R.id.group_image);
-            tbtn_follow = (ToggleButton)itemView.findViewById(R.id.tb_followers);
-            tbtn_member = (ToggleButton)itemView.findViewById(R.id.tb_members);
-*//*
+            group_name = (TextView) itemView.findViewById(R.id.group_name);
+            members_count = (TextView) itemView.findViewById(R.id.tv_members_count);
+            followers_count = (TextView) itemView.findViewById(R.id.tv_followers_count);
+            group_icon = (CircularImageView) itemView.findViewById(R.id.group_image);
+            tbtn_follow = (ToggleButton) itemView.findViewById(R.id.tb_followers);
+            tbtn_member = (ToggleButton) itemView.findViewById(R.id.tb_members);
 
-*//*
+
             tbtn_follow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(follow_click_count%2==0) {
+                    if (follow_click_count % 2 == 0) {
                         f_count++;
+                        String clubId = groupBean.getClubId();
+                        // updating value in the database;
+                        int i = db.updateFollow(clubId, "1");
                         notifyDataSetChanged();
-                    }
-                    else {
+                    } else {
+                        String clubId = groupBean.getClubId();
+                        // updating value in the database;
+                        int i = db.updateFollow(clubId, "1");
+
                         f_count--;
                         notifyDataSetChanged();
                     }
@@ -150,11 +192,17 @@ public class GroupPageAdapterActivity extends
                         notifyDataSetChanged();
                     }
                     member_click_count++;
+
+                   /* MemberConfirmationDialog confirmDialog = new MemberConfirmationDialog(v.getContext());
+                    Window window = confirmDialog.getWindow();
+                    window.setLayout(450, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    confirmDialog.show();*/
+
                 }
-            });*//*
+            });
 
         }
-    }*/
+    }
 
     public class ExtraGroupInfoListHolder extends GroupPageAdapterActivity.GroupPageHolder {
         TextView g_name_joined;
@@ -168,28 +216,31 @@ public class GroupPageAdapterActivity extends
             cv_group_attributes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (getAdapterPosition() == 0) {
+                    if (getAdapterPosition() == 1) {
                         Intent intent_temp = new Intent(v.getContext(), AboutGroupActivity.class);
                         intent_temp.putExtra("About", groupBean.getDescription());
                         v.getContext().startActivity(intent_temp);
-                    } else if (getAdapterPosition() == 1) {
+                    } else if (getAdapterPosition() == 2) {
                         Intent intent_temp = new Intent(v.getContext(), GroupMembersByGroupActivity.class);
                         intent_temp.putExtra("clubId", groupBean.getClubId());
                         v.getContext().startActivity(intent_temp);
-                    } else if (getAdapterPosition() == 2) {
-                        Intent intent_temp = new Intent(v.getContext(), UpcomingEventsActivity.class);
-                        intent_temp.putExtra("clubId",groupBean.getClubId());
-                        v.getContext().startActivity(intent_temp);
                     } else if (getAdapterPosition() == 3) {
-                        Intent intent_temp = new Intent(v.getContext(), NewsPostsByGroupActivity.class);
-                        intent_temp.putExtra("clubId",groupBean.getClubId());
+                        Intent intent_temp = new Intent(v.getContext(), UpcomingEventsActivity.class);
+                        intent_temp.putExtra("clubId", groupBean.getClubId());
                         v.getContext().startActivity(intent_temp);
-
-                    }  else {
+                    } else if (getAdapterPosition() == 4) {
+                        Intent intent_temp = new Intent(v.getContext(), NewsPostsByGroupActivity.class);
+                        intent_temp.putExtra("clubId", groupBean.getClubId());
+                        v.getContext().startActivity(intent_temp);
+                    } else if (getAdapterPosition() == 5) {
+                      /*  Intent intent_temp = new Intent(v.getContext(), PreviousEventsActivity.class);
+                        v.getContext().startActivity(intent_temp);*/
+                    } else {
 
                     }
                 }
             });
+
         }
     }
 
@@ -199,12 +250,14 @@ public class GroupPageAdapterActivity extends
         public Activity c;
         public Dialog d;
         public TextView yes, no;
+        Context context;
 
 
         public MemberConfirmationDialog(Activity a) {
             super(a);
             // TODO Auto-generated constructor stub
             this.c = a;
+            this.context = context;
         }
 
         @Override
@@ -221,8 +274,10 @@ public class GroupPageAdapterActivity extends
             } else {
                 dialog_info.setText("Become a member of " + GroupPageAdapterActivity.this.g_name);
             }
+
             yes.setOnClickListener(this);
             no.setOnClickListener(this);
+
         }
 
         @Override
@@ -230,6 +285,7 @@ public class GroupPageAdapterActivity extends
             switch (v.getId()) {
                 case R.id.btn_yes: {
                     yes_dialog_box_click_count++;
+                    webApiGroupJoin(v.getContext());
                     dismiss();
                     break;
                 }
@@ -239,7 +295,58 @@ public class GroupPageAdapterActivity extends
                 default:
                     break;
             }
+
         }
     }
+
+    public void webApiGroupJoin(Context context) {
+        try {
+            String pid = SharedpreferenceUtility.getInstance(context).getString(AppConstants.PERSON_PID);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("club_id", groupBean.getClubId());
+            jsonObject.put("from_pid", pid);
+            call_web_api = 1;
+            List<NameValuePair> param = new ArrayList<NameValuePair>();
+            String url = WebServiceDetails.DEFAULT_BASE_URL + "joinClub";
+            new WebRequestTask(context, param, _handler, WebRequestTask.POST, jsonObject, WebServiceDetails.PID_CLUB_MEMEBER_JOIN,
+                    true, url).execute();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private final Handler _handler = new Handler() {
+        public void handleMessage(Message msg) {
+            int response_code = msg.what;
+            if (response_code != 0 && response_code != 204) {
+                String strResponse = (String) msg.obj;
+                Log.v("Response", strResponse);
+                if (strResponse != null && strResponse.length() > 0) {
+                    switch (response_code) {
+                        case WebServiceDetails.PID_CLUB_MEMEBER_JOIN: {
+                            try {
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+                        default:
+                            break;
+                    }
+                } else {
+                    Toast.makeText(context, "SERVER_ERROR", Toast.LENGTH_LONG).show();
+                }
+            } else if (response_code == 204) {
+                if (call_web_api == 1) {
+                    Toast.makeText(context, "Your request to join group has been sent to admin for approval", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(context, "SERVER_ERROR", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
+
 }
 

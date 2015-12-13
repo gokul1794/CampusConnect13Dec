@@ -72,7 +72,7 @@ public class UpcomingEventsAdapterActivity extends
         upcoming_eventsViewHolder.event_title.setText(ci.getTitle());
         upcoming_eventsViewHolder.group_name.setText(ci.getClubname());
         upcoming_eventsViewHolder.timestamp.setText(timeAgo(ci.getTimeStamp()));
-
+        upcoming_eventsViewHolder.time.setText("" + ci.getEnd_time());
 
         upcoming_eventsViewHolder.group_icon.setImageResource(R.mipmap.spark_session);
         String url = "http://admin.bookieboost.com/admin/images/2015-02-0116-17-50.jpg";
@@ -117,7 +117,7 @@ public class UpcomingEventsAdapterActivity extends
             }
             Log.e(ci.getTitle(), day + "" + month);
             upcoming_eventsViewHolder.date_month.setText("" + day + "" + month);
-            upcoming_eventsViewHolder.time.setText("" + ci.getEnd_time());
+
         } catch (ParseException e) {
             e.printStackTrace();
         }

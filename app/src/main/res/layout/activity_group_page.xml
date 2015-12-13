@@ -8,184 +8,25 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentTop="true"
-        android:background="#383838"
+        android:background="#303030"
         android:elevation="2dp"
         android:padding="16dp">
+
         <TextView
-            android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="Group"
-            android:textColor="#ffffff"
-            android:textSize="18sp" />
+            android:textColor="#f6f6f6"
+            android:textSize="20sp" />
     </LinearLayout>
 
-
-    <RelativeLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_group_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/custom_toolbar"
-        android:orientation="vertical"
-        >
-
-        <android.support.v7.widget.CardView xmlns:app="http://schemasandroid.com/tools"
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/profile_info_card"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:orientation="vertical"
-            card_view:cardElevation="0dp"
-            card_view:cardMaxElevation="0dp"
-            card_view:cardPreventCornerOverlap="false"
-            card_view:cardUseCompatPadding="true">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#eaebec"
-                android:gravity="center"
-                android:paddingBottom="30dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="30dp"
-                android:weightSum="2">
-
-                <RelativeLayout
-                    android:id="@+id/group_icon"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <com.campusconnect.utility.CircularImageView
-                        android:id="@+id/group_image"
-                        android:layout_width="125dp"
-                        android:layout_height="125dp"
-                        android:layout_centerHorizontal="true"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/default_profile"
-                        app:border_color="#FFFFFF"
-                        app:border_width="5dp" />
-
-                    <TextView
-                        android:id="@+id/group_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_below="@+id/group_image"
-                        android:gravity="center"
-                        android:paddingTop="8dp"
-                        android:text="Rotaract Club"
-                        android:textColor="#383838"
-                        android:textSize="20sp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/count_group"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:paddingLeft="10dp">
-
-                    <TextView
-                        android:id="@+id/tv_followers"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:gravity="left"
-                        android:text="Followers"
-                        android:textColor="#383838"
-                        android:textSize="16sp" />
-
-                    <RelativeLayout
-                        android:id="@+id/followers_count_group"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/tv_followers"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp">
-
-                        <ToggleButton
-                            android:id="@+id/tb_followers"
-                            android:layout_width="35dp"
-                            android:layout_height="35dp"
-                            android:background="@drawable/selector_follow"
-                            android:textOff=""
-                            android:textOn="" />
-
-                        <TextView
-                            android:id="@+id/tv_followers_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:layout_marginLeft="10dp"
-                            android:layout_toRightOf="@+id/tb_followers"
-                            android:text="362"
-                            android:textColor="#383838"
-                            android:textSize="14sp" />
-                    </RelativeLayout>
-                    <View
-                        android:id="@+id/seperator"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@+id/followers_count_group"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="16dp"
-                        android:background="#a0a0a0" />
-                    <TextView
-                        android:id="@+id/tv_members"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/seperator"
-                        android:layout_centerHorizontal="true"
-                        android:gravity="left"
-                        android:text="Members"
-                        android:textColor="#383838"
-                        android:textSize="16sp" />
-
-                    <RelativeLayout
-                        android:id="@+id/members_count_group"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/tv_members"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp">
-
-                        <ToggleButton
-                            android:id="@+id/tb_members"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:background="@drawable/selector_members"
-                            android:textOff=""
-                            android:textOn="" />
-
-                        <TextView
-                            android:id="@+id/tv_members_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:layout_marginLeft="10dp"
-                            android:layout_toRightOf="@+id/tb_members"
-                            android:text="100"
-                            android:textColor="#383838"
-                            android:textSize="16sp" />
-                    </RelativeLayout>
-                </RelativeLayout>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_group_page"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/profile_info_card"
-            android:background="#eaebec"
-             />
-    </RelativeLayout>
-
+        android:background="#f6f5f1"
+        android:clipToPadding="false"
+        android:paddingBottom="5dp"
+        android:paddingTop="?attr/actionBarSize" />
 </RelativeLayout>

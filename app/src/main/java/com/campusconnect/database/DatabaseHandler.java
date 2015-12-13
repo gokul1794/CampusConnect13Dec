@@ -42,10 +42,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     SQLiteDatabase db;
 
 
-
-
-
-
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         db = this.getWritableDatabase();
@@ -176,6 +172,35 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         return retBool;
     }
+
+    public ArrayList<GroupBean> getFollowingClubData() {
+        ArrayList<GroupBean> list = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String sql = "select * from " + TABLE_CLUBS + " where " + KEY_FOLLOWING + "= ?";
+        ;
+
+        Cursor cursor = db.rawQuery(sql, new String[]{"1"});
+
+
+        if (cursor.moveToFirst()) {
+            do {
+                Log.d("DB", cursor.getString(1) + " " + cursor.getString(2) + cursor.getString(3) + cursor.getString(4) + cursor.getString(5) + cursor.getString(6));
+                GroupBean bean = new GroupBean();
+                bean.setClubId(cursor.getString(1));
+                bean.setName(cursor.getString(2));
+                bean.setDescription(cursor.getString(3));
+                bean.setAdmin(cursor.getString(4));
+                bean.setAbb(cursor.getString(5));
+                bean.setFollow(cursor.getString(6));
+                list.add(bean);
+            } while (cursor.moveToNext());
+        }
+
+        return list;
+    }
+
+
 }
 
 
