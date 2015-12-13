@@ -1,5 +1,6 @@
 package com.campusconnect.activity;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -258,6 +259,12 @@ public class InEventActivity extends AppCompatActivity {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i=new Intent(android.content.Intent.ACTION_SEND);
+                i.setType("text/plain");
+                String shareBody = bean.getTitle()+"/n"+bean.getDescription();
+                i.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                v.getContext().startActivity(Intent.createChooser(i, "Share via"));
+
                 if (flag_share_clicked) {
                     share.setAlpha((float) 0.5);
                     flag_share_clicked = false;

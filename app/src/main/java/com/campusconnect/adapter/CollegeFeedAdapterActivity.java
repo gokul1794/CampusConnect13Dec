@@ -201,6 +201,18 @@ public class CollegeFeedAdapterActivity extends
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    Intent i=new Intent(android.content.Intent.ACTION_SEND);
+                    i.setType("text/plain");
+                    String shareBody = CollegeFeedList.get(posi).getTitle()+"/n"+CollegeFeedList.get(posi).getDescription();
+                    i.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                    v.getContext().startActivity(Intent.createChooser(i, "Share via"));
+//
+//                    Intent sharingIntent = new Intent();
+//                    sharingIntent.setAction(Intent.ACTION_SEND);
+//                    sharingIntent.setType("text/plain");
+//                    sharingIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
+//                    v.getContext().startActivity(sharingIntent);
                     if(share_click_count%2==0) {
                         share.setAlpha((float) 1);
                     }
