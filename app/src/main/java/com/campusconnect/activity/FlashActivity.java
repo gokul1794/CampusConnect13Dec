@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.campusconnect.R;
 import com.campusconnect.constant.AppConstants;
 import com.campusconnect.utility.SharedpreferenceUtility;
+import com.flurry.android.FlurryAgent;
 
 /**
  * Created by rkd on 3/12/15.
@@ -20,6 +21,10 @@ public class FlashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flashpage);
+
+
+        FlurryAgent.setLogEnabled(false);
+        FlurryAgent.init(this, "N26DF2K5GN459DRKK558");
        /* sharedpreferences = getSharedPreferences(AppConstants.SHARED_PREFS, Context.MODE_PRIVATE);
 
         Boolean loggedIn=sharedpreferences.getBoolean(AppConstants.LOG_IN_STATUS,false);*/

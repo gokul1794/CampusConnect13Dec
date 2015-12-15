@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.campusconnect">
+    package="com.campusconnect"
+    android:versionName="1.0"
+    android:versionCode="1">
 
     <permission
         android:name="android.permission.WAKE_LOCK"
@@ -60,32 +62,32 @@
             android:name="com.campusconnect.activity.CreateGroupActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name="com.campusconnect.activity.GroupPageActivity"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity
             android:name="com.campusconnect.activity.InEventActivity"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
 
         <activity
             android:name="com.campusconnect.activity.AdminPageActivity"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity
             android:name="com.campusconnect.activity.RequestsPage_InAdminActivity"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity
             android:name="com.campusconnect.activity.GroupMembersPage_InAdminActivity"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity
             android:name="com.campusconnect.activity.SelectCollegeActivity"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity
             android:name=".activity.FlashActivity"
             android:label="@string/app_name">
@@ -97,19 +99,19 @@
         <activity
             android:name="com.campusconnect.activity.GoogleSignin"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity
             android:name="com.campusconnect.activity.CategoryActivity"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity
             android:name="com.campusconnect.activity.GetProfileDetailsActivity"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity
             android:name="com.campusconnect.activity.Signup_2Activity"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity
             android:name="com.campusconnect.activity.AboutGroupActivity"
             android:screenOrientation="portrait"
@@ -144,7 +146,7 @@
             android:name="com.campusconnect.activity.CreatePostActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+            android:windowSoftInputMode="stateAlwaysHidden"/><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"
